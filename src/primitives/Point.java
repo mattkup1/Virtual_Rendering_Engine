@@ -42,6 +42,21 @@ public class Point {
         this._xyz = xyz;
     }
 
+    @Override
+    public String toString() { return "" + _xyz; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return _xyz.equals(((Point) obj)._xyz);
+    }
+
+    @Override
+    public int hashCode() {
+        return _xyz.hashCode();
+    }
+
     /**
      * Computes the vector from the given point to this point.
      *
@@ -76,7 +91,9 @@ public class Point {
      * @return the squared distance between the two points
      */
     public double distanceSquared(Point other) {
+        // Store the point representing the vector from other to this
         Double3 diff = _xyz.subtract(other._xyz);
+        // Compute the squared distance between the 2 points
         return diff._d1() * diff._d1()
                 + diff._d2() * diff._d2()
                 + diff._d3() * diff._d3();
