@@ -11,10 +11,15 @@ abstract public class RadialGeometry {
     protected final double radiusSquared;
 
     /**
+     * Constructs a radial geometry with a given radius.
      *
-     * @param radius the shape's radius
+     * @param radius the radius of the geometry
+     * @throws IllegalArgumentException if radius is negative or zero
      */
     public RadialGeometry(double radius) {
+        if (radius <= 0) {
+            throw new IllegalArgumentException("Radius must be greater than zero");
+        }
         this.radius = radius;
         this.radiusSquared = radius * radius;
     }
