@@ -7,8 +7,8 @@ package geometries.impl;
  * @author moshehanau
  */
 abstract public class RadialGeometry {
-    protected final double radius;
-    protected final double radiusSquared;
+    protected final double _radius;
+    protected final double _radiusSquared;
 
     /**
      * Constructs a radial geometry with a given radius.
@@ -20,7 +20,7 @@ abstract public class RadialGeometry {
         if (radius <= 0) {
             throw new IllegalArgumentException("Radius must be greater than zero");
         }
-        this.radius = radius;
-        this.radiusSquared = radius * radius;
+        this._radius = radius;
+        this._radiusSquared = radius * radius;
     }
 }

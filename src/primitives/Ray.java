@@ -11,12 +11,12 @@ package primitives;
  * @author moshehanau
  */
 public final class Ray {
-    private Point origin;
-    private Vector direction;
+    private final Point _origin;
+    private final Vector _direction;
 
     public Ray(Point origin, Vector direction) {
-        this.origin = origin;
+        this._origin = origin;
         // Direction vector must be normalized
-        this.direction = direction.normalize();
+        this._direction = direction.normalize();
     }
 }
