@@ -133,7 +133,7 @@ public final class Vector extends Point {
     public double length() { return super.distance(new Point(0,0,0)); }
 
     /**
-     * Computes the squared distance between the endpoint of this vector 
+     * Computes the squared distance between the endpoint of this vector
      * and the endpoint of another vector.
      * <p>
      * This method is more efficient than {@link #distance(Vector)}
