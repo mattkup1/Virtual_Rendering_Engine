@@ -25,9 +25,4 @@ abstract public class RadialGeometry extends Geometry {
         this._radius = radius;
         this._radiusSquared = radius * radius;
     }
-
-    @Override
-    public String toString() {
-        return "Radius: " + _radius;
-    }
 }

@@ -44,21 +44,6 @@ public class Point {
         this._xyz = xyz;
     }
 
-    @Override
-    public String toString() { return "" + _xyz; }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        return _xyz.equals(((Point) obj)._xyz);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(_xyz);
-    }
-
     /**
      * Computes the vector from the given point to this point.
      *
@@ -111,4 +96,16 @@ public class Point {
         return Math.sqrt(distanceSquared(other));
     }
 
+    @Override
+    public String toString() { return "Point: Coordinates: " + _xyz; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return _xyz.equals(((Point) obj)._xyz);
+    }
+
+    @Override
+    public int hashCode() { return Objects.hash(_xyz); }
 }

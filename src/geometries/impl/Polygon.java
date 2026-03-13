@@ -1,13 +1,12 @@
 package geometries.impl;
 
-import static primitives.Util.isZero;
-
 import java.util.List;
+import java.util.Objects;
 
 import geometries.api.Geometry;
-
 import primitives.Point;
 import primitives.Vector;
+import static primitives.Util.isZero;
 
 /**
  * Represents a convex polygon in a 3D Cartesian coordinate system.
@@ -88,12 +87,13 @@ public class Polygon extends Geometry {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      Polygon p = (Polygon) obj;
-      return p._vertices == this._vertices && p._plane == this._plane && p._size == this._size;
+      Polygon other = (Polygon) obj;
+      // Use List.equals(), which checks the equality of every Point in order
+      return this._vertices.equals(other._vertices);
    }
 
    @Override
    public int hashCode() {
-      return _vertices.hashCode();
+      return Objects.hash(_vertices, _plane, _size);
    }
 }

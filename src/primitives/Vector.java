@@ -44,16 +44,6 @@ public final class Vector extends Point {
         validate();
     }
 
-    @Override
-    public String toString() { return "->" + super.toString(); }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        return super.equals(obj);
-    }
-
     /**
      * Validates that the vector is not the zero vector
      *
@@ -170,5 +160,20 @@ public final class Vector extends Point {
      */
     public Vector normalize() {
         return new Vector(_xyz.divide(length())); // Assuming 'reduce' or 'divide' scales each component by 1/len
+    }
+
+    @Override
+    public String toString() { return "->" + super.toString(); }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

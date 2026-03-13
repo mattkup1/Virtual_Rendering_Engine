@@ -75,7 +75,7 @@ public class Plane extends Geometry {
 
     @Override
     public String toString() {
-        return "plane hows going through the point " +_point + " with the normal " + _normal;
+        return "Plane: Point: " +_point + ", Normal: " + _normal;
     }
 
     @Override

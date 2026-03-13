@@ -8,7 +8,7 @@ import primitives.Point;
  * A triangle is a flat, three-sided polygon defined by three vertices.
  * It is a fundamental primitive in 3D graphics and ray tracing.
  * </p>
- * * @author mattkuperwasser
+ * @author mattkuperwasser
  * @author moshehanau
  */
 public final class Triangle extends Polygon {
@@ -28,11 +28,6 @@ public final class Triangle extends Polygon {
         super(p1, p2, p3);
     }
 
-    /**
-     * Returns a string representation of the triangle.
-     *
-     * @return a string describing the triangle vertices
-     */
     @Override
     public String toString() {
         return "Triangle: " + super.toString();
