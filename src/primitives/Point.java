@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.Objects;
+
 /**
  * Immutable representation of a point in a 3D Cartesian coordinate system.
  * <p>
@@ -54,7 +56,7 @@ public class Point {
 
     @Override
     public int hashCode() {
-        return _xyz.hashCode();
+        return Objects.hashCode(_xyz);
     }
 
     /**

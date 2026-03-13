@@ -1,8 +1,11 @@
 package geometries.impl;
 
-import geometries.impl.RadialGeometry;
+import java.util.Objects;
+
 import primitives.Point;
+import primitives.Util;
 import primitives.Vector;
+
 /**
  * @author mattkuperwasser
  * @author moshehanau
@@ -21,10 +24,20 @@ public final class Sphere extends RadialGeometry {
     }
 
     @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Sphere s = (Sphere) obj;
-        return _center == s._center && _radius == s._radius;
+        return _center.equals(s._center) && Util.isZero(_radius - s._radius);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_center, _radius);
     }
 }
