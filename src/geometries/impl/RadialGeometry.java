@@ -1,12 +1,14 @@
 package geometries.impl;
 
+import geometries.api.Geometry;
+
 /**
  * Abstract class representing radial geometric shapes and their unique operations
  *
  * @author mattkuperwasser
  * @author moshehanau
  */
-abstract public class RadialGeometry {
+abstract public class RadialGeometry extends Geometry {
     protected final double _radius;
     protected final double _radiusSquared;
 

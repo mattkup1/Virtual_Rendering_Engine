@@ -1,5 +1,6 @@
 package geometries.impl;
 
+import geometries.api.Geometry;
 import primitives.Point;
 import primitives.Vector;
 
@@ -10,13 +11,13 @@ import primitives.Vector;
  * @author mattkuperwasser
  * @author moshehanau
  */
-public class Plane {
+public class Plane extends Geometry {
 
     /** A point on the plane */
     private final Point _point;
 
     /** The normal vector to the plane */
-    private final Vector _normal;
+    private Vector _normal;
 
     /**
      * Constructs a plane from three points on the plane.
@@ -56,7 +57,8 @@ public class Plane {
      *
      * @return the normal vector
      */
-    public Vector getNormal() {
+    @Override
+    public Vector getNormal(Point point) {
         return _normal;
     }
 
