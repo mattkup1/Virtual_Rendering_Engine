@@ -23,7 +23,7 @@ public final class Ray {
      * <p>
      * The direction vector is automatically normalized during construction.
      * </p>
-     * * @param origin    the starting point of the ray
+     * @param origin    the starting point of the ray
      * @param direction the direction vector (will be normalized)
      */
     public Ray(Point origin, Vector direction) {
