@@ -19,7 +19,7 @@ public class Point {
     /**
      * Constant representation of the origin (0,0,0).
      */
-    protected static final Double3 ZERO = Double3.ZERO;
+    public static final Point ZERO = new Point(Double3.ZERO);
 
     /**
      * Constructs a point with the given x, y and z coordinates.
@@ -108,4 +108,5 @@ public class Point {
     public double distance(Point other) {
         return Math.sqrt(distanceSquared(other));
     }
+
 }

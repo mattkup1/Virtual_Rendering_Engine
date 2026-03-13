@@ -4,6 +4,8 @@ import geometries.api.Geometry;
 import primitives.Point;
 import primitives.Vector;
 
+import java.util.Objects;
+
 /**
  * Represents a plane in 3D Cartesian coordinate system.
  * A plane is defined by a point on the plane and a normal vector perpendicular to it.
@@ -47,7 +49,7 @@ public class Plane extends Geometry {
      * @param normal the normal vector to the plane
      * @param point  a point on the plane
      */
-    public Plane(Vector normal, Point point) {
+    public Plane(Point point ,Vector normal) {
         this._normal = normal.normalize();
         this._point = point;
     }
@@ -69,5 +71,20 @@ public class Plane extends Geometry {
      */
     public Point getPoint() {
         return _point;
+    }
+
+    @Override
+    public String toString() {
+        return "plane hows going through the point " +_point + " with the normal " + _normal;
+    }
+
+    @Override
+    public int hashCode() { return Objects.hash(_point , _normal);}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return this._point.equals(((Plane)obj)._point) && this._normal.equals(((Plane)obj)._normal);
     }
 }
