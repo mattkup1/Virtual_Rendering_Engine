@@ -1,11 +1,10 @@
 package geometries.impl;
 
 import java.util.Objects;
-
+import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
 import primitives.Vector;
-import primitives.Point;
 
 /**
  * Represents an infinite tube in a 3D Cartesian coordinate system.
@@ -13,11 +12,14 @@ import primitives.Point;
  * A tube is defined by an infinite central axis ray and a radius.
  * It consists of all points at a fixed distance (the radius) from the axis.
  * </p>
- * * @author mattkuperwasser
+ *
+ * @author mattkuperwasser
  * @author moshehanau
  */
 public class Tube extends RadialGeometry {
-    /** The central axis ray of the tube */
+    /**
+     * The central axis ray of the tube
+     */
     protected final Ray _axis;
 
     /**

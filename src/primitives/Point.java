@@ -1,7 +1,5 @@
 package primitives;
 
-import java.util.Objects;
-
 /**
  * Immutable representation of a point in a 3D Cartesian coordinate system.
  * <p>
@@ -80,10 +78,13 @@ public class Point {
     public double distanceSquared(Point other) {
         // Store the point representing the vector from other to this
         Double3 diff = _xyz.subtract(other._xyz);
+        double diffX = diff._d1();
+        double diffY = diff._d2();
+        double diffZ = diff._d3();
         // Compute the squared distance between the 2 points
-        return diff._d1() * diff._d1()
-                + diff._d2() * diff._d2()
-                + diff._d3() * diff._d3();
+        return diffX * diffX
+                + diffY * diffY
+                + diffZ * diffZ;
     }
 
     /**
@@ -97,7 +98,9 @@ public class Point {
     }
 
     @Override
-    public String toString() { return "Point: Coordinates: " + _xyz; }
+    public String toString() {
+        return "Point: Coordinates: " + _xyz;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -107,5 +110,7 @@ public class Point {
     }
 
     @Override
-    public int hashCode() { return Objects.hash(_xyz); }
+    public int hashCode() {
+        return _xyz.hashCode();
+    }
 }

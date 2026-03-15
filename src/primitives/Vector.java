@@ -15,12 +15,19 @@ package primitives;
  * @author moshehanau
  */
 public final class Vector extends Point {
-    /** Constant static unit vector in X direction */
+    /**
+     * Constant static unit vector in X direction
+     */
     public static final Vector AXIS_X = new Vector(1.0, 0.0, 0.0);
-    /** Constant static unit vector in Y direction */
+    /**
+     * Constant static unit vector in Y direction
+     */
     public static final Vector AXIS_Y = new Vector(0, 1, 0);
-    /** Constant static unit vector in Z direction */
-    public static final Vector AXIS_Z = new Vector(0,0,1);
+    /**
+     * Constant static unit vector in Z direction
+     */
+    public static final Vector AXIS_Z = new Vector(0, 0, 1);
+
     /**
      * Constructs a vector from x, y, z coordinates.
      *
@@ -54,7 +61,7 @@ public final class Vector extends Point {
      */
     private void validate() {
         if (_xyz.equals(Double3.ZERO))
-                throw new IllegalArgumentException("Zero vector is not allowed" );
+            throw new IllegalArgumentException("Zero vector is not allowed");
     }
 
     /**
@@ -106,7 +113,7 @@ public final class Vector extends Point {
         double bY = other._xyz._d2();
         double bZ = other._xyz._d3();
         // Compute and return the cross product using the algebric formula
-        return new Vector (
+        return new Vector(
                 (aY * bZ) - (aZ * bY),
                 (aZ * bX) - (aX * bZ),
                 (aX * bY) - (aY * bX)
@@ -118,14 +125,18 @@ public final class Vector extends Point {
      *
      * @return the length of the vector
      */
-    public double lengthSquared() { return super.distanceSquared(new Point(0,0,0)); }
+    public double lengthSquared() {
+        return super.distanceSquared(new Point(0, 0, 0));
+    }
 
     /**
      * Compute the length of the vector
      *
      * @return the vector length
      */
-    public double length() { return super.distance(new Point(0,0,0)); }
+    public double length() {
+        return super.distance(new Point(0, 0, 0));
+    }
 
 
     /**
@@ -133,6 +144,7 @@ public final class Vector extends Point {
      * <p>
      * Returns a new vector with the same direction but with a length of 1.
      * </p>
+     *
      * @return a new {@link Vector} representing the unit vector
      * @throws ArithmeticException if the vector's length is zero (though validate() prevents this)
      */
@@ -141,6 +153,19 @@ public final class Vector extends Point {
     }
 
     @Override
-    public String toString() { return "->" + super.toString(); }
+    public String toString() {
+        return "->" + super.toString();
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        return _xyz.equals(((Point) obj)._xyz);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
