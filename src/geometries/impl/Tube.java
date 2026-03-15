@@ -53,6 +53,6 @@ public class Tube extends RadialGeometry {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_radius, _axis);
+        return Objects.hash(super.hashCode(), _axis);
     }
 }

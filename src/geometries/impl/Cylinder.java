@@ -10,11 +10,14 @@ import primitives.Util;
  * A cylinder is a finite tube with a specific height and two flat bases.
  * It is defined by a central axis (a ray), a radius, and a height.
  * </p>
+ *
  * @author mattkuperwasser
  * @author moshehanau
  */
 public final class Cylinder extends Tube {
-    /** The height of the cylinder */
+    /**
+     * The height of the cylinder
+     */
     private double _height;
 
     /**
@@ -46,6 +49,6 @@ public final class Cylinder extends Tube {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_radius, _axis, _height);
+        return Objects.hash(super.hashCode(), _axis, _height);
     }
 }
