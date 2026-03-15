@@ -16,7 +16,7 @@ public final class Ray {
     /** The starting point of the ray */
     private final Point _origin;
     /** The normalized direction vector of the ray */
-    public final Vector _direction;
+    private final Vector _direction;
 
     /**
      * Constructs a ray with a given origin point and direction vector.
@@ -41,13 +41,15 @@ public final class Ray {
     }
 
     /**
+     * @return the point that the ray going through
+     */
+    public Point getOrigin() {return _origin;}
+    /**
      * Returns the direction vector of the ray.
      *
      * @return the normalized direction vector
      */
-    public Vector direction() {
-        return _direction;
-    }
+    public Vector getDirection() {return _direction.normalize();}
 
     @Override
     public String toString() {

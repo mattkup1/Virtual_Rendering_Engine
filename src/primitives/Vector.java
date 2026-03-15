@@ -127,31 +127,6 @@ public final class Vector extends Point {
      */
     public double length() { return super.distance(new Point(0,0,0)); }
 
-    /**
-     * Computes the squared distance between the endpoint of this vector
-     * and the endpoint of another vector.
-     * <p>
-     * This method is more efficient than {@link #distance(Vector)}
-     * as it avoids the square root operation.
-     * </p>
-     *
-     * @param other the other vector
-     * @return the squared distance between the two vectors
-     */
-    public double distanceSquared(Vector other) {
-        return super.distanceSquared(other);
-    }
-
-    /**
-     * Computes the Euclidean distance between the endpoint of this vector
-     * and the endpoint of another vector.
-     *
-     * @param other the other vector
-     * @return the distance between the two vectors
-     */
-    public double distance(Vector other) {
-        return Math.sqrt(this.distanceSquared(other));
-    }
 
     /**
      * Normalizes the vector.
@@ -168,15 +143,4 @@ public final class Vector extends Point {
     @Override
     public String toString() { return "->" + super.toString(); }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        return super.equals(obj);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }
