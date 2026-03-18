@@ -1,11 +1,12 @@
-package geometries;
+package geometries.impl;
 
-import geometries.impl.Plane;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Vector;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlaneTests {
 
@@ -17,7 +18,7 @@ public class PlaneTests {
     /**
      * Vertex (1,2,3) used in plane tests
      */
-    private static final Point POINT = new Point(1,2,3);
+    private static final Point POINT = new Point(1, 2, 3);
     /**
      * Vertex (1,0,0) used in plane tests
      */
@@ -46,7 +47,7 @@ public class PlaneTests {
     /**
      * Normal vector used in plane tests
      */
-    private static final Vector NORMAL_VECTOR = new Vector(1,1,1);
+    private static final Vector NORMAL_VECTOR = new Vector(1, 1, 1);
 
     /**
      * Plane used in getNormal tests
@@ -58,33 +59,33 @@ public class PlaneTests {
     private static final double DELTA = 1e-6;
 
     @Test
-    void testConstructor () {
+    void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
 
         // TC01: Correct plane defined by three distinct non-collinear points
-        assertDoesNotThrow(()-> new Plane(POINT_X,POINT_Y,POINT_Z),
+        assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z),
                 "Failed constructing a correct plane");
 
         // TC02: Correct plane defined by a point and a valid normal vector
-        assertDoesNotThrow(()-> new Plane(POINT,NORMAL_VECTOR),
+        assertDoesNotThrow(() -> new Plane(POINT, NORMAL_VECTOR),
                 "Failed constructing a correct plane");
 
         // =============== Boundary Values Tests ==================
 
         // TC11: Three collinear points
-        assertThrows(IllegalArgumentException.class ,() -> new Plane(POINT_COLLINEAR1 , POINT_COLLINEAR2 , POINT_COLLINEAR3),
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_COLLINEAR1, POINT_COLLINEAR2, POINT_COLLINEAR3),
                 "ERROR: the three points lie on the same line and cannot define a plane");
 
         // TC12: Two identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X,POINT_Y,POINT_Y),
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_Y),
                 "ERROR: constructed a plane with two identical points");
 
         // TC13: Zero vector as normal
-        assertThrows(IllegalArgumentException.class,()-> new Plane(POINT, new Vector(0,0,0)),
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT, new Vector(0, 0, 0)),
                 "ERROR: cannot define a plane with the zero vector as a normal");
 
         // TC14: Null vector as normal
-        assertThrows(NullPointerException.class, ()-> new Plane(POINT,null),
+        assertThrows(NullPointerException.class, () -> new Plane(POINT, null),
                 "ERROR: cannot define a plane with a null vector as a normal");
 
     }
