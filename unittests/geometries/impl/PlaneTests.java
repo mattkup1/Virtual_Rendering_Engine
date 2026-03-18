@@ -71,29 +71,29 @@ public class PlaneTests {
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
 
-        // TC01: Correct plane defined by three distinct non-collinear points
+        // EP01: Correct plane defined by three distinct non-collinear points
         assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z),
                 CONSTRUCTION_ERROR);
 
-        // TC02: Correct plane defined by a point and a valid normal vector
+        // EP02: Correct plane defined by a point and a valid normal vector
         assertDoesNotThrow(() -> new Plane(POINT, NORMAL_VECTOR),
                 CONSTRUCTION_ERROR);
 
         // =============== Boundary Values Tests ==================
 
-        // TC11: Three collinear points
+        // BV01: Three collinear points
         assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_COLLINEAR1, POINT_COLLINEAR2, POINT_COLLINEAR3),
                 "ERROR: the three points lie on the same line and cannot define a plane");
 
-        // TC12: Two identical points
+        // BV02: Two identical points
         assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_Y),
                 "ERROR: constructed a plane with two identical points");
 
-        // TC13: Zero vector as normal
+        // BV03: Zero vector as normal
         assertThrows(IllegalArgumentException.class, () -> new Plane(POINT, new Vector(0, 0, 0)),
                 ZERO_NORMAL);
 
-        // TC14: Null vector as normal
+        // BV04: Null vector as normal
         assertThrows(NullPointerException.class, () -> new Plane(POINT, null),
                 ZERO_NORMAL);
 
@@ -101,16 +101,17 @@ public class PlaneTests {
 
     @Test
     void testGetNormal() {
+        // ============ Equivalence Partitions Tests ==============
 
-        // TC07: getNormal returns the same normal vector for different points on the plane
+        // EP01: getNormal returns the same normal vector for different points on the plane
         assertEquals(PLANE.getNormal(POINT_X), PLANE.getNormal(POINT_Y),
                 "getNormal should return the same normal for every point on the plane");
 
-        // TC08: getNormal returns a unit vector
+        // EP02: getNormal returns a unit vector
         assertEquals(1, PLANE.getNormal(POINT_X).length(), DELTA,
                 "getNormal should return a normalized vector");
 
-        // TC09: normal is orthogonal to vector POINT_X -> POINT_Z
+        // EP03: normal is orthogonal to vector POINT_X -> POINT_Z
         assertEquals(0, PLANE.getNormal(POINT_X).dotProduct(POINT_Z.subtract(POINT_X)), DELTA,
                 "Normal is not orthogonal to vector POINT_X -> POINT_Z");
 
