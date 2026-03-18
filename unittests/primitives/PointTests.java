@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Tests follow the methodology of
  * Equivalence Partitioning (EP)
  * and Boundary Values (BVA)
+ *
+ * @author mattkuperwasser
+ * @author moshehanau
  */
 public class PointTests {
     /**
