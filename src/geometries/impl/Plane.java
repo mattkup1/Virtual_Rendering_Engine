@@ -31,16 +31,16 @@ public class Plane extends Geometry {
      * @throws IllegalArgumentException if points are collinear or identical
      */
     public Plane(Point p1, Point p2, Point p3) {
+        // Check whether any two of the given points are identical
+        if (p1.equals(p2) || p1.equals(p3) || p2.equals(p3)) {
+            throw new IllegalArgumentException("Plane cannot be defined by identical points");
+        }
+        // in case that the three point are collinear then the cross product throw exception
+        Vector vec = p1.subtract(p2).crossProduct(p2.subtract(p3));
         this._point = p1;
+        // create 2 vectors by using subtract method then we compute the normal to these vectors and finally normalizing them.
+        this._normal= vec.normalize();
 
-        /*
-        // TODO: check that all 3 points are not on the same straight
-        Vector v1 = p2.subtract(p1);
-        Vector v2 = p3.subtract(p1);
-
-        // The normal is the cross product of two vectors on the plane
-        this._normal = v1.crossProduct(v2).normalize();
-         */
     }
 
     /**
@@ -50,6 +50,7 @@ public class Plane extends Geometry {
      * @param point  a point on the plane
      */
     public Plane(Point point ,Vector normal) {
+        if (normal == null) throw new NullPointerException("the normal of the Plane cannot be null");
         this._normal = normal.normalize();
         this._point = point;
     }
@@ -61,7 +62,7 @@ public class Plane extends Geometry {
      */
     @Override
     public Vector getNormal(Point point) {
-        return _normal;
+        return _normal.normalize();
     }
 
     /**
