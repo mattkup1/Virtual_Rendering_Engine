@@ -58,17 +58,26 @@ public class PlaneTests {
      */
     private static final double DELTA = 1e-6;
 
+    /**
+     * Error message for {@link Plane} construction failure
+     */
+    private static final String CONSTRUCTION_ERROR = "Failed to construct a plane";
+    /**
+     * Error message for {@link Plane} construction with the zero vector as the normal vector
+     */
+    private static final String ZERO_NORMAL = "ERROR: Cannot define plane with zero vector as the Normal.";
+
     @Test
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
 
         // TC01: Correct plane defined by three distinct non-collinear points
         assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z),
-                "Failed constructing a correct plane");
+                CONSTRUCTION_ERROR);
 
         // TC02: Correct plane defined by a point and a valid normal vector
         assertDoesNotThrow(() -> new Plane(POINT, NORMAL_VECTOR),
-                "Failed constructing a correct plane");
+                CONSTRUCTION_ERROR);
 
         // =============== Boundary Values Tests ==================
 
@@ -82,11 +91,11 @@ public class PlaneTests {
 
         // TC13: Zero vector as normal
         assertThrows(IllegalArgumentException.class, () -> new Plane(POINT, new Vector(0, 0, 0)),
-                "ERROR: cannot define a plane with the zero vector as a normal");
+                ZERO_NORMAL);
 
         // TC14: Null vector as normal
         assertThrows(NullPointerException.class, () -> new Plane(POINT, null),
-                "ERROR: cannot define a plane with a null vector as a normal");
+                ZERO_NORMAL);
 
     }
 
