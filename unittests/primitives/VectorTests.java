@@ -25,7 +25,7 @@ import static primitives.Util.isZero;
  * @author mattkuperwasser
  * @author moshehanau
  */
-public class VectorTests {
+class VectorTests {
 
     private static final Vector V1 = new Vector(1, 2, 3);
     private static final Vector V2 = new Vector(-2, -4, -6);
@@ -67,6 +67,19 @@ public class VectorTests {
         Vector vOpposite = new Vector(-1, -2, -3);
         assertThrows(IllegalArgumentException.class, () -> V1.add(vOpposite),
                 "Adding opposite vector did not throw exception for zero vector");
+    }
+
+    /**
+     * Test method for {@link primitives.Vector#subtract(primitives.Point)}
+     */
+    @Test
+    void testSubtract() {
+        // ============ Equivalence Partitions Tests ==============
+        // EP01: Regular subtraction
+        assertEquals(new Vector(1, -1, 5), V1.subtract(V3), "Vectors should be equal");
+
+        // =============== Boundary Values Tests ==================
+        // BV01: Subtracting a vector from itself
     }
 
     /**
