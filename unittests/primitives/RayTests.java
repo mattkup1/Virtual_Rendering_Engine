@@ -42,7 +42,7 @@ class RayTests {
      */
     private static final Vector v2 = new Vector(0, 1, 0);
     /**
-     * Non unit vector (10,0,0) used in ray tests
+     * Non-unit vector (10,0,0) used in ray tests
      */
     private static final Vector vNonUnit = new Vector(10, 0, 0);
     /**
@@ -116,7 +116,7 @@ class RayTests {
         // =============== Boundary Values Tests ==================
         // BV01: Ray construction with zero vector as direction (should throw exception)
         assertThrows(IllegalArgumentException.class,
-                () -> new Ray(p1, new Vector(0,0,0)), ERROR_CTOR_ZERO_DIRECTION));
+                () -> new Ray(p1, new Vector(0, 0, 0)), ERROR_CTOR_ZERO_DIRECTION);
     }
 
     /**
