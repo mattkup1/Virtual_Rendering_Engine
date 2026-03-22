@@ -1,8 +1,10 @@
 package geometries.impl;
 
 import java.util.Objects;
+import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
+import primitives.Vector;
 
 /**
  * Represents a cylinder in a 3D Cartesian coordinate system.
@@ -33,6 +35,32 @@ public final class Cylinder extends Tube {
         if (height <= 0)
             throw new IllegalArgumentException("Cylinder height must be positive");
         _height = height;
+    }
+
+    @Override
+    public Vector getNormal(Point p) {
+        // Case point on cylinder is equal to the cylinder origin - return the normal to bottom base
+        if (p.equals(_axis.getOrigin())) return this._axis.getDirection().scale(-1);
+        // Dot product between the vector represented by the point and the cylinder axis direction vector
+        // This computation essentially returns the projection of the point vector on the axis
+        // If the result is 0, then the point is on the bottom base
+        // If the result is equal to the height of the cylinder then the point is on the top base
+        // If the result is between 0 and the height of the cylinder then the point is on the round surface
+        // We assume the point is somewhere on the cylinder
+        Double t = _axis.getDirection().dotProduct(p.subtract(_axis.getOrigin()));
+        if (t.equals(this._height)) {
+            // Case point on top base (t == height)
+            return this._axis.getDirection();
+        } else if (t.equals(0.0)) {
+            // Case point on bottom base (t == 0)
+            return this._axis.getDirection().scale(-1);
+        } else {
+            // Case point on round surface
+            // Get the projection point on the axis by adding the projection vector to the cylinder origin point
+            Point projectionPoint = _axis.getOrigin().add(_axis.getDirection().scale(t));
+            // Return the vector from the projection point to the point on the cylinder
+            return p.subtract(projectionPoint).normalize();
+        }
     }
 
     @Override

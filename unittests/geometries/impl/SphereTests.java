@@ -27,30 +27,26 @@ public class SphereTests {
      * Center point of the test sphere
      */
     private static final Point CENTER = new Point(1, 1, 1);
-
     /**
      * Radius of the test sphere
      */
     private static final double RADIUS = 1.0;
-
     /**
      * Sphere defined by the test center and radius
      */
     private static final Sphere SPHERE = new Sphere(CENTER, RADIUS);
-
     /**
      * Point on the surface of the test sphere
      */
     private static final Point POINT_ON_SPHERE = new Point(2, 1, 1);
-
     /**
      * Normal vector at the test point on the sphere
      */
     private static final Vector NORMAL_VECTOR = new Vector(1, 0, 0);
     /**
-     * Error message for failed plane construction
+     * Error message for failed sphere construction
      */
-    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a sphere";
     /**
      * Error message for an unexpected normal vector
      */
@@ -60,6 +56,7 @@ public class SphereTests {
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
 
+        // EP01: Correct plane defined by center and radius
         assertDoesNotThrow(() -> new Sphere(CENTER, RADIUS), FAILED_CONSTRUCTOR_ERROR);
     }
 

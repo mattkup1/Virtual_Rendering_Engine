@@ -24,15 +24,15 @@ public class TriangleTests {
     TriangleTests() {/* to satisfy JavaDoc generator */ }
 
     /**
-     * Vertex (1,0,0) used in plane tests
+     * Vertex (1,0,0) used in Triangle tests
      */
     private static final Point POINT_X = new Point(1, 0, 0);
     /**
-     * Vertex (0,1,0) used in plane tests
+     * Vertex (0,1,0) used in Triangle tests
      */
     private static final Point POINT_Y = new Point(0, 1, 0);
     /**
-     * Vertex (0,0,1) used in plane tests
+     * Vertex (0,0,1) used in Triangle tests
      */
     private static final Point POINT_Z = new Point(0, 0, 1);
     /**
@@ -43,11 +43,10 @@ public class TriangleTests {
      * Normalized normal vector of the test triangle
      */
     private static final Vector NORMAL_VECTOR = new Vector(1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3));
-
     /**
-     * Error message for failed plane construction
+     * Error message for failed triangle construction
      */
-    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a triangle";
     /**
      * Error message for an unexpected normal vector
      */

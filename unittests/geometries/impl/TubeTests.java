@@ -63,7 +63,7 @@ public class TubeTests {
     /**
      * Error message for failed plane construction
      */
-    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a tube";
     /**
      * Error message for an unexpected normal vector
      */

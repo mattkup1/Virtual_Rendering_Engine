@@ -13,9 +13,13 @@ import java.util.Objects;
  * @author moshehanau
  */
 public final class Ray {
-    /** The starting point of the ray */
+    /**
+     * The starting point of the ray
+     */
     private final Point _origin;
-    /** The normalized direction vector of the ray */
+    /**
+     * The normalized direction vector of the ray
+     */
     private final Vector _direction;
 
     /**
@@ -23,6 +27,7 @@ public final class Ray {
      * <p>
      * The direction vector is automatically normalized during construction.
      * </p>
+     *
      * @param origin    the starting point of the ray
      * @param direction the direction vector (will be normalized)
      */
@@ -43,13 +48,18 @@ public final class Ray {
     /**
      * @return the point that the ray going through
      */
-    public Point getOrigin() {return _origin;}
+    public Point getOrigin() {
+        return _origin;
+    }
+
     /**
      * Returns the direction vector of the ray.
      *
      * @return the normalized direction vector
      */
-    public Vector getDirection() {return _direction.normalize();}
+    public Vector getDirection() {
+        return _direction.normalize();
+    }
 
     @Override
     public String toString() {
