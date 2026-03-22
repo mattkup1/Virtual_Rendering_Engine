@@ -52,6 +52,9 @@ public class TriangleTests {
      */
     private static final String UNMATCH_VECTOR_NORMAL = "getNormal should return the right normal";
 
+    /**
+     * Test method for {@link Triangle} constructor
+     */
     @Test
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
@@ -60,6 +63,9 @@ public class TriangleTests {
         assertDoesNotThrow(() -> new Triangle(POINT_X, POINT_Y, POINT_Z), FAILED_CONSTRUCTOR_ERROR);
     }
 
+    /**
+     * Test method for {@link Triangle#getNormal(Point)}
+     */
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============

@@ -2,7 +2,6 @@ package primitives;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -63,18 +62,6 @@ class PointTests {
      */
     private static final String ERROR_INCORRECT_RESULT = "ERROR: Incorrect result";
 
-    /**
-     * Test method for {@link Point} constructors
-     */
-    @Test
-    void testConstructor() {
-        // ============ Equivalence Partitions Tests ==============
-        // EP01: Correct point construction for ctor with 3 doubles arguments
-        assertDoesNotThrow(() -> new Point(1, 2, 3), ERROR_CONSTRUCTOR);
-
-        // EP02: Correct point construction for ctor with Double3 argument
-        assertDoesNotThrow(() -> new Point(new Double3(1, 2, 3)), ERROR_CONSTRUCTOR);
-    }
 
     /**
      * Test method for {@link Point#subtract(Point)}

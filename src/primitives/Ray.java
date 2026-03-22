@@ -46,7 +46,9 @@ public final class Ray {
     }
 
     /**
-     * @return the point that the ray going through
+     * Getter method for the {@link Ray} origin
+     *
+     * @return the point on the ray (ray origin)
      */
     public Point getOrigin() {
         return _origin;

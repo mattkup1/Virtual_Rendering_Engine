@@ -52,6 +52,9 @@ public class SphereTests {
      */
     private static final String UNMATCH_VECTOR_NORMAL = "getNormal should return the right normal";
 
+    /**
+     * Test method for {@link Sphere} constructor
+     */
     @Test
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
@@ -60,6 +63,9 @@ public class SphereTests {
         assertDoesNotThrow(() -> new Sphere(CENTER, RADIUS), FAILED_CONSTRUCTOR_ERROR);
     }
 
+    /**
+     * Test method for {@link Sphere#getNormal(Point)}
+     */
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============

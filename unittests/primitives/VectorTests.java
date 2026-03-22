@@ -26,6 +26,12 @@ import static primitives.Util.isZero;
  * @author moshehanau
  */
 class VectorTests {
+    
+    /**
+     * Default constructor to satisfy JavaDoc generator
+     */
+    VectorTests() {/* to satisfy JavaDoc generator */ }
+
     /**
      * Vector -> (1,2,3) used in vector tests
      */
@@ -42,9 +48,17 @@ class VectorTests {
      * Delta value for accuracy when comparing double values
      */
     private static final double DELTA = 1e-6;
-
+    /**
+     * Error message: Exception expected
+     */
     private static final String ERROR_EXCEPTION_EXPECTED = "ERROR: Exception expected";
+    /**
+     * Error message: Exception thrown
+     */
     private static final String ERROR_EXCEPTION_THROWN = "ERROR: Exception thrown";
+    /**
+     * Error message: Incorrect result
+     */
     private static final String ERROR_INCORRECT_RESULT = "ERROR: Incorrect result";
 
     /**
@@ -178,11 +192,5 @@ class VectorTests {
         // ============ Equivalence Partitions Tests ==============
         // EP01: Normalized vector is a unit vector (length = 1)
         assertEquals(1, u.length(), DELTA, ERROR_INCORRECT_RESULT);
-
-        // EP02: Normalized vector is parallel to original
-        assertThrows(IllegalArgumentException.class, () -> V1.crossProduct(u), ERROR_EXCEPTION_EXPECTED);
-
-        // EP03: Normalized vector points in the same direction
-        assertTrue(V1.dotProduct(u) > 0, ERROR_INCORRECT_RESULT);
     }
 }

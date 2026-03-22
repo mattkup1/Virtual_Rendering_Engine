@@ -1,6 +1,7 @@
 package geometries.api;
 
-import primitives.*;
+import primitives.Point;
+import primitives.Vector;
 
 /**
  * Abstract class representing 2D Geometric shapes and operations
@@ -9,6 +10,11 @@ import primitives.*;
  * @author moshehanau
  */
 abstract public class Geometry {
+    /**
+     * Default constructor to satisfy JavaDoc generator
+     */
+    Geometry() { /* To satisfy JavaDoc generator */ }
+
     /**
      * Abstract method to get the geometry's Normal vector
      * Every geometry must implement this method

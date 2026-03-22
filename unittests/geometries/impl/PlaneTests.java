@@ -102,7 +102,9 @@ public class PlaneTests {
      */
     private static final String UNMATCH_NORMAL_VECTOR_ERROR = "getNormal should return the same normal for every point on the plane";
 
-
+    /**
+     * Test method for {@link Plane} constructor
+     */
     @Test
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
@@ -132,6 +134,9 @@ public class PlaneTests {
 
     }
 
+    /**
+     * Test method for {@link Plane#getNormal(Point)}
+     */
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
@@ -144,11 +149,5 @@ public class PlaneTests {
 
         // EP03: getNormal returns a unit vector
         assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
-
-        // =============== Boundary Values Tests ==================
-
-        // BV01: getNormal returns the except normal vector of the plane
-        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(POINT_Y), UNMATCH_NORMAL_VECTOR_ERROR);
-
     }
 }

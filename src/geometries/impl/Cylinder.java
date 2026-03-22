@@ -47,11 +47,11 @@ public final class Cylinder extends Tube {
         // If the result is equal to the height of the cylinder then the point is on the top base
         // If the result is between 0 and the height of the cylinder then the point is on the round surface
         // We assume the point is somewhere on the cylinder
-        Double t = _axis.getDirection().dotProduct(p.subtract(_axis.getOrigin()));
-        if (t.equals(this._height)) {
+        double t = _axis.getDirection().dotProduct(p.subtract(_axis.getOrigin()));
+        if (Util.isZero(t - this._height)) {
             // Case point on top base (t == height)
             return this._axis.getDirection();
-        } else if (t.equals(0.0)) {
+        } else if (Util.isZero(t)) {
             // Case point on bottom base (t == 0)
             return this._axis.getDirection().scale(-1);
         } else {
