@@ -73,7 +73,7 @@ public class TubeTests {
      * Test method for {@link Tube#getNormal(Point)}
      */
     @Test
-    void tesrConstructor() {
+    void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
         assertDoesNotThrow(() -> new Tube(RADIUS, AXIS_RAY), FAILED_CONSTRUCTOR_ERROR);
     }
