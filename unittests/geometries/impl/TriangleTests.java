@@ -7,6 +7,16 @@ import primitives.Vector;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Unit tests for class {@link Triangle}.
+ * The tests verify:
+ * <ul>
+ * <li>Triangle constructor validity</li>
+ * <li>{@link Triangle#getNormal(Point)}</li>
+ * </ul>
+ * Tests follow the methodology of
+ * Equivalence Partitions (EP) and Boundary Values (BVA).
+ */
 public class TriangleTests {
     /**
      * Default constructor to satisfy JavaDoc generator

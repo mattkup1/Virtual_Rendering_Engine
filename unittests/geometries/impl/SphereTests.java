@@ -8,6 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Unit tests for class {@link Sphere}.
+ * The tests verify:
+ * <ul>
+ * <li>Sphere constructor validity</li>
+ * <li>{@link Sphere#getNormal(Point)}</li>
+ * </ul>
+ * Tests follow the methodology of
+ * Equivalence Partitions (EP) and Boundary Values (BVA).
+ */
 public class SphereTests {
     /**
      * Default constructor to satisfy JavaDoc generator

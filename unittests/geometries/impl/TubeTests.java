@@ -8,7 +8,16 @@ import primitives.Vector;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+/**
+ * Unit tests for class {@link Tube}.
+ * The tests verify:
+ * <ul>
+ * <li>Tube constructor validity</li>
+ * <li>{@link Tube#getNormal(Point)}</li>
+ * </ul>
+ * Tests follow the methodology of
+ * Equivalence Partitions (EP) and Boundary Values (BVA).
+ */
 public class TubeTests {
     /**
      * Default constructor to satisfy JavaDoc generator

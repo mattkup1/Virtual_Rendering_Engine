@@ -8,7 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
+/**
+ * Unit tests for class {@link Plane}.
+ * The tests verify:
+ * <ul>
+ * <li>Plane constructor validity</li>
+ * <li>{@link Plane#getNormal(Point)}</li>
+ * </ul>
+ * Tests follow the methodology of
+ * Equivalence Partitions (EP) and Boundary Values (BVA).
+ */
 public class PlaneTests {
 
     /**
