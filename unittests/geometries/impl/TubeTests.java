@@ -63,11 +63,11 @@ public class TubeTests {
     /**
      * Error message for failed plane construction
      */
-    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a tube";
+    private static final String ERROR_FAILED_CONSTRUCTOR = "Failed to construct a tube";
     /**
      * Error message for an unexpected normal vector
      */
-    private static final String UNMATCH_VECTOR_NORMAL = "getNormal should return the right normal";
+    private static final String INCORRECT_VECTOR_NORMAL = "getNormal should return the right normal";
 
     /**
      * Test method for {@link Tube#getNormal(Point)}
@@ -75,7 +75,7 @@ public class TubeTests {
     @Test
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
-        assertDoesNotThrow(() -> new Tube(RADIUS, AXIS_RAY), FAILED_CONSTRUCTOR_ERROR);
+        assertDoesNotThrow(() -> new Tube(RADIUS, AXIS_RAY), ERROR_FAILED_CONSTRUCTOR);
     }
 
     @Test
@@ -83,14 +83,14 @@ public class TubeTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: getNormal returns the expected normal vector at a point opposite the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_RAY), UNMATCH_VECTOR_NORMAL);
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_RAY), INCORRECT_VECTOR_NORMAL);
 
         // EP02: getNormal returns the expected normal vector at a point opposite behind the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_BEHIND_AXIS_RAY), UNMATCH_VECTOR_NORMAL);
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_BEHIND_AXIS_RAY), INCORRECT_VECTOR_NORMAL);
 
         // =============== Boundary Values Tests ==================
 
         // BV01: getNormal returns the expected normal vector at a point opposite the axis head
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_HEAD), UNMATCH_VECTOR_NORMAL);
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_HEAD), INCORRECT_VECTOR_NORMAL);
     }
 }
