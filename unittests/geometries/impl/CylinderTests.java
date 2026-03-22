@@ -25,6 +25,13 @@ public class CylinderTests {
      */
     CylinderTests() { /* to satisfy JavaDoc generator */ }
 
+    /*
+        For these tests we will construct a cylinder with the following properties:
+        Radius = 1.0
+        Origin = (1,0,0)
+        Direction = (1,0,0) (positive X axis)
+        Height = 5.0
+     */
     /**
      * Radius of the test cylinder
      */
@@ -36,15 +43,15 @@ public class CylinderTests {
     /**
      * Head point of the test cylinder axis ray
      */
-    private static final Point POINT = new Point(1, 0, 0);
+    private static final Point ORIGIN = new Point(1, 0, 0);
     /**
      * Direction vector of the test cylinder axis ray
      */
-    private static final Vector VECTOR = new Vector(1, 0, 0);
+    private static final Vector DIRECTION = new Vector(1, 0, 0);
     /**
      * Axis ray of the test cylinder
      */
-    private static final Ray AXIS = new Ray(POINT, VECTOR);
+    private static final Ray AXIS = new Ray(ORIGIN, DIRECTION);
     /**
      * Cylinder used in Cylinder tests
      */
@@ -100,14 +107,20 @@ public class CylinderTests {
      */
     private static final String ERROR_INCORRECT_RESULT = "ERROR: Incorrect result";
 
+    /**
+     * Test method for {@link Cylinder} constructor.
+     */
     @Test
     void testConstructor() {
-        // ============ Equivalence Partitions Tests ==============
 
+        // ============ Equivalence Partitions Tests ==============
         // EP01: Correct plane defined by radius ray and height
         assertDoesNotThrow(() -> new Cylinder(RADIUS, AXIS, HEIGHT), FAILED_CONSTRUCTOR_ERROR);
     }
 
+    /**
+     * Test method for {@link Cylinder#getNormal(Point)}.
+     */
     @Test
     void testGetNormal() {
 
