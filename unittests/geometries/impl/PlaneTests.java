@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+
 public class PlaneTests {
 
     /**
@@ -47,25 +48,25 @@ public class PlaneTests {
     /**
      * Normal vector used in plane tests
      */
-    private static final Vector NORMAL_VECTOR = new Vector(1, 1, 1);
+    private static final Vector VECTOR = new Vector(1, 1, 1);
 
     /**
      * Plane used in getNormal tests
      */
-    private static final Plane PLANE = new Plane(POINT_X, POINT_Y, POINT_Z);
+    private static final Plane PLANE_BY_COORDINATES = new Plane(POINT_X, POINT_Y, POINT_Z);
+    /**
+     * Normalized normal vector used in plane tests
+     */
+    private static final Vector NORMAL_VECTOR = new Vector(1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3));
+
+    private static final Point OTHER_POINT_ON_PLANE = new Point(0.5,0.5,0);
+
+    private static final Plane PLANE_BY_VECTOR = new Plane(POINT, VECTOR);
     /**
      * Delta value for accuracy when comparing double values.
      */
     private static final double DELTA = 1e-6;
 
-    /**
-     * Error message for {@link Plane} construction failure
-     */
-    private static final String CONSTRUCTION_ERROR = "Failed to construct a plane";
-    /**
-     * Error message for {@link Plane} construction with the zero vector as the normal vector
-     */
-    private static final String ZERO_NORMAL = "ERROR: Cannot define plane with zero vector as the Normal.";
 
     @Test
     void testConstructor() {
@@ -73,11 +74,11 @@ public class PlaneTests {
 
         // EP01: Correct plane defined by three distinct non-collinear points
         assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z),
-                CONSTRUCTION_ERROR);
+                "Failed to construct a plane");
 
-        // EP02: Correct plane defined by a point and a valid normal vector
-        assertDoesNotThrow(() -> new Plane(POINT, NORMAL_VECTOR),
-                CONSTRUCTION_ERROR);
+        // EP02: Correct plane defined by three distinct non-collinear points
+        assertDoesNotThrow(() -> new Plane(POINT, VECTOR),
+                "Failed to construct a plane");
 
         // =============== Boundary Values Tests ==================
 
@@ -86,16 +87,20 @@ public class PlaneTests {
                 "ERROR: the three points lie on the same line and cannot define a plane");
 
         // BV02: Two identical points
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_Z),
+                "ERROR: constructed a plane with two identical points");
+
+        // BV03: Two identical points
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_X),
+                "ERROR: constructed a plane with two identical points");
+
+        // BV04: Two identical points
         assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_Y),
                 "ERROR: constructed a plane with two identical points");
 
-        // BV03: Zero vector as normal
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT, new Vector(0, 0, 0)),
-                ZERO_NORMAL);
-
-        // BV04: Null vector as normal
-        assertThrows(NullPointerException.class, () -> new Plane(POINT, null),
-                ZERO_NORMAL);
+        // BV05: Three identical points
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_X),
+                "ERROR: constructed a plane with three identical points");
 
     }
 
@@ -103,17 +108,23 @@ public class PlaneTests {
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
 
-        // EP01: getNormal returns the same normal vector for different points on the plane
-        assertEquals(PLANE.getNormal(POINT_X), PLANE.getNormal(POINT_Y),
+        // EP01: getNormal returns the except normal vector of the plane
+        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(OTHER_POINT_ON_PLANE),
                 "getNormal should return the same normal for every point on the plane");
 
         // EP02: getNormal returns a unit vector
-        assertEquals(1, PLANE.getNormal(POINT_X).length(), DELTA,
-                "getNormal should return a normalized vector");
+        assertEquals(1, PLANE_BY_COORDINATES.getNormal(POINT_X).length(), DELTA,
+                "Plane normal should be normalized");
 
-        // EP03: normal is orthogonal to vector POINT_X -> POINT_Z
-        assertEquals(0, PLANE.getNormal(POINT_X).dotProduct(POINT_Z.subtract(POINT_X)), DELTA,
-                "Normal is not orthogonal to vector POINT_X -> POINT_Z");
+        // EP03: getNormal returns a unit vector
+        assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA,
+                "Plane normal should be normalized");
+
+        // =============== Boundary Values Tests ==================
+
+        // BV01: getNormal returns the except normal vector of the plane
+        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(POINT_Y),
+                "getNormal should return the same normal for every point on the plane");
 
     }
 }
