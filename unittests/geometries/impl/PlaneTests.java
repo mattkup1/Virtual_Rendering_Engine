@@ -53,12 +53,10 @@ public class PlaneTests {
      * Third collinear point used in plane tests
      */
     private static final Point POINT_COLLINEAR3 = new Point(3, 3, 3);
-
     /**
      * Normal vector used in plane tests
      */
     private static final Vector VECTOR = new Vector(1, 1, 1);
-
     /**
      * Plane used in getNormal tests
      */
@@ -67,7 +65,6 @@ public class PlaneTests {
      * Normalized normal vector used in plane tests
      */
     private static final Vector NORMAL_VECTOR = new Vector(1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3));
-
     /**
      * Point on the test plane that is not one of the reference points
      */
@@ -80,6 +77,30 @@ public class PlaneTests {
      * Delta value for accuracy when comparing double values.
      */
     private static final double DELTA = 1e-6;
+    /**
+     * Error message for failed plane construction
+     */
+    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    /**
+     * Error message for constructing a plane with two identical points
+     */
+    private static final String TOW_IDENTICAL_POINT_ERROR = "ERROR: constructed a plane with two identical points";
+    /**
+     * Error message for constructing a plane with three identical points
+     */
+    private static final String THREE_IDENTICAL_POINT_ERROR = "ERROR: constructed a plane with three identical points";
+    /**
+     * Error message for constructing a plane from three collinear points
+     */
+    private static final String THREE_SAME_LINE_ERROR = "ERROR: the three points lie on the same line and cannot define a plane";
+    /**
+     * Error message for an unnormalized normal vector
+     */
+    private static final String UNNORMALIZE_VECTOR_ERROR = "Plane normal should be normalized";
+    /**
+     * Error message for a mismatched normal vector
+     */
+    private static final String UNMATCH_NORMAL_VECTOR_ERROR = "getNormal should return the same normal for every point on the plane";
 
 
     @Test
@@ -87,34 +108,27 @@ public class PlaneTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: Correct plane defined by three distinct non-collinear points
-        assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z),
-                "Failed to construct a plane");
+        assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z), FAILED_CONSTRUCTOR_ERROR);
 
         // EP02: Correct plane defined by three distinct non-collinear points
-        assertDoesNotThrow(() -> new Plane(POINT, VECTOR),
-                "Failed to construct a plane");
+        assertDoesNotThrow(() -> new Plane(POINT, VECTOR), FAILED_CONSTRUCTOR_ERROR);
 
         // =============== Boundary Values Tests ==================
 
         // BV01: Three collinear points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_COLLINEAR1, POINT_COLLINEAR2, POINT_COLLINEAR3),
-                "ERROR: the three points lie on the same line and cannot define a plane");
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_COLLINEAR1, POINT_COLLINEAR2, POINT_COLLINEAR3), THREE_SAME_LINE_ERROR);
 
         // BV02: Two identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_Z),
-                "ERROR: constructed a plane with two identical points");
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_Z), TOW_IDENTICAL_POINT_ERROR);
 
         // BV03: Two identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_X),
-                "ERROR: constructed a plane with two identical points");
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_X), TOW_IDENTICAL_POINT_ERROR);
 
         // BV04: Two identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_Y),
-                "ERROR: constructed a plane with two identical points");
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_Y), TOW_IDENTICAL_POINT_ERROR);
 
         // BV05: Three identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_X),
-                "ERROR: constructed a plane with three identical points");
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_X), THREE_IDENTICAL_POINT_ERROR);
 
     }
 
@@ -123,22 +137,18 @@ public class PlaneTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: getNormal returns the except normal vector of the plane
-        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(OTHER_POINT_ON_PLANE),
-                "getNormal should return the same normal for every point on the plane");
+        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(OTHER_POINT_ON_PLANE), UNMATCH_NORMAL_VECTOR_ERROR);
 
         // EP02: getNormal returns a unit vector
-        assertEquals(1, PLANE_BY_COORDINATES.getNormal(POINT_X).length(), DELTA,
-                "Plane normal should be normalized");
+        assertEquals(1, PLANE_BY_COORDINATES.getNormal(POINT_X).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
 
         // EP03: getNormal returns a unit vector
-        assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA,
-                "Plane normal should be normalized");
+        assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
 
         // =============== Boundary Values Tests ==================
 
         // BV01: getNormal returns the except normal vector of the plane
-        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(POINT_Y),
-                "getNormal should return the same normal for every point on the plane");
+        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(POINT_Y), UNMATCH_NORMAL_VECTOR_ERROR);
 
     }
 }

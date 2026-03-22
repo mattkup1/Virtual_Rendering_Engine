@@ -118,7 +118,7 @@ class RayTests {
         assertThrows(IllegalArgumentException.class,
                 () -> new Ray(p1, new Vector(0, 0, 0)), ERROR_CTOR_ZERO_DIRECTION);
     }
-
+    
     /**
      * Test method for {@link primitives.Ray#equals(Object)}.
      */

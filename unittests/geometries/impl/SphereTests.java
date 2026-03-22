@@ -6,7 +6,6 @@ import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for class {@link Sphere}.
@@ -48,20 +47,26 @@ public class SphereTests {
      * Normal vector at the test point on the sphere
      */
     private static final Vector NORMAL_VECTOR = new Vector(1, 0, 0);
+    /**
+     * Error message for failed plane construction
+     */
+    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    /**
+     * Error message for an unexpected normal vector
+     */
+    private static final String UNMATCH_VECTOR_NORMAL = "getNormal should return the right normal";
 
     @Test
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
 
-        assertDoesNotThrow(() -> new Sphere(CENTER, RADIUS),
-                "Failed to construct a plane");
+        assertDoesNotThrow(() -> new Sphere(CENTER, RADIUS), FAILED_CONSTRUCTOR_ERROR);
     }
 
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(NORMAL_VECTOR, SPHERE.getNormal(POINT_ON_SPHERE),
-                "getNormal should return the right normal");
+        assertEquals(NORMAL_VECTOR, SPHERE.getNormal(POINT_ON_SPHERE), UNMATCH_VECTOR_NORMAL);
     }
 
 }

@@ -61,15 +61,21 @@ public class TubeTests {
      */
     private static final Vector NORMAL_VECTOR = new Vector(0, 1, 0);
     /**
+     * Error message for failed plane construction
+     */
+    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    /**
+     * Error message for an unexpected normal vector
+     */
+    private static final String UNMATCH_VECTOR_NORMAL = "getNormal should return the right normal";
+
+    /**
      * Test method for {@link Tube#getNormal(Point)}
      */
-
-
     @Test
     void tesrConstructor() {
         // ============ Equivalence Partitions Tests ==============
-        assertDoesNotThrow(() -> new Tube(RADIUS, AXIS_RAY),
-                "Failed to construct a plane");
+        assertDoesNotThrow(() -> new Tube(RADIUS, AXIS_RAY), FAILED_CONSTRUCTOR_ERROR);
     }
 
     @Test
@@ -77,17 +83,14 @@ public class TubeTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: getNormal returns the expected normal vector at a point opposite the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_RAY),
-                "getNormal should return the expected normal vector at a point opposite the axis ray");
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_RAY), UNMATCH_VECTOR_NORMAL);
 
         // EP02: getNormal returns the expected normal vector at a point opposite behind the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_BEHIND_AXIS_RAY),
-                "getNormal should return the expected normal vector at a point opposite behind the axis ray");
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_BEHIND_AXIS_RAY), UNMATCH_VECTOR_NORMAL);
 
         // =============== Boundary Values Tests ==================
 
         // BV01: getNormal returns the expected normal vector at a point opposite the axis head
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_HEAD),
-                "getNormal should return the expected normal vector at a point opposite the axis head");
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_HEAD), UNMATCH_VECTOR_NORMAL);
     }
 }

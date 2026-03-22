@@ -44,20 +44,26 @@ public class TriangleTests {
      */
     private static final Vector NORMAL_VECTOR = new Vector(1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3));
 
+    /**
+     * Error message for failed plane construction
+     */
+    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    /**
+     * Error message for an unexpected normal vector
+     */
+    private static final String UNMATCH_VECTOR_NORMAL = "getNormal should return the right normal";
 
     @Test
     void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: Correct Triangle defined by three points
-        assertDoesNotThrow(() -> new Triangle(POINT_X, POINT_Y, POINT_Z),
-                "Failed to construct a plane");
+        assertDoesNotThrow(() -> new Triangle(POINT_X, POINT_Y, POINT_Z), FAILED_CONSTRUCTOR_ERROR);
     }
 
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
-        assertEquals(NORMAL_VECTOR, TRIANGLE.getNormal(POINT_X),
-                "ERROR: the vectors must be equals");
+        assertEquals(NORMAL_VECTOR, TRIANGLE.getNormal(POINT_X), UNMATCH_VECTOR_NORMAL);
     }
 }
