@@ -59,8 +59,13 @@ public class PlaneTests {
      */
     private static final Vector NORMAL_VECTOR = new Vector(1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3));
 
-    private static final Point OTHER_POINT_ON_PLANE = new Point(0.5,0.5,0);
-
+    /**
+     * Point on the test plane that is not one of the reference points
+     */
+    private static final Point OTHER_POINT_ON_PLANE = new Point(0.5, 0.5, 0);
+    /**
+     * Plane defined by a point and a normal vector
+     */
     private static final Plane PLANE_BY_VECTOR = new Plane(POINT, VECTOR);
     /**
      * Delta value for accuracy when comparing double values.
