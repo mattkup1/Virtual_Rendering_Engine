@@ -1,10 +1,11 @@
 package geometries.impl;
 
 import geometries.api.Geometry;
-import primitives.Point;
-import primitives.Vector;
-
+import java.util.List;
 import java.util.Objects;
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
 
 /**
  * Represents a plane in 3D Cartesian coordinate system.
@@ -15,10 +16,14 @@ import java.util.Objects;
  */
 public class Plane extends Geometry {
 
-    /** A point on the plane */
+    /**
+     * A point on the plane
+     */
     private final Point _point;
 
-    /** The normal vector to the plane */
+    /**
+     * The normal vector to the plane
+     */
     private Vector _normal;
 
     /**
@@ -39,7 +44,7 @@ public class Plane extends Geometry {
         Vector vec = p1.subtract(p2).crossProduct(p2.subtract(p3));
         this._point = p1;
         // create 2 vectors by using subtract method then we compute the normal to these vectors and finally normalizing them.
-        this._normal= vec.normalize();
+        this._normal = vec.normalize();
 
     }
 
@@ -49,10 +54,16 @@ public class Plane extends Geometry {
      * @param normal the normal vector to the plane
      * @param point  a point on the plane
      */
-    public Plane(Point point ,Vector normal) {
+    public Plane(Point point, Vector normal) {
         if (normal == null) throw new NullPointerException("the normal of the Plane cannot be null");
         this._normal = normal.normalize();
         this._point = point;
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        // TODO: implement
+        return List.of();
     }
 
     /**
@@ -76,16 +87,18 @@ public class Plane extends Geometry {
 
     @Override
     public String toString() {
-        return "Plane: Point: " +_point + ", Normal: " + _normal;
+        return "Plane: Point: " + _point + ", Normal: " + _normal;
     }
 
     @Override
-    public int hashCode() { return Objects.hash(_point , _normal);}
+    public int hashCode() {
+        return Objects.hash(_point, _normal);
+    }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        return this._point.equals(((Plane)obj)._point) && this._normal.equals(((Plane)obj)._normal);
+        return this._point.equals(((Plane) obj)._point) && this._normal.equals(((Plane) obj)._normal);
     }
 }
