@@ -1,6 +1,8 @@
 package geometries.impl;
 
+import java.util.List;
 import primitives.Point;
+import primitives.Ray;
 
 /**
  * Represents a triangle in a 3D Cartesian coordinate system.
@@ -8,6 +10,7 @@ import primitives.Point;
  * A triangle is a flat, three-sided polygon defined by three vertices.
  * It is a fundamental primitive in 3D graphics and ray tracing.
  * </p>
+ *
  * @author mattkuperwasser
  * @author moshehanau
  */
@@ -26,6 +29,13 @@ public final class Triangle extends Polygon {
      */
     public Triangle(Point p1, Point p2, Point p3) {
         super(p1, p2, p3);
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        // TODO: implement
+        // if no intersection - return null
+        return null;
     }
 
     @Override

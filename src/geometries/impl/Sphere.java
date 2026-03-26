@@ -38,7 +38,7 @@ public final class Sphere extends RadialGeometry {
     @Override
     public List<Point> findIntersections(Ray ray) {
         // TODO: implement
-        return List.of();
+        return null;
     }
 
     @Override
