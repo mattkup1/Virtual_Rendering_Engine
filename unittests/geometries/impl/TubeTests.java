@@ -96,4 +96,13 @@ public class TubeTests {
         // BV01: getNormal returns the expected normal vector at a point opposite the axis head
         assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_HEAD), INCORRECT_VECTOR_NORMAL);
     }
+
+    /**
+     * Test method for {@link Tube#findIntersections(Ray)}
+     */
+    @Test
+    void testGetIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        // =============== Boundary Values Tests ==================
+    }
 }

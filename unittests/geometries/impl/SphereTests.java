@@ -2,6 +2,7 @@ package geometries.impl;
 
 import org.junit.jupiter.api.Test;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -72,4 +73,12 @@ public class SphereTests {
         assertEquals(NORMAL_VECTOR, SPHERE.getNormal(POINT_ON_SPHERE), UNMATCH_VECTOR_NORMAL);
     }
 
+    /**
+     * Test method for {@link Sphere#findIntersections(Ray)}
+     */
+    @Test
+    void testGetIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        // =============== Boundary Values Tests ==================
+    }
 }

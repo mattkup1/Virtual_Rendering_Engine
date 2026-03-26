@@ -2,6 +2,7 @@ package geometries.impl;
 
 import org.junit.jupiter.api.Test;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -129,5 +130,14 @@ class PolygonTests {
             Vector edge = pts[i].subtract(pts[i == 0 ? pts.length - 1 : i - 1]);
             assertEquals(0d, result.dotProduct(edge), DELTA, "Polygon normal is not orthogonal to an edge");
         }
+    }
+
+    /**
+     * Test method for {@link Polygon#findIntersections(Ray)}
+     */
+    @Test
+    void testGetIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        // =============== Boundary Values Tests ==================
     }
 }

@@ -2,6 +2,7 @@ package geometries.impl;
 
 import org.junit.jupiter.api.Test;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -70,5 +71,14 @@ public class TriangleTests {
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
         assertEquals(NORMAL_VECTOR, TRIANGLE.getNormal(POINT_X), UNMATCH_VECTOR_NORMAL);
+    }
+
+    /**
+     * Test method for {@link Triangle#findIntersections(Ray)}
+     */
+    @Test
+    void testGetIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        // =============== Boundary Values Tests ==================
     }
 }

@@ -2,6 +2,7 @@ package geometries.impl;
 
 import org.junit.jupiter.api.Test;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -149,5 +150,14 @@ public class PlaneTests {
 
         // EP03: getNormal returns a unit vector
         assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
+    }
+
+    /**
+     * Test method for {@link Plane#findIntersections(Ray)}
+     */
+    @Test
+    void testGetIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        // =============== Boundary Values Tests ==================
     }
 }
