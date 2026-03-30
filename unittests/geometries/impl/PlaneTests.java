@@ -7,6 +7,7 @@ import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -24,7 +25,7 @@ public class PlaneTests {
     /**
      * Default constructor to satisfy JavaDoc generator
      */
-    PlaneTests() {/* to satisfy JavaDoc generator */ }
+    PlaneTests() {/* to satisfy Javadoc generator */ }
 
     /**
      * Vertex (1,2,3) used in plane tests
@@ -55,9 +56,17 @@ public class PlaneTests {
      */
     private static final Point POINT_COLLINEAR3 = new Point(3, 3, 3);
     /**
+     * Point used in some tests
+     */
+    private static final Point P101 = new Point(1, 0, 1);
+    /**
      * Normal vector used in plane tests
      */
-    private static final Vector VECTOR = new Vector(1, 1, 1);
+    private static final Vector V111 = new Vector(1, 1, 1);
+    /**
+     * Vector used in some tests
+     */
+    private static final Vector V00n1 = new Vector(0, 0, -1);
     /**
      * Plane used in getNormal tests
      */
@@ -77,7 +86,7 @@ public class PlaneTests {
     /**
      * Plane defined by a point and a normal vector
      */
-    private static final Plane PLANE_BY_VECTOR = new Plane(POINT, VECTOR);
+    private static final Plane PLANE_BY_VECTOR = new Plane(POINT, V111);
     /**
      * Delta value for accuracy when comparing double values.
      */
@@ -106,6 +115,14 @@ public class PlaneTests {
      * Error message for a mismatched normal vector
      */
     private static final String UNMATCH_NORMAL_VECTOR_ERROR = "getNormal should return the same normal for every point on the plane";
+    /**
+     * Error message for expected intersection
+     */
+    private static final String ERROR_INTERSECTION_EXPECTED = "ERROR: intersection expected";
+    /**
+     * Error message for when no intersections were expected
+     */
+    private static final String ERROR_EXPECTED_NULL = "ERROR: Expected null result";
 
     /**
      * Test method for {@link Plane} constructor
@@ -118,7 +135,7 @@ public class PlaneTests {
         assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z), FAILED_CONSTRUCTOR_ERROR);
 
         // EP02: Correct plane defined by three distinct non-collinear points
-        assertDoesNotThrow(() -> new Plane(POINT, VECTOR), FAILED_CONSTRUCTOR_ERROR);
+        assertDoesNotThrow(() -> new Plane(POINT, V111), FAILED_CONSTRUCTOR_ERROR);
 
         // =============== Boundary Values Tests ==================
 
@@ -164,21 +181,40 @@ public class PlaneTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01 Ray intersects plane at a single point
+        Ray ray1 = new Ray(P101, new Vector(-1, 1, -1));
+        assertEquals(1, PLANE_XY.findIntersections(ray1).size(), ERROR_INTERSECTION_EXPECTED);
+
         // EP02 Ray does not intersect plane
+        Ray ray2 = new Ray(new Point(1, 0, 1), new Vector(1, -1, 1));
+        assertNull(PLANE_XY.findIntersections(ray2), ERROR_EXPECTED_NULL);
 
         // =============== Boundary Values Tests ==================
 
         // Ray is parallel to the plane
-        // BV11 Ray is included in the plane
+        // BV11 Ray is included in the plane (no intersection)
+        Ray ray3 = new Ray(POINT_X, Vector.AXIS_X);
+        assertNull(PLANE_XY.findIntersections(ray3), ERROR_EXPECTED_NULL);
         // BV12 Ray is not included in the plane
+        Ray ray4 = new Ray(P101, Vector.AXIS_Y);
+        assertNull(PLANE_XY.findIntersections(ray4), ERROR_EXPECTED_NULL);
 
         // Ray is orthogonal to the plane
-        // BV13 Ray origin before the plane
-        // BV14 Ray origin after the plane
-        // BV15 Ray origin on the plane
+        // BV13 Ray origin before the plane (1 intersection)
+        Ray ray5 = new Ray(P101, V00n1);
+        assertEquals(1, PLANE_XY.findIntersections(ray5).size(), ERROR_INTERSECTION_EXPECTED);
+        // BV14 Ray origin after the plane (no intersection)
+        Ray ray6 = new Ray(new Point(1, 0, -1), V00n1);
+        assertNull(PLANE_XY.findIntersections(ray6), ERROR_EXPECTED_NULL);
+        // BV15 Ray origin on the plane (no intersection)
+        Ray ray7 = new Ray(POINT_X, Vector.AXIS_Z);
+        assertNull(PLANE_XY.findIntersections(ray7), ERROR_EXPECTED_NULL);
 
         // Ray is neither orthogonal nor parallel to the plane
-        // BV16 Ray origin on the plane
-        // BV17 Ray origin is the plane reference point
+        // BV16 Ray origin on the plane (no intersection)
+        Ray ray8 = new Ray(POINT_X, V111);
+        assertNull(PLANE_XY.findIntersections(ray8), ERROR_EXPECTED_NULL);
+        // BV17 Ray origin is the plane reference point (no intersection)
+        Ray ray9 = new Ray(POINT_X, V111);
+        assertNull(PLANE_XY.findIntersections(ray9), ERROR_EXPECTED_NULL);
     }
 }
