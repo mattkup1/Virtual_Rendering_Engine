@@ -126,7 +126,7 @@ public class SphereTests {
     @Test
     void testFindIntersections() {
         // ============ Equivalence Partitions Tests ============== //
-        // EP01: Ray's line is outside the sphere (0 points)
+        // EP01: Ray's straight is outside the sphere (0 points)
         assertNull(SPHERE1.findIntersections(new Ray(P01, V110)), ERROR_SPHERE_INTERSECTION);
         // EP02: Ray starts before and crosses the sphere (2 points)
         final var result1 = sphere.findIntersections(new Ray(P01, V310));
