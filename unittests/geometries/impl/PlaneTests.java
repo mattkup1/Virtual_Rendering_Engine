@@ -61,7 +61,11 @@ public class PlaneTests {
     /**
      * Plane used in getNormal tests
      */
-    private static final Plane PLANE_BY_COORDINATES = new Plane(POINT_X, POINT_Y, POINT_Z);
+    private static final Plane PLANE1 = new Plane(POINT_X, POINT_Y, POINT_Z);
+    /**
+     * XY plane used in getIntersections tests
+     */
+    private static final Plane PLANE_XY = new Plane(POINT_X, POINT_Y, Point.ZERO);
     /**
      * Normalized normal vector used in plane tests
      */
@@ -143,10 +147,10 @@ public class PlaneTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: getNormal returns the except normal vector of the plane
-        assertEquals(NORMAL_VECTOR, PLANE_BY_COORDINATES.getNormal(OTHER_POINT_ON_PLANE), UNMATCH_NORMAL_VECTOR_ERROR);
+        assertEquals(NORMAL_VECTOR, PLANE1.getNormal(OTHER_POINT_ON_PLANE), UNMATCH_NORMAL_VECTOR_ERROR);
 
         // EP02: getNormal returns a unit vector
-        assertEquals(1, PLANE_BY_COORDINATES.getNormal(POINT_X).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
+        assertEquals(1, PLANE1.getNormal(POINT_X).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
 
         // EP03: getNormal returns a unit vector
         assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
@@ -158,6 +162,23 @@ public class PlaneTests {
     @Test
     void testGetIntersections() {
         // ============ Equivalence Partitions Tests ==============
+
+        // EP01 Ray intersects plane at a single point
+        // EP02 Ray does not intersect plane
+
         // =============== Boundary Values Tests ==================
+
+        // Ray is parallel to the plane
+        // BV11 Ray is included in the plane
+        // BV12 Ray is not included in the plane
+
+        // Ray is orthogonal to the plane
+        // BV13 Ray origin before the plane
+        // BV14 Ray origin after the plane
+        // BV15 Ray origin on the plane
+
+        // Ray is neither orthogonal nor parallel to the plane
+        // BV16 Ray origin on the plane
+        // BV17 Ray origin is the plane reference point
     }
 }
