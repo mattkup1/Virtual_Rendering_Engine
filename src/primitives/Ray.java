@@ -17,7 +17,7 @@ public final class Ray {
      * The starting point of the ray
      */
     private final Point _origin;
-    /**
+    /*
      * The normalized direction vector of the ray
      */
     private final Vector _direction;
@@ -62,6 +62,21 @@ public final class Ray {
     public Vector getDirection() {
         return _direction.normalize();
     }
+
+    /**
+     * Gets a point on the ray
+     *
+     * @param t the distance of the point from the ray's origin
+     * @return the point at distance t from the ray's origin
+     */
+    public Point getPoint(double t) {
+        try {
+            return _origin.add(_direction.scale(t));
+        } catch (IllegalArgumentException e) { // Zero vector produced in try
+            return _origin;
+        }
+    }
+
 
     @Override
     public String toString() {

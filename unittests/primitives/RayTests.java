@@ -23,46 +23,46 @@ class RayTests {
     /**
      * Default constructor to satisfy JavaDoc generator
      */
-    RayTests() { /* To satisfy JavaDoc generator */ }
+    RayTests() { /* To satisfy Javadoc generator */ }
 
     /**
-     * Point (1,2,3) used in ray tests
+     * {@link Point} (1,0,0) used in ray tests
      */
-    private static final Point p1 = new Point(1, 2, 3);
+    private static final Point P100 = new Point(1, 0, 0);
     /**
-     * Point (4,5,6) used in ray tests
+     * {@link Point} (1,2,3) used in ray tests
      */
-    private static final Point p2 = new Point(4, 5, 6);
+    private static final Point P123 = new Point(1, 2, 3);
     /**
-     * Vector -> (1,0,0) used in ray tests
+     * {@link Point} (4,5,6) used in ray tests
      */
-    private static final Vector v1 = new Vector(1, 0, 0);
+    private static final Point P456 = new Point(4, 5, 6);
     /**
-     * Vector -> (0,1,0) used in ray tests
-     */
-    private static final Vector v2 = new Vector(0, 1, 0);
-    /**
-     * Non-unit vector (10,0,0) used in ray tests
+     * Non-unit {@link Vector} (10,0,0) used in ray tests
      */
     private static final Vector vNonUnit = new Vector(10, 0, 0);
     /**
-     * Ray with origin (1,2,3) and direction -> (1,0,0) used in ray tests
+     * {@link Ray} with origin (1,2,3) and direction -> (1,0,0) used in ray tests
      */
-    private static final Ray ray1 = new Ray(p1, v1);
+    private static final Ray RAYp123v100 = new Ray(P123, Vector.AXIS_X);
     /**
-     * Ray with origin (1,2,3) and direction -> (1,0,0)
-     * (same values as {@link RayTests#v1})
+     * {@link Ray} with origin (1,2,3) and direction -> (1,0,0)
+     * (same values as {@link Vector#AXIS_X})
      * used in ray tests
      */
     private static final Ray ray1Same = new Ray(new Point(1, 2, 3), new Vector(1, 0, 0));
     /**
-     * Ray with origin (1,2,3) and direction -> (0,1,0) used in ray tests
+     * {@link Ray} with origin (1,2,3) and direction -> (0,1,0) used in ray tests
      */
-    private static final Ray ray2 = new Ray(p1, v2);
+    private static final Ray RAYp123v010 = new Ray(P123, Vector.AXIS_Y);
     /**
-     * Ray with origin (4,5,6) and direction -> (1,0,0) used in ray tests
+     * {@link Ray} with origin (4,5,6) and direction -> (1,0,0) used in ray tests
      */
-    private static final Ray ray3 = new Ray(p2, v1);
+    private static final Ray RAYp456v100 = new Ray(P456, Vector.AXIS_X);
+    /**
+     * {@link Ray} with origin (1,0,0) and direction -> (1,0,0) used in ray tests
+     */
+    private static final Ray RAYp100v100 = new Ray(P100, Vector.AXIS_X);
 
     /**
      * Delta value for accuracy when comparing double values.
@@ -87,15 +87,19 @@ class RayTests {
      * Error message for ray construction with zero vector as direction
      */
     private static final String ERROR_CTOR_ZERO_DIRECTION =
-            "Construction of ray with zero vector as direction should throw exception";
+            "ERROR: Construction of ray with zero vector as direction should throw exception";
     /**
      * Error message for ray comparison
      */
-    private static final String ERROR_EQUAL = "Rays should be equal";
+    private static final String ERROR_EQUAL = "ERROR: Rays should be equal";
     /**
      * Error message for ray comparison
      */
-    private static final String ERROR_NOT_EQUAL = "Rays should not be equal";
+    private static final String ERROR_NOT_EQUAL = "ERROR: Rays should not be equal";
+    /**
+     * Error message for {@link RayTests#testGetPoint()} method
+     */
+    private static final String ERROR_WRONG_RESULT_GET_POINT = "ERROR: GetPoint() produced wrong result";
 
 
     /**
@@ -106,19 +110,36 @@ class RayTests {
 
         // ============ Equivalence Partitions Tests ==============
         // EP01: Correct ray construction with unit vector
-        assertDoesNotThrow(() -> new Ray(p1, v1), ERROR_CTOR);
-        assertEquals(v1, ray1.getDirection(), ERROR_CTOR_DIRECTION);
+        assertDoesNotThrow(() -> new Ray(P123, Vector.AXIS_X), ERROR_CTOR);
+        assertEquals(Vector.AXIS_X, RAYp123v100.getDirection(), ERROR_CTOR_DIRECTION);
 
         // EP02: Ray construction with non-unit vector (should normalize)
-        Ray ray2 = new Ray(p1, vNonUnit);
+        Ray ray2 = new Ray(P123, vNonUnit);
         assertEquals(1.0, ray2.getDirection().length(), DELTA, ERROR_CTOR_NORMALIZE_DIRECTION);
 
         // =============== Boundary Values Tests ==================
         // BV01: Ray construction with zero vector as direction (should throw exception)
         assertThrows(IllegalArgumentException.class,
-                () -> new Ray(p1, new Vector(0, 0, 0)), ERROR_CTOR_ZERO_DIRECTION);
+                () -> new Ray(P123, new Vector(0, 0, 0)), ERROR_CTOR_ZERO_DIRECTION);
     }
-    
+
+    /**
+     * Test method for {@link primitives.Ray#getPoint(double)}
+     */
+    @Test
+    void testGetPoint() {
+        // ============ Equivalence Partitions Tests ==============
+        // EP01: t < 0 - return a point
+        assertEquals(new Point(-1, 0, 0), RAYp100v100.getPoint(-2), ERROR_WRONG_RESULT_GET_POINT);
+        // EP02: t > 0 - return a point
+        assertEquals(new Point(2, 0, 0), RAYp100v100.getPoint(1), ERROR_WRONG_RESULT_GET_POINT);
+
+        // =============== Boundary Values Tests ==================
+        // BV11: t = 0 - return the origin
+        assertEquals(RAYp100v100.getOrigin(), RAYp100v100.getPoint(0), ERROR_WRONG_RESULT_GET_POINT);
+    }
+
+
     /**
      * Test method for {@link primitives.Ray#equals(Object)}.
      */
@@ -127,15 +148,15 @@ class RayTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: Rays with same origin and direction should be equal
-        assertEquals(ray1, ray1Same, ERROR_EQUAL);
+        assertEquals(RAYp123v100, ray1Same, ERROR_EQUAL);
 
         // EP02: Rays with different directions should not be equal
-        assertNotEquals(ray1, ray2, ERROR_NOT_EQUAL);
+        assertNotEquals(RAYp123v100, RAYp123v010, ERROR_NOT_EQUAL);
 
         // EP03: Rays with different origins should not be equal
-        assertNotEquals(ray1, ray3, ERROR_NOT_EQUAL);
+        assertNotEquals(RAYp123v100, RAYp456v100, ERROR_NOT_EQUAL);
 
         // EP04: Comparison with null
-        assertNotEquals(null, ray1, ERROR_NOT_EQUAL);
+        assertNotEquals(null, RAYp123v100, ERROR_NOT_EQUAL);
     }
 }
