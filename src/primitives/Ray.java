@@ -17,7 +17,7 @@ public final class Ray {
      * The starting point of the ray
      */
     private final Point _origin;
-    /*
+    /**
      * The normalized direction vector of the ray
      */
     private final Vector _direction;
