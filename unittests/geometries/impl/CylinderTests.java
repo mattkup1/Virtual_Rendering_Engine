@@ -136,7 +136,7 @@ public class CylinderTests {
         // BV01: Point on edge of top base
         assertEquals(normalToTopBase, CYLINDER.getNormal(pointEdgeTopBase), ERROR_INCORRECT_RESULT);
         // BV02: Point on edge of bottom base
-        assertEquals(normalToBottomBase, CYLINDER.getNormal(pointOnBottomBase), ERROR_INCORRECT_RESULT);
+        assertEquals(normalToBottomBase, CYLINDER.getNormal(pointEdgeBottomBase), ERROR_INCORRECT_RESULT);
         // BV03: Point on center of top base
         assertEquals(normalToTopBase, CYLINDER.getNormal(pointMidTopBase), ERROR_INCORRECT_RESULT);
         // BV04: Point on center of bottom base

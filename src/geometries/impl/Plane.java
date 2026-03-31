@@ -81,7 +81,7 @@ public class Plane extends Geometry {
         double t = alignZero(nQMinusP0 / nv);
         // Return intersection point in a list
         // If no intersection, Return null
-        return t <= 0 ? null : List.of(ray.getOrigin().add(ray.getDirection().scale(t)));
+        return t <= 0 ? null : List.of(ray.getPoint(t));
     }
 
     /**
