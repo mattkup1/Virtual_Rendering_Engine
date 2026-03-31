@@ -1,6 +1,5 @@
 package geometries.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import primitives.Point;
@@ -39,33 +38,40 @@ public final class Sphere extends RadialGeometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        final Point ray_origin = ray.getOrigin();
+        Point p0 = ray.getOrigin();
+        Vector v = ray.getDirection();
 
-        if (_center.equals(ray_origin))
+        // Vector from ray origin to sphere center
+        if (_center.equals(p0)) {
             return List.of(ray.getPoint(_radius));
+        }
 
-        // Vector from ray's origin to sphere's center
-        final Vector u = _center.subtract(ray_origin);
-        final double t_p = u.dotProduct(ray.getDirection());
-        final Point p = ray.getPoint(t_p);
+        Vector u = _center.subtract(p0);
+        double t_p = v.dotProduct(u);
 
-        // Squared distance from p to sphere's center point
-        final double dist_sq_p_center = _center.distanceSquared(p);
+        // Squared distance from center to the projection point on the ray
+        // Using Pythagoras: d^2 = |u|^2 - tp^2
+        double dSquared = u.lengthSquared() - t_p * t_p;
 
-        if (Util.isZero(dist_sq_p_center - _radiusSquared) || dist_sq_p_center > _radiusSquared)
+        // Check if the perpendicular distance is greater than or equal to radius
+        if (dSquared > _radiusSquared || isZero(dSquared - _radiusSquared))
             return null;
 
-        // Distance from p to the intersection points
-        final double dist_p_inter = Math.sqrt(_radiusSquared - dist_sq_p_center);
+        // Distance from the perpendicular point to the intersection points
+        double th = Math.sqrt(_radiusSquared - dSquared);
 
-        // Return the list of intersection points
-        // Order the points in the list by ascending distance from ray origin
-        List<Point> result = new ArrayList<>();
-        if ((t_p - dist_p_inter) > 0) result.add(ray.getPoint(t_p - dist_p_inter));
-        if ((t_p + dist_p_inter) > 0) result.add(ray.getPoint(t_p + dist_p_inter));
-        if (!result.isEmpty()) return result;
-        return null;
-        //return List.of(ray.getPoint(t_p - dist_p_inter), ray.getPoint(t_p + dist_p_inter));
+        double t1 = Util.alignZero(t_p - th);
+        double t2 = Util.alignZero(t_p + th);
+
+        // Only return points where t > 0 (in front of the ray)
+        if (t1 <= 0 && t2 <= 0) return null;
+
+        if (t1 > 0 && t2 > 0) {
+            return List.of(ray.getPoint(t1), ray.getPoint(t2));
+        }
+
+        // Case only one intersection
+        return t1 > 0 ? List.of(ray.getPoint(t1)) : List.of(ray.getPoint(t2));
     }
 
     @Override
