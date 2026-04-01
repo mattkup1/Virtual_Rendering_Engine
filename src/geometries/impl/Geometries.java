@@ -41,9 +41,16 @@ public class Geometries extends Intersectable {
      * @return the list of intersection points with the ray
      */
     public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = new ArrayList<>();
+        List<Point> intersections = null;
         for (Intersectable geometry : geometries) {
-
+            final var geometry_intersection = geometry.findIntersections(ray);
+            if (geometry_intersection != null) {
+                if (intersections == null) {
+                    intersections = new ArrayList<>();
+                }
+                intersections.addAll(geometry_intersection);
+            }
         }
+        return intersections; // Null if no intersection points
     }
 }

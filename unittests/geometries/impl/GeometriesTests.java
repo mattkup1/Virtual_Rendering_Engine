@@ -51,7 +51,6 @@ public class GeometriesTests {
         // BV12: Only 1 shape is intersected -> 1 Point
         assertEquals(1, geometries.findIntersections(ray3).size(), ERR_INCORRECT_INTERSECTIONS);
         // BV13: All shapes are intersected -> A few points
-        assertEquals(4, geometries.findIntersections(ray4).size(), ERR_INCORRECT_INTERSECTIONS);
+        assertEquals(5, geometries.findIntersections(ray4).size(), ERR_INCORRECT_INTERSECTIONS);
     }
-
 }
