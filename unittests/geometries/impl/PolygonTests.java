@@ -62,14 +62,6 @@ class PolygonTests {
     private static final double DELTA = 1e-6;
 
     /**
-     * Error message for wrong plane intersection
-     */
-    private static final String ERROR_PLANE = "ERROR: wrong intersection with plane";
-    /**
-     * Error message for wrong polygon intersection
-     */
-    private static final String ERROR_POLYGON = "ERROR: wrong polygon intersection";
-    /**
      * Error message for incorrect intersection
      */
     private static final String ERR_INCORRECT_INTERSECTION = "ERROR: Incorrect intersection";
