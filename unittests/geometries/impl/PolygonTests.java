@@ -143,11 +143,11 @@ class PolygonTests {
     @Test
     void testFindIntersections() {
         // Points
-        final Point A = new Point(2, 2, 3);
+        final Point A = new Point(-2, -2, 3);
         final Point B = new Point(2, -2, 3);
-        final Point C = new Point(-2, -2, 3);
-        final Point D = new Point(-2, 2, 3);
-        final Point E = new Point(4, 0, 3);
+        final Point C = new Point(4, 0, 3);
+        final Point D = new Point(2, 2, 3);
+        final Point E = new Point(-2, 2, 3);
 
         // Polygon
         final Polygon polygon = new Polygon(A, B, C, D, E);

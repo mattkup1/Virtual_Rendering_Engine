@@ -1,13 +1,13 @@
 package geometries.impl;
 
 import geometries.api.Geometry;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
@@ -100,41 +100,44 @@ public class Polygon extends Geometry {
             return null;
 
         // Get the vectors from the ray origin to the polygon vertices
-        Vector[] vList = Vector[_vertices.size()];
-
-        List<Vector> vList = new ArrayList<>();
-
-        for (Point vertex : _vertices) {
-            vList.add(vertex.subtract(RayOrigin));
+        Vector[] vList = new Vector[_vertices.size()];
+        // Get the number of vertices
+        int vSize = _vertices.size();
+        for (int i = 0; i < vSize; ++i) {
+            vList[i] = _vertices.get(i).subtract(ray.getOrigin());
         }
 
-
-        List<Vector> nList = new ArrayList<>();
-        for (Vector v : vList) {
-            nList.add(v.crossProduct());
-        }
 
         // Get the normalized normal vectors to the planes represented by each 2 of the above vectors
         // together with the ray origin
-        final Vector n1 = v1.crossProduct(v2).normalize();
-        final Vector n2 = v2.crossProduct(v3).normalize();
-        final Vector n3 = v3.crossProduct(v1).normalize();
+        Vector[] nList = new Vector[vSize];
+        for (int i = 0; i < vSize; ++i) {
+            nList[i] = vList[i].crossProduct(vList[(i + 1) % vSize]);
+        }
+
 
         // Get the ray direction vector
         final Vector rayDirection = ray.getDirection();
 
         // Get the dot product of each pair of the above normal vectors
-        final double s1 = alignZero(rayDirection.dotProduct(n1)),
-                s2 = alignZero(rayDirection.dotProduct(n2)),
-                s3 = alignZero(rayDirection.dotProduct(n3));
-
-        // If all dot products produce the same sign - the intersection point is inside the triangle
-        // If one or more of the dot products produce zero, then the ray intersects the triangle edge (or vertex)
-        if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
-            return planeIntersection;
+        double[] sList = new double[vSize];
+        for (int i = 0; i < vSize; ++i) {
+            sList[i] = alignZero(rayDirection.dotProduct(nList[i]));
+            if (sList[i] == 0) return null;
         }
 
-        return null;
+        // If all dot products produce the same sign - the intersection point is inside the polygon
+        // If one or more of the dot products produce zero, then the ray intersects a polygon edge (or vertex)
+        if (sList[0] > 0) {
+            for (int i = 1; i < vSize; ++i) {
+                if (sList[i] < 0) return null;
+            }
+        } else {
+            for (int i = 1; i < vSize; ++i) {
+                if (sList[i] > 0) return null;
+            }
+        }
+        return planeIntersection;
     }
 
     @Override
