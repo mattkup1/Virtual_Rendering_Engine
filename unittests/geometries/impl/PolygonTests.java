@@ -7,6 +7,7 @@ import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -68,6 +69,10 @@ class PolygonTests {
      * Error message for wrong polygon intersection
      */
     private static final String ERROR_POLYGON = "ERROR: wrong polygon intersection";
+    /**
+     * Error message for incorrect intersection
+     */
+    private static final String ERR_INCORRECT_INTERSECTION = "ERROR: Incorrect intersection";
 
     /**
      * Test method for {@link Polygon#Polygon(Point...)}.
@@ -137,7 +142,44 @@ class PolygonTests {
      */
     @Test
     void testFindIntersections() {
+        // Points
+        final Point A = new Point(2, 2, 3);
+        final Point B = new Point(2, -2, 3);
+        final Point C = new Point(-2, -2, 3);
+        final Point D = new Point(-2, 2, 3);
+        final Point E = new Point(4, 0, 3);
+
+        // Polygon
+        final Polygon polygon = new Polygon(A, B, C, D, E);
+
+        final Ray rayIn = new Ray(new Point(1, 1, 0), Vector.AXIS_Z);
+        final Ray rayAgainstEdge = new Ray(new Point(1, 3, 0), Vector.AXIS_Z);
+        final Ray rayAgainstVertex = new Ray(new Point(5, 0, 0), Vector.AXIS_Z);
+        final Ray rayOnEdge = new Ray(new Point(0, 2, 0), Vector.AXIS_Z);
+        final Ray rayOnVertex = new Ray(new Point(4, 0, 0), Vector.AXIS_Z);
+        final Ray rayOnEdgeContinuation = new Ray(new Point(4, 2, 0), Vector.AXIS_Z);
+
         // ============ Equivalence Partitions Tests ==============
+        // EP01: In polygon
+        assertEquals(1, polygon.findIntersections(rayIn).size(),
+                ERR_INCORRECT_INTERSECTION);
+        // EP02: Outside polygon against edge
+        assertNull(polygon.findIntersections(rayAgainstEdge),
+                ERR_INCORRECT_INTERSECTION);
+        // EP03: Outside polygon against Vertex
+        assertNull(polygon.findIntersections(rayAgainstVertex),
+                ERR_INCORRECT_INTERSECTION);
+
         // =============== Boundary Values Tests ==================
+        // BV11: On polygon edge
+        assertNull(polygon.findIntersections(rayOnEdge),
+                ERR_INCORRECT_INTERSECTION);
+        // BV11: On polygon vertex
+        assertNull(polygon.findIntersections(rayOnVertex),
+                ERR_INCORRECT_INTERSECTION);
+        // BV11: On polygon edge continuation
+        assertNull(polygon.findIntersections(rayOnEdgeContinuation),
+                ERR_INCORRECT_INTERSECTION);
+
     }
 }

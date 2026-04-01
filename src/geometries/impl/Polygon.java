@@ -1,6 +1,7 @@
 package geometries.impl;
 
 import geometries.api.Geometry;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import primitives.Point;
@@ -86,7 +87,53 @@ public class Polygon extends Geometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        // TODO: implement
+        // Get polygon vertices
+        final Point A = _vertices.get(0),
+                B = _vertices.get(1),
+                C = _vertices.get(2),
+                RayOrigin = ray.getOrigin();
+
+        // Get the ray's intersection point with the triangle's plane
+        final Plane PolyPlane = new Plane(A, B, C);
+        final var planeIntersection = PolyPlane.findIntersections(ray);
+        if (planeIntersection == null)
+            return null;
+
+        // Get the vectors from the ray origin to the polygon vertices
+        Vector[] vList = Vector[_vertices.size()];
+
+        List<Vector> vList = new ArrayList<>();
+
+        for (Point vertex : _vertices) {
+            vList.add(vertex.subtract(RayOrigin));
+        }
+
+
+        List<Vector> nList = new ArrayList<>();
+        for (Vector v : vList) {
+            nList.add(v.crossProduct());
+        }
+
+        // Get the normalized normal vectors to the planes represented by each 2 of the above vectors
+        // together with the ray origin
+        final Vector n1 = v1.crossProduct(v2).normalize();
+        final Vector n2 = v2.crossProduct(v3).normalize();
+        final Vector n3 = v3.crossProduct(v1).normalize();
+
+        // Get the ray direction vector
+        final Vector rayDirection = ray.getDirection();
+
+        // Get the dot product of each pair of the above normal vectors
+        final double s1 = alignZero(rayDirection.dotProduct(n1)),
+                s2 = alignZero(rayDirection.dotProduct(n2)),
+                s3 = alignZero(rayDirection.dotProduct(n3));
+
+        // If all dot products produce the same sign - the intersection point is inside the triangle
+        // If one or more of the dot products produce zero, then the ray intersects the triangle edge (or vertex)
+        if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
+            return planeIntersection;
+        }
+
         return null;
     }
 
