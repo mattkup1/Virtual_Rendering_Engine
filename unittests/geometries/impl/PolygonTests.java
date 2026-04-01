@@ -136,7 +136,7 @@ class PolygonTests {
      * Test method for {@link Polygon#findIntersections(Ray)}
      */
     @Test
-    void testGetIntersections() {
+    void testFindIntersections() {
         // ============ Equivalence Partitions Tests ==============
         // =============== Boundary Values Tests ==================
     }

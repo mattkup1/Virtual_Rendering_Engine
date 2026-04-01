@@ -1,5 +1,6 @@
 package geometries.impl;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -7,6 +8,7 @@ import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit tests for class {@link Triangle}.
@@ -52,6 +54,10 @@ public class TriangleTests {
      * Error message for an unexpected normal vector
      */
     private static final String UNMATCH_VECTOR_NORMAL = "getNormal should return the right normal";
+    /**
+     * Error message for incorrect intersection
+     */
+    private static final String ERR_INCORRECT_INTERSECTION = "ERROR: Incorrect intersection";
 
     /**
      * Test method for {@link Triangle} constructor
@@ -77,8 +83,36 @@ public class TriangleTests {
      * Test method for {@link Triangle#findIntersections(Ray)}
      */
     @Test
-    void testGetIntersections() {
+    void testFindIntersections() {
+        // Points
+        final Point point1 = new Point(5, 0, 5);
+        final Point point2 = new Point(0, 5, 5);
+        final Point point3 = new Point(5, 5, 5);
+        // Triangle
+        final Triangle triangle = new Triangle(point1, point2, point3);
+        // Rays
+        final Ray rayIn = new Ray(new Point(4, 4, 0), Vector.AXIS_Z);
+        final Ray rayAgainstEdge = new Ray(new Point(6, 3, 0), Vector.AXIS_Z);
+        final Ray rayAgainstVertex = new Ray(new Point(6, 6, 0), Vector.AXIS_Z);
+        final Ray onEdge = new Ray(new Point(5, 4, 0), Vector.AXIS_Z);
+        final Ray onVertex = new Ray(new Point(5, 5, 0), Vector.AXIS_Z);
+        final Ray onEdgeContinuation = new Ray(new Point(6, 5, 0), Vector.AXIS_Z);
+
         // ============ Equivalence Partitions Tests ==============
+        // EP01: Inside triangle
+        assertEquals(List.of(new Point(4, 4, 5)), triangle.findIntersections(rayIn),
+                ERR_INCORRECT_INTERSECTION);
+        // EP02: against triangle edge
+        assertNull(triangle.findIntersections(rayAgainstEdge), ERR_INCORRECT_INTERSECTION);
+        // EP03: against triangle vertex
+        assertNull(triangle.findIntersections(rayAgainstVertex), ERR_INCORRECT_INTERSECTION);
+
         // =============== Boundary Values Tests ==================
+        // BV11: On triangle edge
+        assertNull(triangle.findIntersections(onEdge), ERR_INCORRECT_INTERSECTION);
+        // BV12: On triangle vertex
+        assertNull(triangle.findIntersections(onVertex), ERR_INCORRECT_INTERSECTION);
+        // BV13: On triangle edge continuation
+        assertNull(triangle.findIntersections(onEdgeContinuation), ERR_INCORRECT_INTERSECTION);
     }
 }
