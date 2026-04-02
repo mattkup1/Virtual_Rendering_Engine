@@ -26,6 +26,9 @@ class PolygonTests {
      */
     PolygonTests() { /* to satisfy JavaDoc generator */ }
 
+    // ================== CONSTANTS ==================
+
+    // Points
     /**
      * Vertex (1,0,0) used in polygon tests
      */
@@ -38,7 +41,6 @@ class PolygonTests {
      * Vertex (0,0,1) used in polygon tests
      */
     private static final Point POINT_Z = new Point(0, 0, 1);
-
     /**
      * Additional vertex used for valid polygon construction
      */
@@ -140,10 +142,9 @@ class PolygonTests {
         final Point C = new Point(4, 0, 3);
         final Point D = new Point(2, 2, 3);
         final Point E = new Point(-2, 2, 3);
-
         // Polygon
-        final Polygon polygon = new Polygon(A, B, C, D, E);
-
+        final Polygon POLYGON1 = new Polygon(A, B, C, D, E);
+        // Rays
         final Ray rayIn = new Ray(new Point(1, 1, 0), Vector.AXIS_Z);
         final Ray rayAgainstEdge = new Ray(new Point(1, 3, 0), Vector.AXIS_Z);
         final Ray rayAgainstVertex = new Ray(new Point(5, 0, 0), Vector.AXIS_Z);
@@ -153,25 +154,24 @@ class PolygonTests {
 
         // ============ Equivalence Partitions Tests ==============
         // EP01: In polygon
-        assertEquals(1, polygon.findIntersections(rayIn).size(),
+        assertEquals(1, POLYGON1.findIntersections(rayIn).size(),
                 ERR_INCORRECT_INTERSECTION);
         // EP02: Outside polygon against edge
-        assertNull(polygon.findIntersections(rayAgainstEdge),
+        assertNull(POLYGON1.findIntersections(rayAgainstEdge),
                 ERR_INCORRECT_INTERSECTION);
         // EP03: Outside polygon against Vertex
-        assertNull(polygon.findIntersections(rayAgainstVertex),
+        assertNull(POLYGON1.findIntersections(rayAgainstVertex),
                 ERR_INCORRECT_INTERSECTION);
 
         // =============== Boundary Values Tests ==================
         // BV11: On polygon edge
-        assertNull(polygon.findIntersections(rayOnEdge),
+        assertNull(POLYGON1.findIntersections(rayOnEdge),
                 ERR_INCORRECT_INTERSECTION);
         // BV11: On polygon vertex
-        assertNull(polygon.findIntersections(rayOnVertex),
+        assertNull(POLYGON1.findIntersections(rayOnVertex),
                 ERR_INCORRECT_INTERSECTION);
         // BV11: On polygon edge continuation
-        assertNull(polygon.findIntersections(rayOnEdgeContinuation),
+        assertNull(POLYGON1.findIntersections(rayOnEdgeContinuation),
                 ERR_INCORRECT_INTERSECTION);
-
     }
 }
