@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PlaneTests {
 
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy Javadoc generator
      */
     PlaneTests() {/* to satisfy Javadoc generator */ }
 

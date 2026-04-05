@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class PolygonTests {
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy Javadoc generator
      */
-    PolygonTests() { /* to satisfy JavaDoc generator */ }
+    PolygonTests() { /* to satisfy Javadoc generator */ }
 
     // ================== CONSTANTS ==================
 
