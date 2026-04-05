@@ -26,6 +26,8 @@ public class TubeTests {
      */
     TubeTests() { /* to satisfy Javadoc generator */ }
 
+    // ================== CONSTANTS ==================
+
     // Points
     /**
      * {@link Point} (1,0,0) used in some tests
@@ -56,15 +58,15 @@ public class TubeTests {
      */
     private static final Point P20N1 = new Point(2, 0, -1);
     /**
-     * Point on the tube opposite the axis ray
+     * {@link Point} (2,1,0) on the tube opposite the axis ray
      */
     private static final Point P210 = new Point(2, 1, 0);
     /**
-     * Point on the tube opposite behind the axis ray
+     * {@link Point} (0,1,0) on the tube opposite behind the axis ray
      */
     private static final Point P010 = new Point(0, 1, 0);
     /**
-     * Point on the tube opposite the axis head
+     * {@link Point} (1,1,0) on the tube opposite the axis head
      */
     private static final Point P110 = new Point(1, 1, 0);
     /**
@@ -77,10 +79,6 @@ public class TubeTests {
     private static final Point P00N1 = new Point(0, 0, -1);
 
     // Vectors
-    /**
-     * Direction vector of the tube axis ray
-     */
-    private static final Vector AXIS_DIRECTION = new Vector(1, 0, 0);
     /**
      * {@link Vector} -> (0,1,1) used in some tests
      */
@@ -102,7 +100,7 @@ public class TubeTests {
     /**
      * Axis ray of the test tube
      */
-    private static final Ray AXIS_RAY = new Ray(P100, AXIS_DIRECTION);
+    private static final Ray AXIS_RAY = new Ray(P100, Vector.AXIS_X);
     /**
      * Radius of the test tube
      */
@@ -111,10 +109,6 @@ public class TubeTests {
      * Tube defined by the test axis ray and radius used in most tests
      */
     private static final Tube TUBE = new Tube(RADIUS, AXIS_RAY);
-    /**
-     * Normal vector at the test points on the tube
-     */
-    private static final Vector NORMAL_VECTOR = new Vector(0, 1, 0);
 
     // Expected values
 
@@ -162,15 +156,15 @@ public class TubeTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: getNormal returns the expected normal vector at a point opposite the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(P210), INCORRECT_VECTOR_NORMAL);
+        assertEquals(Vector.AXIS_Y, TUBE.getNormal(P210), INCORRECT_VECTOR_NORMAL);
 
         // EP02: getNormal returns the expected normal vector at a point opposite behind the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(P010), INCORRECT_VECTOR_NORMAL);
+        assertEquals(Vector.AXIS_Y, TUBE.getNormal(P010), INCORRECT_VECTOR_NORMAL);
 
         // =============== Boundary Values Tests ==================
 
         // BV01: getNormal returns the expected normal vector at a point opposite the axis head
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(P110), INCORRECT_VECTOR_NORMAL);
+        assertEquals(Vector.AXIS_Y, TUBE.getNormal(P110), INCORRECT_VECTOR_NORMAL);
     }
 
     /**
@@ -319,7 +313,7 @@ public class TubeTests {
         assertEquals(EXPECTEDL001, TUBE.findIntersections(ray31), ERR_INCORRECT_INTERSECTIONS);
 
         // BV38: Ray starts on the tube axis
-        final Ray ray32 = new Ray(new Point(1, 0, 0), Vector.AXIS_Z);
+        final Ray ray32 = new Ray(P100, Vector.AXIS_Z);
         final List<Point> EXPECTED32 = List.of(new Point(1, 0, 1));
         assertEquals(EXPECTED32, TUBE.findIntersections(ray32), ERR_INCORRECT_INTERSECTIONS);
 

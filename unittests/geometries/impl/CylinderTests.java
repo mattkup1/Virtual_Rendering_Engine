@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CylinderTests {
 
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy Javadoc generator
      */
-    CylinderTests() { /* to satisfy JavaDoc generator */ }
+    CylinderTests() { /* to satisfy Javadoc generator */ }
 
     /*
         For these tests we will construct a cylinder with the following properties:
