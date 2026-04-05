@@ -98,7 +98,7 @@ public class TubeTests {
      */
     private static final Vector V10N1 = new Vector(1, 0, -1);
 
-    // Rays
+    // Test tube and its components
     /**
      * Axis ray of the test tube
      */
@@ -108,10 +108,9 @@ public class TubeTests {
      */
     private static final double RADIUS = 1.0;
     /**
-     * Tube defined by the test axis ray and radius
+     * Tube defined by the test axis ray and radius used in most tests
      */
     private static final Tube TUBE = new Tube(RADIUS, AXIS_RAY);
-
     /**
      * Normal vector at the test points on the tube
      */
@@ -120,11 +119,11 @@ public class TubeTests {
     // Expected values
 
     /**
-     * Expected list of ray-tube intersections used in some tests
+     * Expected {@link List} of ray-tube intersections used in some tests
      */
     private static final List<Point> EXPECTEDL001 = List.of(P001);
     /**
-     * Expected list of ray-tube intersections used in some tests
+     * Expected {@link List} of ray-tube intersections used in some tests
      */
     private static final List<Point> EXPECTEDL20N1 = List.of(P20N1);
 
@@ -311,8 +310,13 @@ public class TubeTests {
         final Ray ray30 = new Ray(P001, Vector.AXIS_Z);
         assertNull(TUBE.findIntersections(ray30), ERR_INCORRECT_INTERSECTIONS);
 
-        // BV37: Ray starts inside the tube
+        // BV37: Ray starts inside the tube but not on the tube axis
         final Ray ray31 = new Ray(new Point(0, 0, -0.5), Vector.AXIS_Z);
         assertEquals(EXPECTEDL001, TUBE.findIntersections(ray31), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV38: Ray starts on the tube axis
+        final Ray ray32 = new Ray(new Point(1, 0, 0), Vector.AXIS_Z);
+        final List<Point> EXPECTED32 = List.of(new Point(1, 0, 1));
+        assertEquals(EXPECTED32, TUBE.findIntersections(ray32), ERR_INCORRECT_INTERSECTIONS);
     }
 }
