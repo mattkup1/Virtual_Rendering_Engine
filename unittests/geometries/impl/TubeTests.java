@@ -55,6 +55,26 @@ public class TubeTests {
      * {@link Point} (2,0,-1) used in some tests
      */
     private static final Point P20N1 = new Point(2, 0, -1);
+    /**
+     * Point on the tube opposite the axis ray
+     */
+    private static final Point P210 = new Point(2, 1, 0);
+    /**
+     * Point on the tube opposite behind the axis ray
+     */
+    private static final Point P010 = new Point(0, 1, 0);
+    /**
+     * Point on the tube opposite the axis head
+     */
+    private static final Point P110 = new Point(1, 1, 0);
+    /**
+     * {@link Point} (-1,0,0) used in some tests
+     */
+    private static final Point PN100 = new Point(-1, 0, 0);
+    /**
+     * {@link Point} (0,0,-1) used in some tests
+     */
+    private static final Point P00N1 = new Point(0, 0, -1);
 
     // Vectors
     /**
@@ -91,18 +111,7 @@ public class TubeTests {
      * Tube defined by the test axis ray and radius
      */
     private static final Tube TUBE = new Tube(RADIUS, AXIS_RAY);
-    /**
-     * Point on the tube opposite the axis ray
-     */
-    private static final Point POINT_OPPOSITE_AXIS_RAY = new Point(2, 1, 0);
-    /**
-     * Point on the tube opposite behind the axis ray
-     */
-    private static final Point POINT_OPPOSITE_BEHIND_AXIS_RAY = new Point(0, 1, 0);
-    /**
-     * Point on the tube opposite the axis head
-     */
-    private static final Point POINT_OPPOSITE_AXIS_HEAD = new Point(1, 1, 0);
+
     /**
      * Normal vector at the test points on the tube
      */
@@ -150,15 +159,15 @@ public class TubeTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: getNormal returns the expected normal vector at a point opposite the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_RAY), INCORRECT_VECTOR_NORMAL);
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(P210), INCORRECT_VECTOR_NORMAL);
 
         // EP02: getNormal returns the expected normal vector at a point opposite behind the axis ray
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_BEHIND_AXIS_RAY), INCORRECT_VECTOR_NORMAL);
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(P010), INCORRECT_VECTOR_NORMAL);
 
         // =============== Boundary Values Tests ==================
 
         // BV01: getNormal returns the expected normal vector at a point opposite the axis head
-        assertEquals(NORMAL_VECTOR, TUBE.getNormal(POINT_OPPOSITE_AXIS_HEAD), INCORRECT_VECTOR_NORMAL);
+        assertEquals(NORMAL_VECTOR, TUBE.getNormal(P110), INCORRECT_VECTOR_NORMAL);
     }
 
     /**
@@ -209,8 +218,7 @@ public class TubeTests {
         final Ray ray9 = new Ray(P001, V111);
         assertNull(TUBE.findIntersections(ray9), ERR_INCORRECT_INTERSECTIONS);
 
-        // Group 3: Ray direction vector orthogonal to the tube axis
-        // 3.1 EP's
+        // Group 3: Ray direction vector orthogonal to the tube axis - regular cases
         // BV16: Ray starts before the tube and intersects the tube twice (2 points)
         final Ray ray10 = new Ray(new Point(0, -2, -1), V011);
         final List<Point> EXPECTED10 = List.of(P0N10, P001);
@@ -228,7 +236,7 @@ public class TubeTests {
         final Ray ray13 = new Ray(P011, V011);
         assertNull(TUBE.findIntersections(ray13), ERR_INCORRECT_INTERSECTIONS);
 
-        // 3.2 Ray is tangent to the tube
+        // Group 4: Ray direction is orthogonal to the tube axis and ray is tangent to the tube
         // BV20: Ray starts before the tangent point
         final Ray ray14 = new Ray(new Point(0, -5, 1), Vector.AXIS_Y);
         assertNull(TUBE.findIntersections(ray14), ERR_INCORRECT_INTERSECTIONS);
@@ -241,7 +249,7 @@ public class TubeTests {
         final Ray ray16 = new Ray(P011, Vector.AXIS_Y);
         assertNull(TUBE.findIntersections(ray16), ERR_INCORRECT_INTERSECTIONS);
 
-        // 3.3 Ray starts on the tube
+        // Group 5: Ray direction is orthogonal to the tube axis and Ray starts on the tube
         // BV23: Ray direction inside the tube (1 point)
         final Ray ray17 = new Ray(P0N10, V011);
         assertEquals(EXPECTEDL001, TUBE.findIntersections(ray17), ERR_INCORRECT_INTERSECTIONS);
@@ -250,7 +258,7 @@ public class TubeTests {
         final Ray ray18 = new Ray(P001, V011);
         assertNull(TUBE.findIntersections(ray18), ERR_INCORRECT_INTERSECTIONS);
 
-        // Group 4: Ray intersects the tube axis
+        // Group 6: Ray intersects the tube axis
         // BV25: Ray starts before the tube (2 points)
         final Ray ray19 = new Ray(new Point(-1, 0, 2), V10N1);
         final List<Point> EXPECTED19 = List.of(P001, P20N1);
@@ -268,8 +276,43 @@ public class TubeTests {
         final Ray ray22 = new Ray(P100, V10N1);
         assertEquals(EXPECTEDL20N1, TUBE.findIntersections(ray22), ERR_INCORRECT_INTERSECTIONS);
 
-        // Group 5: Ray parallel to the tube asix
+        // Group 7: Ray parallel to the tube asix (null)
+        // BV29: Ray outside tube
+        final Ray ray23 = new Ray(new Point(0, 0, 2), Vector.AXIS_X);
+        assertNull(TUBE.findIntersections(ray23), ERR_INCORRECT_INTERSECTIONS);
 
-        // Group 6:
+        // BV30: Ray inside tube but not on axis
+        final Ray ray24 = new Ray(new Point(0, 0, 0.5), Vector.AXIS_X);
+        assertNull(TUBE.findIntersections(ray24), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV31: Ray on tube
+        final Ray ray25 = new Ray(P001, Vector.AXIS_X);
+        assertNull(TUBE.findIntersections(ray25), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV32: Ray on tube axis
+        final Ray ray26 = new Ray(P100, Vector.AXIS_X);
+        assertNull(TUBE.findIntersections(ray26), ERR_INCORRECT_INTERSECTIONS);
+
+        // Group 8: Ray direction is orthogonal to the tube axis and ray intersects the tube axis
+        // BV33: Ray starts before the tube (2 points)
+        final Ray ray27 = new Ray(new Point(-2, 0, 0), Vector.AXIS_Z);
+        final List<Point> EXPECTED27 = List.of(P00N1, P001);
+        assertEquals(EXPECTED27, TUBE.findIntersections(ray27), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV34: Ray starts after the tube (null)
+        final Ray ray28 = new Ray(new Point(0, 0, 2), Vector.AXIS_Z);
+        assertNull(TUBE.findIntersections(ray28), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV35: Ray starts on the tube and goes inwards (1 point)
+        final Ray ray29 = new Ray(PN100, Vector.AXIS_Z);
+        assertEquals(EXPECTEDL001, TUBE.findIntersections(ray29), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV36: Ray starts on the tube and goes outwards (null)
+        final Ray ray30 = new Ray(P001, Vector.AXIS_Z);
+        assertNull(TUBE.findIntersections(ray30), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV37: Ray starts inside the tube
+        final Ray ray31 = new Ray(new Point(0, 0, -0.5), Vector.AXIS_Z);
+        assertEquals(EXPECTEDL001, TUBE.findIntersections(ray31), ERR_INCORRECT_INTERSECTIONS);
     }
 }
