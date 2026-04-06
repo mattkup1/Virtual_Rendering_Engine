@@ -24,6 +24,9 @@ public class GeometriesTests {
      */
     GeometriesTests() {/* to satisfy Javadoc generator */ }
 
+    /**
+     * Error message for incorrect intersections
+     */
     private static final String ERR_INCORRECT_INTERSECTIONS = "ERROR: Number of intersections is incorrect";
 
     /**

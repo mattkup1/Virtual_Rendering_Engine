@@ -14,6 +14,10 @@ import primitives.Ray;
  * @author moshehanau
  */
 public class Geometries extends Intersectable {
+
+    /**
+     * Collection of geometric shapes
+     */
     private final List<Intersectable> geometries = new ArrayList<>();
 
     /**
