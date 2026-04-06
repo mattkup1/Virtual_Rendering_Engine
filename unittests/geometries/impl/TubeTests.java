@@ -95,6 +95,11 @@ public class TubeTests {
      * {@link Vector} -> (1,0,-1) used in some tests
      */
     private static final Vector V10N1 = new Vector(1, 0, -1);
+    /**
+     * {@link Vector} -> (2,0,-1) used in some tests
+     */
+    private static final Vector V20N1 = new Vector(2, 0, -1);
+
 
     // Test tube and its components
     /**
@@ -124,6 +129,10 @@ public class TubeTests {
      * Expected {@link List} of ray-tube intersections used in some tests
      */
     private static final List<Point> EXPECTEDL201 = List.of(new Point(2, 0, 1));
+    /**
+     * Expected {@link List} of ray-tube intersections used in some tests
+     */
+    private static final List<Point> EXPECTEDL40N1 = List.of(new Point(4, 0, -1));
 
     // Error messages
     /**
@@ -334,5 +343,39 @@ public class TubeTests {
         // BV42: Ray starts on the tube origin point and continues outwards (1 point)
         final Ray ray36 = new Ray(P100, V10N1);
         assertEquals(EXPECTEDL201, TUBE.findIntersections(ray36), ERR_INCORRECT_INTERSECTIONS);
+
+        // Group 10: Wide angle between ray and tube axis and intersects tube axis
+        // BV43: Ray starts before the tube (2 points)
+        final Ray ray37 = new Ray(new Point(2, 0, 2), V20N1);
+        final List<Point> EXPECTED37 = List.of(P001, new Point(4, 0, -1));
+        assertEquals(EXPECTED37, TUBE.findIntersections(ray37), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV44: Ray starts on the tube and goes inwards (1 point)
+        final Ray ray38 = new Ray(P001, V20N1);
+        assertEquals(EXPECTEDL40N1, TUBE.findIntersections(ray38), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV45: Ray starts inside the tube (1 point)
+        final Ray ray39 = new Ray(new Point(1, 0, 0.5), V20N1);
+        assertEquals(EXPECTEDL40N1, TUBE.findIntersections(ray39), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV46: Ray starts on tube axis (1 point)
+        final Ray ray40 = new Ray(new Point(2, 0, 0), V20N1);
+        assertEquals(EXPECTEDL40N1, TUBE.findIntersections(ray40), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV47: Ray starts on tube origin point (1 point)
+        final Ray ray41 = new Ray(P100, new Vector(3, 0, -1));
+        assertEquals(EXPECTEDL40N1, TUBE.findIntersections(ray41), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV48: Ray starts on the tube and goes outwards (null)
+        final Ray ray42 = new Ray(P00N1, V20N1);
+        assertNull(TUBE.findIntersections(ray42), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV49: Ray starts after the tube (null)
+        final Ray ray43 = new Ray(new Point(0, 0, -2), V20N1);
+        assertNull(TUBE.findIntersections(ray43), ERR_INCORRECT_INTERSECTIONS);
+
+        // BV50: Ray straight does not intersect the tube in any direction
+        final Ray ray44 = new Ray(new Point(0, 2, 2), V20N1);
+        assertNull(TUBE.findIntersections(ray44), ERR_INCORRECT_INTERSECTIONS);
     }
 }
