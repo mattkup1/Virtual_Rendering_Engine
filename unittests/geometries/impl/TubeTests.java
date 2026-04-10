@@ -133,6 +133,10 @@ public class TubeTests {
      * Expected {@link List} of ray-tube intersections used in some tests
      */
     private static final List<Point> EXPECTEDL40N1 = List.of(new Point(4, 0, -1));
+    /**
+     * Expected {@link List} of ray-tube intersections used in some tests
+     */
+    private static final List<Point> EXPECTEDL101 = List.of(new Point(1, 0, 1));
 
     // Error messages
     /**
@@ -185,7 +189,7 @@ public class TubeTests {
         // ============ Equivalence Partitions Tests ==============
         // EP01: Ray starts before the tube and intersects the tube tweice (2 points)
         final Ray ray1 = new Ray(new Point(-2, -2, -1), V111);
-        final List<Point> EXPECTED1 = List.of(PN1N10, P001);
+        final var EXPECTED1 = List.of(PN1N10, P001);
         assertEquals(EXPECTED1, TUBE.findIntersections(ray1), ERR_INCORRECT_INTERSECTIONS);
 
         // EP02: Ray starts inside the tube and intersects the tube once (1 point)
@@ -227,7 +231,7 @@ public class TubeTests {
         // Group 3: Ray direction vector orthogonal to the tube axis - regular cases
         // BV16: Ray starts before the tube and intersects the tube twice (2 points)
         final Ray ray10 = new Ray(new Point(0, -2, -1), V011);
-        final List<Point> EXPECTED10 = List.of(P0N10, P001);
+        final var EXPECTED10 = List.of(P0N10, P001);
         assertEquals(EXPECTED10, TUBE.findIntersections(ray10), ERR_INCORRECT_INTERSECTIONS);
 
         // BV17: Ray starts inside the tube and intersects the tube once (1 point)
@@ -267,7 +271,7 @@ public class TubeTests {
         // Group 6: Ray intersects the tube axis
         // BV25: Ray starts before the tube (2 points)
         final Ray ray19 = new Ray(new Point(-1, 0, 2), V10N1);
-        final List<Point> EXPECTED19 = List.of(P001, P20N1);
+        final var EXPECTED19 = List.of(P001, P20N1);
         assertEquals(EXPECTED19, TUBE.findIntersections(ray19), ERR_INCORRECT_INTERSECTIONS);
 
         // BV26: Ray starts on the tube (1 point)
@@ -302,7 +306,7 @@ public class TubeTests {
         // Group 8: Ray direction is orthogonal to the tube axis and ray intersects the tube axis
         // BV33: Ray starts before the tube (2 points)
         final Ray ray27 = new Ray(new Point(-2, 0, 0), Vector.AXIS_Z);
-        final List<Point> EXPECTED27 = List.of(P00N1, P001);
+        final var EXPECTED27 = List.of(P00N1, P001);
         assertEquals(EXPECTED27, TUBE.findIntersections(ray27), ERR_INCORRECT_INTERSECTIONS);
 
         // BV34: Ray starts after the tube (null)
@@ -323,13 +327,12 @@ public class TubeTests {
 
         // BV38: Ray starts on the tube axis
         final Ray ray32 = new Ray(P100, Vector.AXIS_Z);
-        final List<Point> EXPECTED32 = List.of(new Point(1, 0, 1));
-        assertEquals(EXPECTED32, TUBE.findIntersections(ray32), ERR_INCORRECT_INTERSECTIONS);
+        assertEquals(EXPECTEDL101, TUBE.findIntersections(ray32), ERR_INCORRECT_INTERSECTIONS);
 
         // Group 9: Ray intersects the tube origin point and ray is orthogonal to the tube axis
         // BV39: Ray starts before the tube (2 points)
         final Ray ray33 = new Ray(new Point(2, 0, -2), Vector.AXIS_Z);
-        final List<Point> EXPECTED33 = List.of(new Point(2, 0, -1), new Point(2, 0, 1));
+        final var EXPECTED33 = List.of(new Point(2, 0, -1), new Point(2, 0, 1));
         assertEquals(EXPECTED33, TUBE.findIntersections(ray33), ERR_INCORRECT_INTERSECTIONS);
 
         // BV40: Ray starts inside the tube (1 point)
@@ -347,7 +350,7 @@ public class TubeTests {
         // Group 10: Wide angle between ray and tube axis and intersects tube axis
         // BV43: Ray starts before the tube (2 points)
         final Ray ray37 = new Ray(new Point(2, 0, 2), V20N1);
-        final List<Point> EXPECTED37 = List.of(P001, new Point(4, 0, -1));
+        final var EXPECTED37 = List.of(P001, new Point(4, 0, -1));
         assertEquals(EXPECTED37, TUBE.findIntersections(ray37), ERR_INCORRECT_INTERSECTIONS);
 
         // BV44: Ray starts on the tube and goes inwards (1 point)

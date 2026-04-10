@@ -62,8 +62,9 @@ public class Tube extends RadialGeometry {
         if (discriminant < 0) return null;
 
         // Discriminant = 0: single intersection point
-        if (isZero(discriminant))
+        if (isZero(discriminant)) {
             return List.of(rayDirection.scale(-(b / (2 * a))));
+        }
 
         // Discriminant > 0: 2 intersection points
         final double t1 = (-b - discriminant) / (2 * a);
