@@ -45,8 +45,65 @@ public class Tube extends RadialGeometry {
         // If the ray and tube directions are equal - no intersection points
         if (tubeDirection.equals(rayDirection)) return null;
 
-        // Get the vector from the tube origin point to the ray origin point
         final Vector deltaP = rayOrigin.subtract(tubeOrigin);
+
+        final double rayTubeDotProduct = alignZero(rayDirection.dotProduct(tubeDirection));
+
+        // Case ray direction and tube direction are orthogonal
+        if (isZero(rayTubeDotProduct)) {
+            if (rayOrigin.equals(tubeOrigin)) {
+                return List.of(rayOrigin.add(rayDirection.scale(this._radius)));
+            }
+            // Case ray origin point orthogonal to tube origin point
+            if (isZero(deltaP.dotProduct(tubeDirection))) {
+                // Case ray origin on tube
+                if (isZero(deltaP.length() - this._radius)) {
+                    final Point p = rayOrigin.add(rayDirection.scale(2 * this._radius));
+                    // Case ray direction inwards
+                    return isZero(p.distance(tubeOrigin) - _radius) ? List.of(p) : null;
+                }
+            } else { // Case ray origin not orthogonal to tube origin
+                // Get the projection of deltaP on the tube axis
+                final Point closestPointOnAxis = tubeOrigin.add(deltaP.project(tubeDirection));
+                // Get the vector from the closest point on the axis to the ray origin
+                final Vector rayOriginToClosest = closestPointOnAxis.subtract(rayOrigin);
+                final boolean rayOriginOnTube = isZero(rayOriginToClosest.lengthSquared() - this._radiusSquared);
+
+                // Case ray origin on the tube and not orthogonal to tube origin
+                if (rayOriginOnTube) {
+                    // Get the projection of the rayOriginToClosest vector on the ray
+                    final double scalar = rayOriginToClosest.projectionScalar(rayDirection);
+                    // Case ray tangent to tube
+                    if (isZero(scalar)) return null;
+                    // Get the possible intersection point
+                    final Point p = rayOrigin.add(rayDirection.scale(2 * scalar));
+                    // If the point is on the tube (ray goes inwards) - return the point, Else return null
+                    return isZero(p.distance(closestPointOnAxis) - this._radius) ? List.of(p) : null;
+                } else { // Case ray origin not on tube
+                    final double projectionScalar = rayOriginToClosest.projectionScalar(rayDirection);
+                    // Case ray origin is orthogonal to the closest point on the axis
+                    if (isZero(projectionScalar)) {
+                        // Case ray starts inside the tube
+                        if (rayOrigin.distanceSquared(closestPointOnAxis) < this._radiusSquared) {
+                            final double edgeLength = Math.sqrt(this._radiusSquared - rayOriginToClosest.lengthSquared());
+                            return List.of(rayOrigin.add(rayDirection.scale(edgeLength)));
+                        } else return null; // Case ray starts outside the tube
+                    }
+                }
+            }
+        }
+
+        // Get the vector from the tube origin  to the ray origin
+        if (rayOrigin.equals(tubeOrigin)) {
+
+            // Get the vector from the tube axis to the intersection point that is orthogonal to the tube axis
+            final Vector orthogonal = rayDirection.subtract(tubeDirection.scale(rayTubeDotProduct));
+
+            // Get the scalar by which the ray direction vector needs to be scaled to get to the intersection point
+            final double scalar = rayTubeDotProduct > 0 ? (_radius / orthogonal.length()) : -_radius / orthogonal.length();
+
+            return List.of(rayOrigin.add(rayDirection.scale(scalar)));
+        }
 
         final Vector vectorA = deltaP.subtract(tubeDirection.scale(deltaP.dotProduct(tubeDirection)));
         final Vector vectorB = rayDirection.subtract(tubeDirection.scale(rayDirection.dotProduct(tubeDirection)));
@@ -63,12 +120,14 @@ public class Tube extends RadialGeometry {
 
         // Discriminant = 0: single intersection point
         if (isZero(discriminant)) {
+            // TODO: assert that the ray origin is inside the tube before returning results,
+            //  otherwise, the ray is tangent to the tube
             return List.of(rayDirection.scale(-(b / (2 * a))));
         }
 
         // Discriminant > 0: 2 intersection points
-        final double t1 = (-b - discriminant) / (2 * a);
-        final double t2 = (-b + discriminant) / (2 * a);
+        final double t1 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        final double t2 = (-b + Math.sqrt(discriminant)) / (2 * a);
 
         // if t1 and t2 are less than 0 than the points is on the ray tail
         // if t1 or t2 are 0 than - the ray origin is on the tube
