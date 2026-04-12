@@ -147,63 +147,61 @@ public class Tube extends RadialGeometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        Point p0 = ray.getOrigin();
-        Vector vD = ray.getDirection();
-        Point pC = this._axis.getOrigin();
-        Vector vC = this._axis.getDirection();
+        final Point p0 = ray.getOrigin();
+        final Vector d = ray.getDirection();
+        final Point c = this._axis.getOrigin();
+        final Vector v = this._axis.getDirection();
 
-        // 1. חישוב נתוני יסוד סקלריים למניעת יצירת וקטור אפס
-        double vD_dot_vC = alignZero(vD.dotProduct(vC));
+        // Calculate base scalar data to prevent zero vector creation
+        final double dDotV = alignZero(d.dotProduct(v));
 
-        // בדיקה אם הקרן מקבילה לציר הגליל (A=0)
-        // אם המכפלה היא 1 או 1-, הקרן מקבילה לציר ולא תחתוך את הדפנות לעולם
-        double a = alignZero(1 - vD_dot_vC * vD_dot_vC);
+        // Check if the ray is parallel to the tube axis (A = 0)
+        // If the dot product is 1 or -1, the ray is parallel and will never intersect the tube
+        final double a = alignZero(1 - dDotV * dDotV);
         if (isZero(a)) {
             return null;
         }
 
-        // 2. טיפול ב-DeltaP (המרחק בין תחילת הקרן לנקודה על הציר)
-        // אם הנקודות זהות, המכפלות הסקלריות של וקטור ההפרש הן פשוט 0
-        double vD_dot_dP = 0;
-        double dP_dot_vC = 0;
-        double dP_dot_dP = 0;
+        // Handle deltaP (the distance vector between the ray origin and the axis origin)
+        // If the points are identical, the scalar products of the difference vector are simply 0
+        double dDotDeltaP = 0;
+        double deltaPDotV = 0;
+        double deltaPDotDeltaP = 0;
 
-        if (!p0.equals(pC)) {
-            Vector deltaP = p0.subtract(pC); // כאן בטוח שזה לא וקטור האפס בגלל ה-if
-            vD_dot_dP = alignZero(vD.dotProduct(deltaP));
-            dP_dot_vC = alignZero(deltaP.dotProduct(vC));
-            dP_dot_dP = alignZero(deltaP.dotProduct(deltaP));
+        if (!p0.equals(c)) {
+            Vector deltaP = p0.subtract(c); // Safe from zero vector exception due to the if statement
+            dDotDeltaP = alignZero(d.dotProduct(deltaP));
+            deltaPDotV = alignZero(deltaP.dotProduct(v));
+            deltaPDotDeltaP = alignZero(deltaP.dotProduct(deltaP));
         }
 
-        // 3. חישוב מקדמי המשוואה הריבועית At^2 + Bt + C = 0
-        // השתמשנו בזהויות מתמטיות כדי לא לבנות וקטורים פיזית
-        double b = alignZero(2 * (vD_dot_dP - vD_dot_vC * dP_dot_vC));
-        double c = alignZero(dP_dot_dP - dP_dot_vC * dP_dot_vC - _radius * _radius);
+        // Calculate the quadratic equation coefficients: At^2 + Bt + C = 0
+        // Using math identities to avoid physically building projection vectors
+        final double b = alignZero(2 * (dDotDeltaP - dDotV * deltaPDotV));
+        final double cCoeff = alignZero(deltaPDotDeltaP - deltaPDotV * deltaPDotV - _radius * _radius);
 
-        // 4. פתרון המשוואה
-        double discriminant = alignZero(b * b - 4 * a * c);
+        // Solve the quadratic equation
+        final double discriminant = alignZero(b * b - 4 * a * cCoeff);
 
-        // מקרה של אי-חיתוך או השקה (השקה לפי דרישתך לא נחשבת חיתוך)
+        // Case of no intersection or tangency (tangency is not considered an intersection)
         if (discriminant <= 0) {
             return null;
         }
 
-        double sqrtDelta = Math.sqrt(discriminant);
-        double t1 = alignZero((-b - sqrtDelta) / (2 * a));
-        double t2 = alignZero((-b + sqrtDelta) / (2 * a));
+        final double sqrtDelta = Math.sqrt(discriminant);
+        final double t1 = alignZero((-b - sqrtDelta) / (2 * a));
+        final double t2 = alignZero((-b + sqrtDelta) / (2 * a));
 
-        // 5. סינון תוצאות לפי דרישות הקרן (רק t > 0)
-        // אמרת שנקודת התחלה על הגליל לא נחשבת, לכן נבדוק רק t שגדול ממש מאפס
-        List<Point> results = new ArrayList<>();
-
+        // Filter results according to ray requirements (t > 0)
+        // Avoid creating empty lists - return List.of only when valid intersections exist
         if (t1 > 0) {
-            results.add(ray.getPoint(t1));
-        }
-        if (t2 > 0) {
-            results.add(ray.getPoint(t2));
+            return List.of(ray.getPoint(t1), ray.getPoint(t2));
         }
 
-        return results.isEmpty() ? null : results;
+        if (t2 > 0) {
+            return List.of(ray.getPoint(t2));
+        }
+        return null;
     }
 
     @Override
