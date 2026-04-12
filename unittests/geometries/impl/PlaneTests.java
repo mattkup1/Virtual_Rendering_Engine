@@ -28,6 +28,7 @@ public class PlaneTests {
     PlaneTests() {/* to satisfy Javadoc generator */ }
 
     // ================== CONSTANTS ==================
+    // Points
     /**
      * Vertex (1,2,3) used in plane tests
      */
@@ -63,6 +64,8 @@ public class PlaneTests {
     /**
      * Normal vector used in plane tests
      */
+
+    // Vectors
     private static final Vector V111 = new Vector(1, 1, 1);
     /**
      * Vector used in some tests
@@ -71,11 +74,19 @@ public class PlaneTests {
     /**
      * Plane used in getNormal tests
      */
+
+    // Planes
     private static final Plane PLANE1 = new Plane(POINT_X, POINT_Y, POINT_Z);
     /**
      * XY plane used in getIntersections tests
      */
     private static final Plane PLANE_XY = new Plane(POINT_X, POINT_Y, Point.ZERO);
+    /**
+     * Plane defined by a point and a normal vector
+     */
+    private static final Plane PLANE_BY_VECTOR = new Plane(POINT, V111);
+
+    // MISC
     /**
      * Normalized normal vector used in plane tests
      */
@@ -85,45 +96,41 @@ public class PlaneTests {
      */
     private static final Point OTHER_POINT_ON_PLANE = new Point(0.5, 0.5, 0);
     /**
-     * Plane defined by a point and a normal vector
-     */
-    private static final Plane PLANE_BY_VECTOR = new Plane(POINT, V111);
-    /**
      * Delta value for accuracy when comparing double values.
      */
     private static final double DELTA = 1e-6;
     /**
      * Error message for failed plane construction
      */
-    private static final String FAILED_CONSTRUCTOR_ERROR = "Failed to construct a plane";
+    private static final String ERR_CONSTRUCTOR = "Failed to construct a plane";
     /**
      * Error message for constructing a plane with two identical points
      */
-    private static final String TOW_IDENTICAL_POINT_ERROR = "ERROR: constructed a plane with two identical points";
+    private static final String ERR_TWO_IDENTICAL_POINTS = "ERROR: constructed a plane with two identical points";
     /**
      * Error message for constructing a plane with three identical points
      */
-    private static final String THREE_IDENTICAL_POINT_ERROR = "ERROR: constructed a plane with three identical points";
+    private static final String ERR_THREE_IDENTICAL_PTS = "ERROR: constructed a plane with three identical points";
     /**
      * Error message for constructing a plane from three collinear points
      */
-    private static final String THREE_SAME_LINE_ERROR = "ERROR: the three points lie on the same line and cannot define a plane";
+    private static final String ERR_THREE_SAME_LINE = "ERROR: the three points lie on the same line and cannot define a plane";
     /**
      * Error message for an unnormalized normal vector
      */
-    private static final String UNNORMALIZE_VECTOR_ERROR = "Plane normal should be normalized";
+    private static final String ERR_NOT_NORMALIZED_VECTOR = "Plane normal should be normalized";
     /**
      * Error message for a mismatched normal vector
      */
-    private static final String UNMATCH_NORMAL_VECTOR_ERROR = "getNormal should return the same normal for every point on the plane";
+    private static final String ERR_INCORRECT_NORMAL = "ERROR: Incorrect normal vector";
     /**
      * Error message for expected intersection
      */
-    private static final String ERROR_INTERSECTION_EXPECTED = "ERROR: intersection expected";
+    private static final String ERR_INTERSECTION_EXPECTED = "ERROR: intersection expected";
     /**
      * Error message for when no intersections were expected
      */
-    private static final String ERROR_EXPECTED_NULL = "ERROR: Expected null result";
+    private static final String ERR_EXPECTED_NULL = "ERROR: Expected null";
 
     /**
      * Test method for {@link Plane} constructor
@@ -133,27 +140,27 @@ public class PlaneTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: Correct plane defined by three distinct non-collinear points
-        assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z), FAILED_CONSTRUCTOR_ERROR);
+        assertDoesNotThrow(() -> new Plane(POINT_X, POINT_Y, POINT_Z), ERR_CONSTRUCTOR);
 
         // EP02: Correct plane defined by three distinct non-collinear points
-        assertDoesNotThrow(() -> new Plane(POINT, V111), FAILED_CONSTRUCTOR_ERROR);
+        assertDoesNotThrow(() -> new Plane(POINT, V111), ERR_CONSTRUCTOR);
 
         // =============== Boundary Values Tests ==================
 
         // BV01: Three collinear points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_COLLINEAR1, POINT_COLLINEAR2, POINT_COLLINEAR3), THREE_SAME_LINE_ERROR);
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_COLLINEAR1, POINT_COLLINEAR2, POINT_COLLINEAR3), ERR_THREE_SAME_LINE);
 
         // BV02: Two identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_Z), TOW_IDENTICAL_POINT_ERROR);
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_Z), ERR_TWO_IDENTICAL_POINTS);
 
         // BV03: Two identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_X), TOW_IDENTICAL_POINT_ERROR);
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_X), ERR_TWO_IDENTICAL_POINTS);
 
         // BV04: Two identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_Y), TOW_IDENTICAL_POINT_ERROR);
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_Y, POINT_Y), ERR_TWO_IDENTICAL_POINTS);
 
         // BV05: Three identical points
-        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_X), THREE_IDENTICAL_POINT_ERROR);
+        assertThrows(IllegalArgumentException.class, () -> new Plane(POINT_X, POINT_X, POINT_X), ERR_THREE_IDENTICAL_PTS);
 
     }
 
@@ -165,13 +172,13 @@ public class PlaneTests {
         // ============ Equivalence Partitions Tests ==============
 
         // EP01: getNormal returns the except normal vector of the plane
-        assertEquals(NORMAL_VECTOR, PLANE1.getNormal(OTHER_POINT_ON_PLANE), UNMATCH_NORMAL_VECTOR_ERROR);
+        assertEquals(NORMAL_VECTOR, PLANE1.getNormal(OTHER_POINT_ON_PLANE), ERR_INCORRECT_NORMAL);
 
         // EP02: getNormal returns a unit vector
-        assertEquals(1, PLANE1.getNormal(POINT_X).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
+        assertEquals(1, PLANE1.getNormal(POINT_X).length(), DELTA, ERR_NOT_NORMALIZED_VECTOR);
 
         // EP03: getNormal returns a unit vector
-        assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA, UNNORMALIZE_VECTOR_ERROR);
+        assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA, ERR_NOT_NORMALIZED_VECTOR);
     }
 
     /**
@@ -183,39 +190,39 @@ public class PlaneTests {
 
         // EP01 Ray intersects plane at a single point
         Ray ray1 = new Ray(P101, new Vector(-1, 1, -1));
-        assertEquals(1, PLANE_XY.findIntersections(ray1).size(), ERROR_INTERSECTION_EXPECTED);
+        assertEquals(1, PLANE_XY.findIntersections(ray1).size(), ERR_INTERSECTION_EXPECTED);
 
         // EP02 Ray does not intersect plane
         Ray ray2 = new Ray(new Point(1, 0, 1), new Vector(1, -1, 1));
-        assertNull(PLANE_XY.findIntersections(ray2), ERROR_EXPECTED_NULL);
+        assertNull(PLANE_XY.findIntersections(ray2), ERR_EXPECTED_NULL);
 
         // =============== Boundary Values Tests ==================
 
         // Ray is parallel to the plane
         // BV11 Ray is included in the plane (no intersection)
         Ray ray3 = new Ray(POINT_X, Vector.AXIS_X);
-        assertNull(PLANE_XY.findIntersections(ray3), ERROR_EXPECTED_NULL);
+        assertNull(PLANE_XY.findIntersections(ray3), ERR_EXPECTED_NULL);
         // BV12 Ray is not included in the plane
         Ray ray4 = new Ray(P101, Vector.AXIS_Y);
-        assertNull(PLANE_XY.findIntersections(ray4), ERROR_EXPECTED_NULL);
+        assertNull(PLANE_XY.findIntersections(ray4), ERR_EXPECTED_NULL);
 
         // Ray is orthogonal to the plane
         // BV13 Ray origin before the plane (1 intersection)
         Ray ray5 = new Ray(P101, V00n1);
-        assertEquals(1, PLANE_XY.findIntersections(ray5).size(), ERROR_INTERSECTION_EXPECTED);
+        assertEquals(1, PLANE_XY.findIntersections(ray5).size(), ERR_INTERSECTION_EXPECTED);
         // BV14 Ray origin after the plane (no intersection)
         Ray ray6 = new Ray(new Point(1, 0, -1), V00n1);
-        assertNull(PLANE_XY.findIntersections(ray6), ERROR_EXPECTED_NULL);
+        assertNull(PLANE_XY.findIntersections(ray6), ERR_EXPECTED_NULL);
         // BV15 Ray origin on the plane (no intersection)
         Ray ray7 = new Ray(POINT_X, Vector.AXIS_Z);
-        assertNull(PLANE_XY.findIntersections(ray7), ERROR_EXPECTED_NULL);
+        assertNull(PLANE_XY.findIntersections(ray7), ERR_EXPECTED_NULL);
 
         // Ray is neither orthogonal nor parallel to the plane
         // BV16 Ray origin on the plane (no intersection)
         Ray ray8 = new Ray(POINT_X, V111);
-        assertNull(PLANE_XY.findIntersections(ray8), ERROR_EXPECTED_NULL);
+        assertNull(PLANE_XY.findIntersections(ray8), ERR_EXPECTED_NULL);
         // BV17 Ray origin is the plane reference point (no intersection)
         Ray ray9 = new Ray(POINT_X, V111);
-        assertNull(PLANE_XY.findIntersections(ray9), ERROR_EXPECTED_NULL);
+        assertNull(PLANE_XY.findIntersections(ray9), ERR_EXPECTED_NULL);
     }
 }
