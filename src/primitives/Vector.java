@@ -1,7 +1,5 @@
 package primitives;
 
-import static primitives.Util.alignZero;
-
 /**
  * Immutable representation of a 3D mathematical vector.
  * <p>
@@ -123,27 +121,6 @@ public final class Vector extends Point {
     }
 
     /**
-     * Get the scalar by which a vector needs to be scaled by to get to the projection point of another given vector
-     *
-     * @param other the vector on which the projection is done
-     * @return the scalar
-     */
-    public double projectionScalar(Vector other) {
-        return alignZero(this.dotProduct(other));
-    }
-
-    /**
-     * Project a vector on another vector
-     *
-     * @param other the vector on which the projection is done
-     * @return the projection vector
-     */
-    public Vector project(Vector other) {
-        final double scalar = this.projectionScalar(other);
-        return this.scale(scalar);
-    }
-
-    /**
      * Computes the squared length of the vector
      *
      * @return the length of the vector
@@ -160,7 +137,6 @@ public final class Vector extends Point {
     public double length() {
         return super.distance(new Point(0, 0, 0));
     }
-
 
     /**
      * Normalizes the vector.
