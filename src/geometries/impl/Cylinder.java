@@ -76,7 +76,6 @@ public final class Cylinder extends Tube {
         final Point p0 = axisRay.getOrigin();
         final Vector v = axisRay.getDirection();
 
-
         // grab intersections from the infinite tube first
         List<Point> tubeIntersections = super.findIntersections(ray);
 
