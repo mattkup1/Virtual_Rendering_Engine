@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Unit tests for class {@link Plane}.
  * The tests verify:
  * <ul>
- * <li>Plane constructor validity</li>
+ * <li>{@link Plane} constructor validity</li>
  * <li>{@link Plane#getNormal(Point)}</li>
  * </ul>
  * Tests follow the methodology of
@@ -30,69 +30,69 @@ public class PlaneTests {
     // ================== CONSTANTS ==================
     // Points
     /**
-     * Vertex (1,2,3) used in plane tests
+     * {@link Point} (1,2,3) used in plane tests
      */
     private static final Point POINT = new Point(1, 2, 3);
     /**
-     * Vertex (1,0,0) used in plane tests
+     * {@link Point} (1,0,0) used in plane tests
      */
     private static final Point POINT_X = new Point(1, 0, 0);
     /**
-     * Vertex (0,1,0) used in plane tests
+     * {@link Point} (0,1,0) used in plane tests
      */
     private static final Point POINT_Y = new Point(0, 1, 0);
     /**
-     * Vertex (0,0,1) used in plane tests
+     * {@link Point} (0,0,1) used in plane tests
      */
     private static final Point POINT_Z = new Point(0, 0, 1);
     /**
-     * First collinear point used in plane tests
+     * First collinear {@link Point} (1,1,1) used in plane tests
      */
     private static final Point POINT_COLLINEAR1 = new Point(1, 1, 1);
     /**
-     * Second collinear point used in plane tests
+     * Second collinear {@link Point} (2,2,2) used in plane tests
      */
     private static final Point POINT_COLLINEAR2 = new Point(2, 2, 2);
     /**
-     * Third collinear point used in plane tests
+     * Third collinear {@link Point} (3,3,3) used in plane tests
      */
     private static final Point POINT_COLLINEAR3 = new Point(3, 3, 3);
     /**
-     * Point used in some tests
+     * {@link Point} (1,0,1) used in some tests
      */
     private static final Point P101 = new Point(1, 0, 1);
-    /**
-     * Normal vector used in plane tests
-     */
 
     // Vectors
+    /**
+     * {@link Vector} (1,1,1) used in plane tests
+     */
     private static final Vector V111 = new Vector(1, 1, 1);
     /**
-     * Vector used in some tests
+     * {@link Vector} (0,0,-1) used in some tests
      */
-    private static final Vector V00n1 = new Vector(0, 0, -1);
-    /**
-     * Plane used in getNormal tests
-     */
+    private static final Vector V00N1 = new Vector(0, 0, -1);
 
     // Planes
+    /**
+     * {@link Plane} used in getNormal tests
+     */
     private static final Plane PLANE1 = new Plane(POINT_X, POINT_Y, POINT_Z);
     /**
-     * XY plane used in getIntersections tests
+     * XY {@link Plane} used in getIntersections tests
      */
     private static final Plane PLANE_XY = new Plane(POINT_X, POINT_Y, Point.ZERO);
     /**
-     * Plane defined by a point and a normal vector
+     * {@link Plane} defined by a point and a normal vector
      */
     private static final Plane PLANE_BY_VECTOR = new Plane(POINT, V111);
 
     // MISC
     /**
-     * Normalized normal vector used in plane tests
+     * Normalized normal {@link Vector} used in plane tests
      */
     private static final Vector NORMAL_VECTOR = new Vector(1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3));
     /**
-     * Point on the test plane that is not one of the reference points
+     * {@link Point} on the test {@link Plane} that is not one of the reference points
      */
     private static final Point OTHER_POINT_ON_PLANE = new Point(0.5, 0.5, 0);
     /**
@@ -208,10 +208,10 @@ public class PlaneTests {
 
         // Ray is orthogonal to the plane
         // BV13 Ray origin before the plane (1 intersection)
-        Ray ray5 = new Ray(P101, V00n1);
+        Ray ray5 = new Ray(P101, V00N1);
         assertEquals(1, PLANE_XY.findIntersections(ray5).size(), ERR_INTERSECTION_EXPECTED);
         // BV14 Ray origin after the plane (no intersection)
-        Ray ray6 = new Ray(new Point(1, 0, -1), V00n1);
+        Ray ray6 = new Ray(new Point(1, 0, -1), V00N1);
         assertNull(PLANE_XY.findIntersections(ray6), ERR_EXPECTED_NULL);
         // BV15 Ray origin on the plane (no intersection)
         Ray ray7 = new Ray(POINT_X, Vector.AXIS_Z);
