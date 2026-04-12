@@ -126,7 +126,7 @@ public final class Vector extends Point {
      * @return the length of the vector
      */
     public double lengthSquared() {
-        return super.distanceSquared(new Point(0, 0, 0));
+        return super.distanceSquared(Point.ZERO);
     }
 
     /**
@@ -135,7 +135,7 @@ public final class Vector extends Point {
      * @return the vector length
      */
     public double length() {
-        return super.distance(new Point(0, 0, 0));
+        return super.distance(Point.ZERO);
     }
 
     /**
