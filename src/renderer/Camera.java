@@ -9,7 +9,7 @@ import primitives.Vector;
  * @author mattkuperwasser
  * @author moshehanau
  */
-public class Camera {
+public class Camera implements Cloneable {
     /**
      * {@link Point} representing the camera location
      */
@@ -59,6 +59,28 @@ public class Camera {
      */
     private final double pixelHeight;
 
+    /**
+     * Empty camera constructor
+     */
     private Camera() {
+    }
+
+    /**
+     * Camera builder getter
+     *
+     * @return the camera builder object
+     */
+    public static Builder getBuilder() {
+        return new Builder();
+    }
+
+    /**
+     * Camera builder class
+     */
+    public static class Builder {
+        /**
+         * Initialize camera object
+         */
+        private final Camera camera = new Camera();
     }
 }
