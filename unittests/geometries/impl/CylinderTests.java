@@ -5,8 +5,11 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit tests for class {@link Cylinder}.
@@ -14,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * <ul>
  * <li>{@link Cylinder} constructor validity</li>
  * <li>{@link Cylinder#getNormal(Point)}</li>
+ * <li>{@link Cylinder#findIntersections(Ray)}</li>
  * </ul>
  * Tests follow the methodology of
  * Equivalence Partitions (EP) and Boundary Values (BVA).
@@ -32,8 +36,6 @@ public class CylinderTests {
         Direction = (1,0,0) (positive X axis)
         Height = 5.0
      */
-
-    // ================== CONSTANTS ==================
     /**
      * Radius of the test cylinder
      */
@@ -58,6 +60,7 @@ public class CylinderTests {
      * Cylinder used in Cylinder tests
      */
     private static final Cylinder CYLINDER = new Cylinder(RADIUS, AXIS, HEIGHT);
+
     /**
      * Point on the round surface of the test cylinder
      */
@@ -86,6 +89,7 @@ public class CylinderTests {
      * Point on the edge of the bottom base of the test cylinder
      */
     private static final Point pointEdgeBottomBase = new Point(1, 1, 0);
+
     /**
      * Normal vector to the top base of the test cylinder
      */
@@ -146,12 +150,76 @@ public class CylinderTests {
     }
 
     /**
-     * Test method for {@link Cylinder#findIntersections(Ray)}
+     * Test method for {@link Cylinder#findIntersections(Ray)}.
      */
     @Test
     void testFindIntersections() {
+
         // ============ Equivalence Partitions Tests ==============
+        // EP01: Ray intersects the round surface twice within the height (2 points)
+        Ray ray1 = new Ray(new Point(3, -2, 0), new Vector(0, 1, 0));
+        var result1 = CYLINDER.findIntersections(ray1);
+        assertEquals(2, result1.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(3, -1, 0), new Point(3, 1, 0)), result1, ERROR_INCORRECT_RESULT);
+
+        // EP02: Ray intersects both the bottom and top bases (2 points)
+        Ray ray2 = new Ray(new Point(0, 0.5, 0), new Vector(1, 0, 0));
+        var result2 = CYLINDER.findIntersections(ray2);
+        assertEquals(2, result2.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(1, 0.5, 0), new Point(6, 0.5, 0)), result2, ERROR_INCORRECT_RESULT);
+
+        // EP03: Ray intersects the round surface and one of the bases (2 points)
+        Ray ray3 = new Ray(new Point(0, 2, 0), new Vector(3, -1, 0));
+        var result3 = CYLINDER.findIntersections(ray3);
+        assertEquals(2, result3.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(3, 1, 0), new Point(6, 0, 0)), result3, ERROR_INCORRECT_RESULT);
+
+        // EP04: Ray misses the cylinder completely (0 points)
+        Ray ray4 = new Ray(new Point(0, 2, 0), new Vector(0, 1, 0));
+        assertNull(CYLINDER.findIntersections(ray4), ERROR_INCORRECT_RESULT);
 
         // =============== Boundary Values Tests ==================
+
+        // BV01: Ray intersects the infinite tube, but outside the cylinder's height (0 points)
+        Ray ray5 = new Ray(new Point(8, -2, 0), new Vector(0, 1, 0));
+        assertNull(CYLINDER.findIntersections(ray5), ERROR_INCORRECT_RESULT);
+
+        // BV02: Ray intersects the base plane, but outside the base radius (0 points)
+        Ray ray6 = new Ray(new Point(0, 2, 0), new Vector(1, 0, 0));
+        assertNull(CYLINDER.findIntersections(ray6), ERROR_INCORRECT_RESULT);
+
+        // BV03: Ray starts inside the cylinder and goes out through the round surface (1 point)
+        Ray ray7 = new Ray(new Point(3, 0, 0), new Vector(0, 1, 0));
+        var result7 = CYLINDER.findIntersections(ray7);
+        assertEquals(1, result7.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(3, 1, 0)), result7, ERROR_INCORRECT_RESULT);
+
+        // BV04: Ray starts inside the cylinder and goes out through a base (1 point)
+        Ray ray8 = new Ray(new Point(3, 0, 0), new Vector(1, 0, 0));
+        var result8 = CYLINDER.findIntersections(ray8);
+        assertEquals(1, result8.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(6, 0, 0)), result8, ERROR_INCORRECT_RESULT);
+
+        // BV05: Ray starts exactly on the top base and goes inwards (1 point)
+        Ray ray9 = new Ray(new Point(6, 0.5, 0), new Vector(-1, 0, 0));
+        var result9 = CYLINDER.findIntersections(ray9);
+        assertEquals(1, result9.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(1, 0.5, 0)), result9, ERROR_INCORRECT_RESULT);
+
+        // BV06: Ray starts exactly on the bottom base and goes outwards (0 points)
+        Ray ray10 = new Ray(new Point(1, 0.5, 0), new Vector(-1, 0, 0));
+        assertNull(CYLINDER.findIntersections(ray10), ERROR_INCORRECT_RESULT);
+
+        // BV07: Ray parallel to the cylinder axis, passing exactly through the bases centers (2 points)
+        Ray ray11 = new Ray(new Point(0, 0, 0), new Vector(1, 0, 0));
+        var result11 = CYLINDER.findIntersections(ray11);
+        assertEquals(2, result11.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(1, 0, 0), new Point(6, 0, 0)), result11, ERROR_INCORRECT_RESULT);
+
+        // BV08: Ray starts exactly on the round surface and goes inwards (1 point)
+        Ray ray12 = new Ray(new Point(3, 1, 0), new Vector(0, -1, 0));
+        var result12 = CYLINDER.findIntersections(ray12);
+        assertEquals(1, result12.size(), "Wrong number of points");
+        assertEquals(List.of(new Point(3, -1, 0)), result12, ERROR_INCORRECT_RESULT);
     }
 }
