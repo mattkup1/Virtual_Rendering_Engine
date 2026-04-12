@@ -27,6 +27,7 @@ public class PlaneTests {
      */
     PlaneTests() {/* to satisfy Javadoc generator */ }
 
+    // ================== CONSTANTS ==================
     /**
      * Vertex (1,2,3) used in plane tests
      */

@@ -32,6 +32,8 @@ public class CylinderTests {
         Direction = (1,0,0) (positive X axis)
         Height = 5.0
      */
+
+    // ================== CONSTANTS ==================
     /**
      * Radius of the test cylinder
      */
@@ -141,5 +143,15 @@ public class CylinderTests {
         assertEquals(normalToTopBase, CYLINDER.getNormal(pointMidTopBase), ERROR_INCORRECT_RESULT);
         // BV04: Point on center of bottom base
         assertEquals(normalToBottomBase, CYLINDER.getNormal(pointMidBottomBase), ERROR_INCORRECT_RESULT);
+    }
+
+    /**
+     * Test method for {@link Cylinder#findIntersections(Ray)}
+     */
+    @Test
+    void testFindIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+
+        // =============== Boundary Values Tests ==================
     }
 }
