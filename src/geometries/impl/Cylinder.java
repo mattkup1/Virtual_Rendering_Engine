@@ -70,72 +70,67 @@ public final class Cylinder extends Tube {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = new LinkedList<>();
+        List<Point> intersections = null;
 
         final Ray axisRay = this._axis;
         final Point p0 = axisRay.getOrigin();
         final Vector v = axisRay.getDirection();
+        final Vector dir = ray.getDirection();
 
-        // grab intersections from the infinite tube first
+        // Check the infinite tube first
         List<Point> tubeIntersections = super.findIntersections(ray);
 
         if (tubeIntersections != null) {
             for (Point p : tubeIntersections) {
-                // skip if the point is exactly at the axis origin to avoid zero vector
-                if (p.equals(p0)) {
-                    continue;
-                }
+                // Prevent zero-vector exception
+                if (p.equals(p0)) continue;
 
-                // project the point onto the axis to see where it lands height-wise
+                // Verify the point is within the cylinder's height
                 double tProj = alignZero(p.subtract(p0).dotProduct(v));
-
-                // keep it only if it falls strictly inside the cylinder bounds
                 if (tProj > 0 && tProj < _height) {
+                    if (intersections == null) intersections = new LinkedList<>();
                     intersections.add(p);
                 }
             }
         }
 
-        // check the bottom cap (at p0)
-        addCapIntersection(ray, p0, v, _radius, intersections);
+        // Check bottom and top caps
+        double nv = alignZero(v.dotProduct(dir));
 
-        // check the top cap (at p0 + v * height)
-        Point topCenter = p0.add(v.scale(_height));
-        addCapIntersection(ray, topCenter, v, _radius, intersections);
+        // Proceed only if the ray is not parallel to the caps
+        if (nv != 0) {
 
-        return intersections.isEmpty() ? null : intersections;
+            // Bottom cap
+            if (!ray.getOrigin().equals(p0)) {
+                double tBottom = alignZero(v.dotProduct(p0.subtract(ray.getOrigin())) / nv);
+                if (tBottom > 0) {
+                    Point pBottom = ray.getPoint(tBottom);
+                    // Verify the point is inside the cap's radius
+                    if (alignZero(pBottom.distanceSquared(p0)) <= _radius * _radius) {
+                        if (intersections == null) intersections = new LinkedList<>();
+                        intersections.add(pBottom);
+                    }
+                }
+            }
+
+            // Top cap
+            Point topCenter = p0.add(v.scale(_height));
+            if (!ray.getOrigin().equals(topCenter)) {
+                double tTop = alignZero(v.dotProduct(topCenter.subtract(ray.getOrigin())) / nv);
+                if (tTop > 0) {
+                    Point pTop = ray.getPoint(tTop);
+                    // Verify the point is inside the cap's radius
+                    if (alignZero(pTop.distanceSquared(topCenter)) <= _radius * _radius) {
+                        if (intersections == null) intersections = new LinkedList<>();
+                        intersections.add(pTop);
+                    }
+                }
+            }
+        }
+
+        return intersections;
     }
 
-    private void addCapIntersection(Ray ray, Point capCenter, Vector capNormal, double radius, List<Point> intersections) {
-        final Vector dir = ray.getDirection();
-
-        double nv = alignZero(capNormal.dotProduct(dir));
-        // ray is parallel to the cap
-        if (nv == 0) {
-            return;
-        }
-
-        // avoid zero vector if ray starts exactly at the cap center
-        if (ray.getOrigin().equals(capCenter)) {
-            return;
-        }
-
-        // calculate t for the plane intersection
-        double t = alignZero(capNormal.dotProduct(capCenter.subtract(ray.getOrigin())) / nv);
-
-        // ignore points behind the ray
-        if (t <= 0) {
-            return;
-        }
-
-        Point p = ray.getPoint(t);
-
-        // verify the point is actually within the cap's radius
-        double dSquared = alignZero(p.distanceSquared(capCenter));
-        if (dSquared <= radius * radius) {
-            intersections.add(p);
-        }
-    }
 
     @Override
     public String toString() {
