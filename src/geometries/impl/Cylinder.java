@@ -72,10 +72,9 @@ public final class Cylinder extends Tube {
     public List<Point> findIntersections(Ray ray) {
         List<Point> intersections = null;
 
-        final Ray axisRay = this._axis;
-        final Point p0 = axisRay.getOrigin();
-        final Vector v = axisRay.getDirection();
-        final Vector dir = ray.getDirection();
+        final Point TubeOrig = this._axis.getOrigin();
+        final Vector TubeDir = this._axis.getDirection();
+        final Vector RayDir = ray.getDirection();
 
         // Check the infinite tube first
         List<Point> tubeIntersections = super.findIntersections(ray);
@@ -83,30 +82,31 @@ public final class Cylinder extends Tube {
         if (tubeIntersections != null) {
             for (Point p : tubeIntersections) {
                 // Prevent zero-vector exception
-                if (p.equals(p0)) continue;
+                if (p.equals(TubeOrig)) continue;
 
                 // Verify the point is within the cylinder's height
-                double tProj = alignZero(p.subtract(p0).dotProduct(v));
+                double tProj = alignZero(p.subtract(TubeOrig).dotProduct(TubeDir));
                 if (tProj > 0 && tProj < _height) {
+                    // Initialize the intersections result list if needed
                     if (intersections == null) intersections = new LinkedList<>();
+                    // Add the intersection point to the list
                     intersections.add(p);
                 }
             }
         }
 
         // Check bottom and top caps
-        double nv = alignZero(v.dotProduct(dir));
+        double nv = alignZero(TubeDir.dotProduct(RayDir));
 
         // Proceed only if the ray is not parallel to the caps
         if (nv != 0) {
-
             // Bottom cap
-            if (!ray.getOrigin().equals(p0)) {
-                double tBottom = alignZero(v.dotProduct(p0.subtract(ray.getOrigin())) / nv);
+            if (!ray.getOrigin().equals(TubeOrig)) {
+                double tBottom = alignZero(TubeDir.dotProduct(TubeOrig.subtract(ray.getOrigin())) / nv);
                 if (tBottom > 0) {
                     Point pBottom = ray.getPoint(tBottom);
                     // Verify the point is inside the cap's radius
-                    if (alignZero(pBottom.distanceSquared(p0)) <= _radius * _radius) {
+                    if (alignZero(pBottom.distanceSquared(TubeOrig)) <= _radius * _radius) {
                         if (intersections == null) intersections = new LinkedList<>();
                         intersections.add(pBottom);
                     }
@@ -114,9 +114,9 @@ public final class Cylinder extends Tube {
             }
 
             // Top cap
-            Point topCenter = p0.add(v.scale(_height));
+            Point topCenter = TubeOrig.add(TubeDir.scale(_height));
             if (!ray.getOrigin().equals(topCenter)) {
-                double tTop = alignZero(v.dotProduct(topCenter.subtract(ray.getOrigin())) / nv);
+                double tTop = alignZero(TubeDir.dotProduct(topCenter.subtract(ray.getOrigin())) / nv);
                 if (tTop > 0) {
                     Point pTop = ray.getPoint(tTop);
                     // Verify the point is inside the cap's radius
