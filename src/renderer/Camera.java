@@ -81,6 +81,32 @@ public class Camera implements Cloneable {
         /**
          * Initialize camera object
          */
-        private final Camera camera = new Camera();
+        private final Camera _camera = new Camera();
+
+        public Builder setLocation(Point p0) {}
+
+        public Builder setDirection(Vector vTo, Vector vUp) {}
+
+        public Builder setDirection(Point, Vector) {}
+
+        public Builder setDirection(Point) {}
+
+        public Builder setVpDistance(double distance) {}
+
+        public Builder setVpSize(double, double) {}
+
+        public Builder setResolution(int, int) {}
+
+        private Builder calcVectors() {}
+
+        private Builder calcVpCenter() {}
+
+        private Builder checkAndSetResolution() {}
+
+        private Builder checkAndSetOrientation() {}
+
+        private Builder checkAndSetViewPlane() {}
+
+        public Camera build() {}
     }
 }
