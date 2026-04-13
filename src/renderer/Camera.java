@@ -63,6 +63,18 @@ public class Camera implements Cloneable {
      * Empty camera constructor
      */
     private Camera() {
+//        _p0 = Point.ZERO;
+//        _vTo = Vector.AXIS_Z;
+//        _vUp = Vector.AXIS_Y;
+//        _vRight = Vector.AXIS_X;
+//        _width = 0;
+//        _height = 0;
+//        _distance = 0;
+//        _nX = 0;
+//        _nY = 0;
+//        _vpCenter = Point.ZERO;
+//        pixelWidth = 0;
+//        pixelHeight = 0;
     }
 
     /**
@@ -83,30 +95,56 @@ public class Camera implements Cloneable {
          */
         private final Camera _camera = new Camera();
 
-        public Builder setLocation(Point p0) {}
+        public Builder setLocation(Point p0) {
+            return null;
+        }
 
-        public Builder setDirection(Vector vTo, Vector vUp) {}
+        public Builder setDirection(Vector vTo, Vector vUp) {
+            return null;
+        }
 
-        public Builder setDirection(Point, Vector) {}
+        public Builder setDirection(Point p, Vector v) {
+            return null;
+        }
 
-        public Builder setDirection(Point) {}
+        public Builder setDirection(Point p) {
+            return null;
+        }
 
-        public Builder setVpDistance(double distance) {}
+        public Builder setVpDistance(double distance) {
+            return null;
+        }
 
-        public Builder setVpSize(double, double) {}
+        public Builder setVpSize(double d1, double d2) {
+            return null;
+        }
 
-        public Builder setResolution(int, int) {}
+        public Builder setResolution(int i1, int i2) {
+            return null;
+        }
 
-        private Builder calcVectors() {}
+        private Builder calcVectors() {
+            return null;
+        }
 
-        private Builder calcVpCenter() {}
+        private Builder calcVpCenter() {
+            return null;
+        }
 
-        private Builder checkAndSetResolution() {}
+        private Builder checkAndSetResolution() {
+            return null;
+        }
 
-        private Builder checkAndSetOrientation() {}
+        private Builder checkAndSetOrientation() {
+            return null;
+        }
 
-        private Builder checkAndSetViewPlane() {}
+        private Builder checkAndSetViewPlane() {
+            return null;
+        }
 
-        public Camera build() {}
+        public Camera build() {
+            return _camera;
+        }
     }
 }

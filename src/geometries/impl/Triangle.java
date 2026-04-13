@@ -6,6 +6,7 @@ import primitives.Ray;
 import primitives.Vector;
 
 import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 /**
  * Represents a triangle in a 3D Cartesian coordinate system.
@@ -36,45 +37,101 @@ public final class Triangle extends Polygon {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        // Get triangle vertices and ray origin
-        final Point A = _vertices.get(0),
-                B = _vertices.get(1),
-                C = _vertices.get(2),
-                RayOrigin = ray.getOrigin();
+        // Setup basic components of the ray and triangle
+        Point p0 = ray.getOrigin();
+        Vector rayDir = ray.getDirection();
+        Point v0 = _vertices.get(0);
+        Point v1 = _vertices.get(1);
+        Point v2 = _vertices.get(2);
 
-        // Get the ray's intersection point with the triangle's plane
-        final Plane triPlane = new Plane(A, B, C);
-        final var planeIntersection = triPlane.findIntersections(ray);
-        if (planeIntersection == null)
-            return null;
+        // Find vectors for two edges sharing the first vertex (v0)
+        Vector edge1 = v1.subtract(v0);
+        Vector edge2 = v2.subtract(v0);
 
-        // Get the vectors from the ray origin to the triangle vertices
-        final Vector v1 = A.subtract(RayOrigin);
-        final Vector v2 = B.subtract(RayOrigin);
-        final Vector v3 = C.subtract(RayOrigin);
+        // Begin calculating the determinant.
+        // The algorithm treats the intersection as a system of linear equations.
+        // 'pvec' is a helper vector used for the triple product (scalar triple product).
+        Vector pvec = rayDir.crossProduct(edge2);
+        double det = edge1.dotProduct(pvec);
 
-        // Get the normalized normal vectors to the planes represented by each 2 of the above vectors
-        // together with the ray origin
-        final Vector n1 = v1.crossProduct(v2).normalize();
-        final Vector n2 = v2.crossProduct(v3).normalize();
-        final Vector n3 = v3.crossProduct(v1).normalize();
+        // If the determinant is zero, the ray lies in the plane of the triangle
+        // or is parallel to it.
+        if (isZero(det)) return null;
 
-        // Get the ray direction vector
-        final Vector rayDirection = ray.getDirection();
+        // We pre-calculate the inverse determinant to replace divisions with multiplications (faster)
+        double invDet = 1.0 / det;
 
-        // Get the dot product of each pair of the above normal vectors
-        final double s1 = alignZero(rayDirection.dotProduct(n1)),
-                s2 = alignZero(rayDirection.dotProduct(n2)),
-                s3 = alignZero(rayDirection.dotProduct(n3));
+        // Calculate the distance from v0 to the ray origin
+        Vector tvec = p0.subtract(v0);
 
-        // If all dot products produce the same sign - the intersection point is inside the triangle
-        // If one or more of the dot products produce zero, then the ray intersects the triangle edge (or vertex)
-        if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
-            return planeIntersection;
-        }
+        // Calculate the 'u' barycentric coordinate.
+        // This represents the weight of vertex v1.
+        double u = tvec.dotProduct(pvec) * invDet;
 
-        return null;
+        // If u < 0 or u > 1, the intersection point is outside the triangle
+        if (u < 0 || u > 1 || isZero(u)) return null;
+
+        // Calculate the 'w' barycentric coordinate.
+        // 'qvec' is another helper vector for the second part of the system.
+        Vector qvec = tvec.crossProduct(edge1);
+
+        // This represents the weight of vertex v2.
+        double w = rayDir.dotProduct(qvec) * invDet;
+
+        // If w < 0 or u + w > 1, the point is outside the triangle.
+        // (u + v + w must equal 1, and since u+w is the portion of the other
+        // two vertices, their sum cannot exceed 1).
+        if (w < 0 || isZero(w) || u + w > 1 || isZero(1 - u - w)) return null;
+
+        // Calculate t - the distance from the ray origin to the intersection point.
+        double t = edge2.dotProduct(qvec) * invDet;
+
+        // If t is negative or zero, the intersection is behind the ray origin.
+        return alignZero(t) <= 0 ? null : List.of(ray.getPoint(t));
     }
+
+// baricentric algorithm - checks for intersection with plane first
+//    @Override
+//    public List<Point> findIntersections(Ray ray) {
+//        // Get triangle vertices and ray origin
+//        final Point A = _vertices.get(0),
+//                B = _vertices.get(1),
+//                C = _vertices.get(2),
+//                RayOrigin = ray.getOrigin();
+//
+//        // Get the ray's intersection point with the triangle's plane
+//        final Plane triPlane = new Plane(A, B, C);
+//        final var planeIntersection = triPlane.findIntersections(ray);
+//        if (planeIntersection == null)
+//            return null;
+//
+//        // Get the vectors from the ray origin to the triangle vertices
+//        final Vector v1 = A.subtract(RayOrigin);
+//        final Vector v2 = B.subtract(RayOrigin);
+//        final Vector v3 = C.subtract(RayOrigin);
+//
+//        // Get the normalized normal vectors to the planes represented by each 2 of the above vectors
+//        // together with the ray origin
+//        final Vector n1 = v1.crossProduct(v2).normalize();
+//        final Vector n2 = v2.crossProduct(v3).normalize();
+//        final Vector n3 = v3.crossProduct(v1).normalize();
+//
+//        // Get the ray direction vector
+//        final Vector rayDirection = ray.getDirection();
+//
+//        // Get the dot product of each pair of the above normal vectors
+//        final double s1 = alignZero(rayDirection.dotProduct(n1)),
+//                s2 = alignZero(rayDirection.dotProduct(n2)),
+//                s3 = alignZero(rayDirection.dotProduct(n3));
+//
+//        // If all dot products produce the same sign - the intersection point is inside the triangle
+//        // If one or more of the dot products produce zero, then the ray intersects the triangle edge (or vertex)
+//        if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
+//            return planeIntersection;
+//        }
+//
+//        return null;
+//    }
 
     @Override
     public String toString() {
