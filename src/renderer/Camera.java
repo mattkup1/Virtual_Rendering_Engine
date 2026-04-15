@@ -1,7 +1,10 @@
 package renderer;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+
+import static primitives.Util.isZero;
 
 /**
  * Camera class representing a camera in a 3D space
@@ -13,51 +16,51 @@ public class Camera implements Cloneable {
     /**
      * {@link Point} representing the camera location
      */
-    private final Point _p0;
+    private Point _p0;
     /**
      * {@link Vector} representing the direction in which the camera is pointing
      */
-    private final Vector _vTo;
+    private Vector _vTo;
     /**
      * {@link Vector} representing the upward direction relative to the camera
      */
-    private final Vector _vUp;
+    private Vector _vUp;
     /**
      * {@link Vector} representing the right hand side direction relative to the camera
      */
-    private final Vector _vRight;
+    private Vector _vRight;
     /**
      * View plane width
      */
-    private final double _width;
+    private double _width;
     /**
      * View plane height
      */
-    private final double _height;
+    private double _height;
     /**
      * Distance from the camera to the view plane
      */
-    private final double _distance;
+    private double _distance;
     /**
      * Number of pixel columns in the view plane
      */
-    private final int _nX;
+    private int _nX;
     /**
      * Number of pixel rows in the view plane
      */
-    private final int _nY;
+    private int _nY;
     /**
      * {@link Point} representing the center of the view plane
      */
-    private final Point _vpCenter;
+    private Point _vpCenter;
     /**
      * Individual pixel width
      */
-    private final double pixelWidth;
+    private double pixelWidth;
     /**
      * Individual pixel height
      */
-    private final double pixelHeight;
+    private double pixelHeight;
 
     /**
      * Empty camera constructor
@@ -86,6 +89,10 @@ public class Camera implements Cloneable {
         return new Builder();
     }
 
+    public Ray constructRay(int column, int row) {
+        return null;
+    }
+
     /**
      * Camera builder class
      */
@@ -95,16 +102,52 @@ public class Camera implements Cloneable {
          */
         private final Camera _camera = new Camera();
 
+        /**
+         * Set the camera location
+         *
+         * @param p0 the camera location
+         * @return the builder object
+         */
         public Builder setLocation(Point p0) {
-            return null;
+            _camera._p0 = p0;
+            return this;
         }
 
+        /**
+         * Set the camera direction
+         *
+         * @param vTo the direction in which the camera is pointing
+         * @param vUp the upward direction relative to the camera
+         * @return the builder object
+         * @throws IllegalArgumentException if the vectors are not orthogonal
+         */
         public Builder setDirection(Vector vTo, Vector vUp) {
-            return null;
+            if (!isZero(vTo.dotProduct(vUp)))
+                throw new IllegalArgumentException("vTo and vUp must be orthogonal");
+
+            _camera._vTo = vTo;
+            _camera._vUp = vUp;
+
+            return this;
         }
 
-        public Builder setDirection(Point p, Vector v) {
-            return null;
+        /**
+         * Initializes the camera direction vectors based on a a given target point and up vector
+         *
+         * @param pTarget the target point at which the camera is pointing
+         * @param vUp     the upward direction vector relative to the camera
+         * @return the builder object
+         */
+        public Builder setDirection(Point pTarget, Vector vUp) {
+            final Vector vTo = pTarget.subtract(_camera._p0);
+            if (!isZero(vTo.dotProduct(vUp)))
+                throw new IllegalArgumentException("vTo and vUp must be orthogonal");
+
+            _camera._vTo = vTo.normalize();
+            _camera._vUp = vUp.normalize();
+            _camera._vRight = _camera._vUp.crossProduct(_camera._vTo).normalize();
+
+            return this;
         }
 
         public Builder setDirection(Point p) {
