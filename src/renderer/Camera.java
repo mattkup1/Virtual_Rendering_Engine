@@ -150,10 +150,31 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        /**
+         * Sets the camera direction based on a single point
+         * The upward direction is assumed to be the y axis
+         *
+         * @param p the point at which the camera is pointing
+         * @return the builder object
+         * @throws IllegalArgumentException if the camera direction and the y axis are not orthogonal
+         */
         public Builder setDirection(Point p) {
-            return null;
+            final Vector vTo = p.subtract(_camera._p0);
+            final Vector vUp = Vector.AXIS_Y
+            if (!isZero(vTo.dotProduct(vUp)))
+                throw new IllegalArgumentException("Camera direction and the y axis must be orthogonal");
+
+            _camera._vTo = vTo.normalize();
+            _camera._vUp = vUp;
+            _camera._vRight = vTo.crossProduct(vUp).normalize();
         }
 
+        /**
+         * Set the distance between the camera and the view plane
+         *
+         * @param distance the distance
+         * @return the builder objects
+         */
         public Builder setVpDistance(double distance) {
             return null;
         }
