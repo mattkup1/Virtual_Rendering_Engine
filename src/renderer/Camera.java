@@ -44,11 +44,11 @@ public class Camera implements Cloneable {
     /**
      * Number of pixel columns in the view plane
      */
-    private int _nX;
+    private int _nX = 1;
     /**
      * Number of pixel rows in the view plane
      */
-    private int _nY;
+    private int _nY = 1;
     /**
      * {@link Point} representing the center of the view plane
      */
@@ -65,20 +65,7 @@ public class Camera implements Cloneable {
     /**
      * Empty camera constructor
      */
-    private Camera() {
-//        _p0 = Point.ZERO;
-//        _vTo = Vector.AXIS_Z;
-//        _vUp = Vector.AXIS_Y;
-//        _vRight = Vector.AXIS_X;
-//        _width = 0;
-//        _height = 0;
-//        _distance = 0;
-//        _nX = 0;
-//        _nY = 0;
-//        _vpCenter = Point.ZERO;
-//        pixelWidth = 0;
-//        pixelHeight = 0;
-    }
+    private Camera() {}
 
     /**
      * Camera builder getter
@@ -89,7 +76,7 @@ public class Camera implements Cloneable {
         return new Builder();
     }
 
-    public Ray constructRay(int column, int row) {
+    public Ray constructRay(int xIndex, int yIndex) {
         return null;
     }
 
