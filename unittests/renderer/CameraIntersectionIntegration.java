@@ -1,0 +1,124 @@
+package renderer;
+
+import geometries.api.Intersectable;
+import geometries.impl.Sphere;
+import org.junit.jupiter.api.Test;
+import primitives.Point;
+import primitives.Vector;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CameraIntersectionIntegration {
+
+    /**
+     * Default constructor to satisfy Javadoc generator.
+     */
+    CameraIntersectionIntegration() { /* to satisfy Javadoc generator */ }
+
+    /**
+     * Default vTo vector used in test cameras
+     */
+    private static final Vector V_TO = new Vector(0, 0, -1);
+    /**
+     * Default view-plane distance used in tests.
+     */
+    private static final double VP_DISTANCE = 1d;
+
+    /**
+     * Default number of pixel columns in view plane
+     */
+    private static final int nX = 3;
+
+    /**
+     * Default number of pixel rows in view plane
+     */
+    private static final int nY = 3;
+    /**
+     * Default view plane width
+     */
+    private static final double width = 3d;
+
+    /**
+     * Default view plane height
+     */
+    private static final double height = 3d;
+
+    /**
+     * Error message for invalid argument in camera build.
+     */
+    private static final String ERR_INCORRECT_NUM_INTERSECTIONS = "ERROR: Incorrect number of intersections";
+
+    /**
+     * Creates a basic builder with valid location and view-plane distance.
+     *
+     * @return initialized camera builder
+     */
+    private Camera.Builder baseBuilder() {
+        return Camera.getBuilder()
+                .setDirection(V_TO, Vector.AXIS_Y)
+                .setVpDistance(VP_DISTANCE)
+                .setResolution(nX, nY)
+                .setVpSize(width, height);
+    }
+
+    /**
+     * Helper function to assert correct intersections count in test cases
+     *
+     * @param camera        the camera
+     * @param intersectable the intersectable geometric shape
+     * @param expectedCount the expected number of intersection points between the camera rays and the intersectable
+     * @param errorMessage  error message in case of test failure
+     */
+    private void assertIntersectionsCount(Camera camera, Intersectable intersectable, int expectedCount, String errorMessage) {
+        int count = 0;
+        for (int i = 0; i < nX; ++i) {
+            for (int j = 0; j < nY; ++j) {
+                var intersections = intersectable.findIntersections(camera.constructRay(i, j));
+                if (intersections != null)
+                    count += intersections.size();
+            }
+        }
+
+        assertEquals(count, expectedCount, errorMessage);
+    }
+
+    @Test
+    void testCameraRaySphereIntegration() {
+        final Camera camera1 = baseBuilder()
+                .setLocation(Point.ZERO)
+                .build();
+
+        final Camera camera2 = baseBuilder()
+                .setLocation(new Point(0, 0, 0.5))
+                .build();
+
+        // TC01: Intersection through center pixel only - 2 intersection points
+        final Sphere sphereTC01 = new Sphere(new Point(0, 0, -3), 1d);
+        assertIntersectionsCount(camera1, sphereTC01, 2, ERR_INCORRECT_NUM_INTERSECTIONS);
+
+        // TC02: All pixel rays intersect the sphere twice - 18 intersection points
+        final Sphere sphereTC02 = new Sphere(new Point(0, 0, -2.5), 2.5);
+        assertIntersectionsCount(camera2, sphereTC02, 18, ERR_INCORRECT_NUM_INTERSECTIONS);
+
+        // TC03: Intersection through non-corner pixels only - 10 intersection points
+        final Sphere sphereTC03 = new Sphere(new Point(0, 0, -2), 2d);
+        assertIntersectionsCount(camera2, sphereTC03, 10, ERR_INCORRECT_NUM_INTERSECTIONS);
+
+        // TC04: Camera inside sphere - 9 Intersection points
+        final Sphere sphereTC04 = new Sphere(new Point(1, 0, 0), 4d);
+        assertIntersectionsCount(camera1, sphereTC04, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
+
+        // TC05:
+
+    }
+
+    @Test
+    void testCameraRayPlaneIntegration() {
+        // 3 cases
+    }
+
+    @Test
+    void testCameraRayTriangleIntegration() {
+        // 2 Cases
+    }
+}
