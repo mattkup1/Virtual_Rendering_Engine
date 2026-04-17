@@ -5,6 +5,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import static primitives.Util.isZero;
+
 /**
  * Camera class representing a camera in a 3D space
  *
@@ -77,26 +79,36 @@ public class Camera implements Cloneable {
     }
 
     /**
-     * Construct a ray from the camera to a given pixel in the view plane
+     * Construct a {@link Ray} from the camera to a given pixel in the view plane
      *
-     * @param xIndex
-     * @param yIndex
-     * @return
+     * @param xIndex the pixel column number (zero indexed)
+     * @param yIndex the pixel row number (zero indexed)
+     * @return the ray
      */
     public Ray constructRay(int xIndex, int yIndex) {
         final double xJ = (xIndex - (_nX - 1) / 2.0) * _pixelWidth;
         final double yI = -(yIndex - (_nY - 1) / 2.0) * _pixelHeight;
 
-        final Point intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ)).add(this._vUp.scale(yI));
-        return new Ray(this._p0, intersectionPoint.subtract(this._p0));
+        if (isZero(xJ) && isZero(yI))
+            return new Ray(this._p0, this._vTo);
+
+        Point intersectionPoint;
+
+        if (isZero(xJ))
+            intersectionPoint = this._vpCenter.add(this._vUp.scale(yI));
+        else if (isZero(yI))
+            intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ));
+        else intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ)).add(this._vUp.scale(yI));
+
+        return new Ray(this._p0, intersectionPoint.subtract(this._p0).normalize());
     }
 
     /**
-     * Camera builder class
+     * {@link Camera} builder class
      */
     public static class Builder {
         /**
-         * Initialize camera object
+         * Initialize {@link Camera} object
          */
         private final Camera _camera = new Camera();
         /**
@@ -105,7 +117,7 @@ public class Camera implements Cloneable {
         private Point _pTarget;
 
         /**
-         * Set the camera location
+         * Set the {@link Camera} location
          *
          * @param p0 the camera location
          * @return the builder object
@@ -116,7 +128,7 @@ public class Camera implements Cloneable {
         }
 
         /**
-         * Set the camera direction
+         * Set the {@link Camera} direction
          *
          * @param vTo the direction in which the camera is pointing
          * @param vUp the upward direction relative to the camera
@@ -132,7 +144,7 @@ public class Camera implements Cloneable {
         }
 
         /**
-         * Initializes the camera direction vectors based on a given target point and up vector
+         * Initializes the {@link Camera} direction vectors based on a given target point and up vector
          *
          * @param pTarget the target point at which the camera is pointing
          * @param vUp     the upward direction vector relative to the camera
@@ -146,7 +158,7 @@ public class Camera implements Cloneable {
         }
 
         /**
-         * Sets the camera direction based on a single point
+         * Sets the {@link Camera} direction based on a single point
          * The upward direction is assumed to be the y axis
          *
          * @param p the point at which the camera is pointing
@@ -206,8 +218,8 @@ public class Camera implements Cloneable {
             if (_camera._vTo == null)
                 _camera._vTo = this._pTarget.subtract(_camera._p0).normalize();
 
-            _camera._vRight = _camera._vUp.crossProduct(_camera._vTo).normalize();
-            _camera._vUp = _camera._vTo.crossProduct(_camera._vRight).normalize();
+            _camera._vRight = _camera._vTo.crossProduct(_camera._vUp).normalize();
+            _camera._vUp = _camera._vRight.crossProduct(_camera._vTo).normalize();
         }
 
         /**
