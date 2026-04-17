@@ -113,9 +113,6 @@ public class Camera implements Cloneable {
          * @throws IllegalArgumentException if the vectors are not orthogonal
          */
         public Builder setDirection(Vector vTo, Vector vUp) {
-//            if (!isZero(vTo.dotProduct(vUp)))
-//                throw new IllegalArgumentException("vTo and vUp must be orthogonal");
-
             _camera._vTo = vTo.normalize();
             _camera._vUp = vUp.normalize();
             this._pTarget = null;
@@ -132,14 +129,7 @@ public class Camera implements Cloneable {
          */
         public Builder setDirection(Point pTarget, Vector vUp) {
             this._pTarget = pTarget;
-//            final Vector vTo = pTarget.subtract(_camera._p0);
-//            if (!isZero(vTo.dotProduct(vUp)))
-//                throw new IllegalArgumentException("vTo and vUp must be orthogonal");
-
-//            _camera._vTo = vTo.normalize();
             _camera._vUp = vUp.normalize();
-            this._pTarget = null;
-//            _camera._vRight = _camera._vUp.crossProduct(_camera._vTo).normalize();
 
             return this;
         }
@@ -153,17 +143,10 @@ public class Camera implements Cloneable {
          * @throws IllegalArgumentException if the camera direction and the y axis are not orthogonal
          */
         public Builder setDirection(Point p) {
-//            final Vector vTo = p.subtract(_camera._p0);
             this._pTarget = p;
-            final Vector vUp = Vector.AXIS_Y;
+            _camera._vUp = Vector.AXIS_Y;
 
             return this;
-//            if (!isZero(vTo.dotProduct(vUp)))
-//                throw new IllegalArgumentException("Camera direction and the y axis must be orthogonal");
-
-//            _camera._vTo = vTo.normalize();
-//            _camera._vUp = vUp;
-//            _camera._vRight = vTo.crossProduct(vUp).normalize();
         }
 
         /**
@@ -207,7 +190,6 @@ public class Camera implements Cloneable {
 
         /**
          * Helper function to calculate the camera direction vectors
-         *
          */
         private void calcVectors() {
             if (_camera._vTo == null)
@@ -217,9 +199,11 @@ public class Camera implements Cloneable {
             _camera._vUp = _camera._vTo.crossProduct(_camera._vRight).normalize();
         }
 
+        /**
+         * Helper function to calculate the view plane center point
+         */
         private void calcVpCenter() {
             _camera._vpCenter = _camera._p0.add(_camera._vTo.scale(_camera._distance));
-
         }
 
         /**
@@ -251,15 +235,17 @@ public class Camera implements Cloneable {
         }
 
         /**
+         * Helper function to validate the width and height of the view plane and compute the pixel measurements
          *
-         *
+         * @throws IllegalArgumentException if the view plane width or height are non-positive or if the distance
+         *                                  between the camera and the view plane is non-positive
          */
         private void checkViewPlane() {
-            if (_camera._width < 0)
-                throw new IllegalArgumentException("view plane must be positive");
-            if (_camera._height < 0)
+            if (_camera._width <= 0)
+                throw new IllegalArgumentException("view plane width must be positive");
+            if (_camera._height <= 0)
                 throw new IllegalArgumentException("view plane height must be positive");
-            if (_camera._distance < 0)
+            if (_camera._distance <= 0)
                 throw new IllegalArgumentException("distance must be positive");
 
             calcVpCenter();
@@ -267,6 +253,13 @@ public class Camera implements Cloneable {
             _camera._pixelHeight = _camera._height / _camera._nY;
         }
 
+        /**
+         * Final camera build method
+         *
+         * @return the initialized camera object
+         * @throws IllegalArgumentException if illegal camera parameters are given
+         * @throws MissingResourceException if any crucial camera parameters are missing
+         */
         public Camera build() {
             checkResolution();
             checkLocationAndDirection();
@@ -279,12 +272,3 @@ public class Camera implements Cloneable {
         }
     }
 }
-
-
-//Camera camera = Camera.getBuilder()
-//        .setLocation(...)
-//        .setDirection(...)
-//    .setVpSize(...)
-//    .setVpDistance(...)
-//    .setResolution(...)
-//    .build();
