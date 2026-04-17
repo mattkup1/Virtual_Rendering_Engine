@@ -76,8 +76,19 @@ public class Camera implements Cloneable {
         return new Builder();
     }
 
+    /**
+     * Construct a ray from the camera to a given pixel in the view plane
+     *
+     * @param xIndex
+     * @param yIndex
+     * @return
+     */
     public Ray constructRay(int xIndex, int yIndex) {
-        return null;
+        final double xJ = (xIndex - (_nX - 1) / 2.0) * _pixelWidth;
+        final double yI = -(yIndex - (_nY - 1) / 2.0) * _pixelHeight;
+
+        final Point intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ)).add(this._vUp.scale(yI));
+        return new Ray(this._p0, intersectionPoint.subtract(this._p0));
     }
 
     /**
