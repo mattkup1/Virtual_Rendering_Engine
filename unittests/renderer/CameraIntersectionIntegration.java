@@ -1,6 +1,7 @@
 package renderer;
 
 import geometries.api.Intersectable;
+import geometries.impl.Plane;
 import geometries.impl.Sphere;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
@@ -49,6 +50,13 @@ public class CameraIntersectionIntegration {
     private static final String ERR_INCORRECT_NUM_INTERSECTIONS = "ERROR: Incorrect number of intersections";
 
     /**
+     * Default camera1 located at the origin, used in the integration test cases.
+     */
+    final Camera camera1 = baseBuilder()
+            .setLocation(Point.ZERO)
+            .build();
+
+    /**
      * Creates a basic builder with valid location and view-plane distance.
      *
      * @return initialized camera builder
@@ -84,9 +92,6 @@ public class CameraIntersectionIntegration {
 
     @Test
     void testCameraRaySphereIntegration() {
-        final Camera camera1 = baseBuilder()
-                .setLocation(Point.ZERO)
-                .build();
 
         final Camera camera2 = baseBuilder()
                 .setLocation(new Point(0, 0, 0.5))
@@ -108,13 +113,26 @@ public class CameraIntersectionIntegration {
         final Sphere sphereTC04 = new Sphere(new Point(1, 0, 0), 4d);
         assertIntersectionsCount(camera1, sphereTC04, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC05:
+        // TC05: Camera is in front the sphere - 0 Intersection points
+        final Sphere sphereTC05 = new Sphere(new Point(0,0,1) , 0.5);
+        assertIntersectionsCount(camera1, sphereTC05, 0, ERR_INCORRECT_NUM_INTERSECTIONS);
 
     }
 
     @Test
     void testCameraRayPlaneIntegration() {
-        // 3 cases
+
+        // TC01: All pixel rays intersect the plane - 9 Intersection points
+        final Plane planeTC01 = new Plane(new Point(0,0,-2), Vector.AXIS_Z);
+        assertIntersectionsCount(camera1 ,planeTC01, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
+
+        // TC02: All pixel rays intersect the tilted plane - 9 Intersection points
+        final Plane planeTC02 = new Plane(new Point(0,0,-2), new Vector(0,1,-2));
+        assertIntersectionsCount(camera1, planeTC02, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
+
+        // TC03: Only 6 pixel rays intersect the tilted plane - 6 Intersection points
+        final Plane planeTC03 = new Plane(new Point(0,0,-2), new Vector(0,2,-1));
+        assertIntersectionsCount(camera1, planeTC03, 6, ERR_INCORRECT_NUM_INTERSECTIONS);
     }
 
     @Test
