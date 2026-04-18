@@ -46,9 +46,9 @@ public class CameraIntersectionIntegration {
     private static final double height = 3d;
 
     /**
-     *
+     * Common point at z = -2 used for plane and sphere integration test cases.
      */
-    Point P00N2 = new Point(0,0,-2);
+    private static final Point P00N2 = new Point(0,0,-2);
     /**
      * Error message for invalid argument in camera build.
      */
