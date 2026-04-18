@@ -3,6 +3,7 @@ package renderer;
 import geometries.api.Intersectable;
 import geometries.impl.Plane;
 import geometries.impl.Sphere;
+import geometries.impl.Triangle;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Vector;
@@ -44,6 +45,10 @@ public class CameraIntersectionIntegration {
      */
     private static final double height = 3d;
 
+    /**
+     *
+     */
+    Point P00N2 = new Point(0,0,-2);
     /**
      * Error message for invalid argument in camera build.
      */
@@ -106,7 +111,7 @@ public class CameraIntersectionIntegration {
         assertIntersectionsCount(camera2, sphereTC02, 18, ERR_INCORRECT_NUM_INTERSECTIONS);
 
         // TC03: Intersection through non-corner pixels only - 10 intersection points
-        final Sphere sphereTC03 = new Sphere(new Point(0, 0, -2), 2d);
+        final Sphere sphereTC03 = new Sphere(P00N2, 2d);
         assertIntersectionsCount(camera2, sphereTC03, 10, ERR_INCORRECT_NUM_INTERSECTIONS);
 
         // TC04: Camera inside sphere - 9 Intersection points
@@ -123,20 +128,31 @@ public class CameraIntersectionIntegration {
     void testCameraRayPlaneIntegration() {
 
         // TC01: All pixel rays intersect the plane - 9 Intersection points
-        final Plane planeTC01 = new Plane(new Point(0,0,-2), Vector.AXIS_Z);
+        final Plane planeTC01 = new Plane(P00N2, Vector.AXIS_Z);
         assertIntersectionsCount(camera1 ,planeTC01, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
 
         // TC02: All pixel rays intersect the tilted plane - 9 Intersection points
-        final Plane planeTC02 = new Plane(new Point(0,0,-2), new Vector(0,1,-2));
+        final Plane planeTC02 = new Plane(P00N2, new Vector(0,1,-2));
         assertIntersectionsCount(camera1, planeTC02, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
 
         // TC03: Only 6 pixel rays intersect the tilted plane - 6 Intersection points
-        final Plane planeTC03 = new Plane(new Point(0,0,-2), new Vector(0,2,-1));
+        final Plane planeTC03 = new Plane(P00N2, new Vector(0,2,-1));
         assertIntersectionsCount(camera1, planeTC03, 6, ERR_INCORRECT_NUM_INTERSECTIONS);
     }
 
     @Test
     void testCameraRayTriangleIntegration() {
-        // 2 Cases
+
+        // TC01: Intersection through center pixel only - 1 Intersection points
+        final Triangle triangleTC01 = new Triangle(new Point(0,1,-2)
+                ,new Point(1,-1,-2)
+                ,new Point(-1,-1,-2));
+        assertIntersectionsCount(camera1, triangleTC01, 1, ERR_INCORRECT_NUM_INTERSECTIONS);
+
+        // TC02: Intersection through center and upper-middle pixels - 2 intersection points
+        final Triangle triangleTC02 = new Triangle(new Point(0,10,-2)
+                ,new Point(1,-1,-2)
+                ,new Point(-1,-1,-2));
+        assertIntersectionsCount(camera1, triangleTC02, 2,  ERR_INCORRECT_NUM_INTERSECTIONS);
     }
 }
