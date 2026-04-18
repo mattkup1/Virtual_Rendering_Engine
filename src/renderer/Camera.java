@@ -212,6 +212,62 @@ public class Camera implements Cloneable {
         }
 
         /**
+         * Rotates the camera around its viewing direction by the given angle in degrees.
+         * The rotation updates the up and right vectors while keeping the viewing direction unchanged.
+         * Positive angles rotate clockwise around the viewing direction.
+         *
+         * @param angle the rotation angle in degrees
+         * @return the builder object
+         * @throws MissingResourceException if the camera direction vectors have not been initialized yet
+         */
+        public Builder rotate(double angle) {
+
+            // in case the angle is zero then there is no rotate
+            if (isZero(angle)) return this;
+
+            if (_camera._vUp == null)
+                throw new MissingResourceException("Camera vUp vector must be initialized before rotation",
+                        "Camera.Builder", "vUp");
+
+            if (_camera._vTo == null && this._pTarget == null)
+                throw new MissingResourceException(
+                        "Camera vTo vector or pTarget point must be initialized before rotation",
+                        "Camera.Builder", "vTo or pTarget");
+
+            if (_camera._vTo == null && _camera._p0 == null)
+                throw new MissingResourceException("Camera location must be initialized before rotation",
+                        "Camera.Builder", "p0");
+
+            if (_camera._vTo == null)
+                _camera._vTo = this._pTarget.subtract(_camera._p0).normalize();
+
+            if (_camera._vRight == null)
+                _camera._vRight = _camera._vTo.crossProduct(_camera._vUp).normalize();
+
+            double radians = Math.toRadians(angle);
+            double cos = Math.cos(radians);
+            double sin = Math.sin(radians);
+
+            Vector oldVUp = _camera._vUp;
+            Vector oldVRight = _camera._vRight;
+            Vector newVUp;
+
+            if (isZero(cos)) {
+                newVUp = oldVRight.scale(-sin);
+            } else if (isZero(sin)) {
+                newVUp = oldVUp.scale(cos);
+            } else {
+                newVUp = oldVUp.scale(cos).add(oldVRight.scale(sin));
+            }
+
+            _camera._vUp = newVUp.normalize();
+            _camera._vRight = _camera._vTo.crossProduct(_camera._vUp).normalize();
+            _camera._vUp = _camera._vRight.crossProduct(_camera._vTo).normalize();
+
+            return this;
+        }
+
+        /**
          * Helper function to calculate the camera direction vectors
          */
         private void calcVectors() {
