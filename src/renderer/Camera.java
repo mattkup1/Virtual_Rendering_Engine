@@ -264,7 +264,7 @@ public class Camera implements Cloneable {
             } else if (isZero(sin)) {
                 newVUp = oldVUp.scale(cos);
             } else {
-                newVUp = oldVUp.scale(cos).add(oldVRight.scale(sin));
+                newVUp = oldVUp.scale(cos).add(oldVRight.scale(-sin));
             }
 
             _camera._vUp = newVUp.normalize();
