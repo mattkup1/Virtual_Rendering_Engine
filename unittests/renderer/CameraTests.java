@@ -72,6 +72,10 @@ class CameraTests {
      * Error message for invalid argument in camera build.
      */
     private static final String ERROR_INVALID_ARGUMENT = "Expected IllegalArgumentException was not thrown";
+    /**
+     * Error message for invalid camera rotation.
+     */
+    private static final String ERROR_ROTATE = "rotate() result is incorrect";
 
     /**
      * Creates a basic builder with valid location and view-plane distance.
@@ -289,5 +293,105 @@ class CameraTests {
         // BV06: Construct ray through a corner pixel in a 3x3 view plane
         Ray rayBV06 = camera3x3.constructRay(0, 0);
         assertEquals(new Ray(LOCATION, new Vector(-2, 2, -10)), rayBV06, ERROR_CONSTRUCT_RAY);
+    }
+
+
+    /**
+     * Test method for {@link renderer.Camera.Builder#rotate(double)}.
+     */
+    @Test
+    void testRotate() {
+        Camera cameraRot90ByVectors = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .rotate(90)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        Camera cameraRot90ByTarget = baseBuilder()
+                .setDirection(TARGET)
+                .rotate(90)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        Camera cameraRot90ByTargetAndUp = baseBuilder()
+                .setDirection(TARGET, V_UP)
+                .rotate(90)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        Camera cameraRot0 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .rotate(0)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        Camera cameraRot180 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .rotate(180)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        Camera cameraRot270 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .rotate(270)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        Camera cameraRot360 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .rotate(360)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        Camera cameraRot90Then90 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .rotate(90)
+                .rotate(90)
+                .setVpSize(6, 6)
+                .setResolution(3, 3)
+                .build();
+
+        // ============ Equivalence Partitions Tests ==============
+
+        // EP01: Rotate camera by 90 degrees clockwise using setDirection(Vector, Vector)
+        assertEquals(new Ray(LOCATION, new Vector(-2, 0, -10)),
+                cameraRot90ByVectors.constructRay(1, 0), ERROR_ROTATE);
+
+        // EP02: Rotate camera by 90 degrees clockwise using setDirection(Point)
+        assertEquals(new Ray(LOCATION, new Vector(-2, 0, -10)),
+                cameraRot90ByTarget.constructRay(1, 0), ERROR_ROTATE);
+
+        // EP03: Rotate camera by 90 degrees clockwise using setDirection(Point, Vector)
+        assertEquals(new Ray(LOCATION, new Vector(-2, 0, -10)),
+                cameraRot90ByTargetAndUp.constructRay(1, 0), ERROR_ROTATE);
+
+        // =============== Boundary Values Tests ==================
+
+        // BV01: Rotate camera by 0 degrees
+        assertEquals(new Ray(LOCATION, new Vector(0, 2, -10)),
+                cameraRot0.constructRay(1, 0), ERROR_ROTATE);
+
+        // BV02: Rotate camera by 180 degrees
+        assertEquals(new Ray(LOCATION, new Vector(0, -2, -10)),
+                cameraRot180.constructRay(1, 0), ERROR_ROTATE);
+
+        // BV03: Rotate camera by 270 degrees clockwise
+        assertEquals(new Ray(LOCATION, new Vector(2, 0, -10)),
+                cameraRot270.constructRay(1, 0), ERROR_ROTATE);
+
+        // BV04: Rotate camera by 360 degrees
+        assertEquals(new Ray(LOCATION, new Vector(0, 2, -10)),
+                cameraRot360.constructRay(1, 0), ERROR_ROTATE);
+
+        // BV05: Rotate camera twice by 90 degrees
+        assertEquals(new Ray(LOCATION, new Vector(0, -2, -10)),
+                cameraRot90Then90.constructRay(1, 0), ERROR_ROTATE);
     }
 }

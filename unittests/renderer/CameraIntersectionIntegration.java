@@ -53,7 +53,6 @@ public class CameraIntersectionIntegration {
      * Error message for invalid argument in camera build.
      */
     private static final String ERR_INCORRECT_NUM_INTERSECTIONS = "ERROR: Incorrect number of intersections";
-
     /**
      * Default camera1 located at the origin, used in the integration test cases.
      */
