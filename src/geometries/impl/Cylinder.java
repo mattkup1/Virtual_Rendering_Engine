@@ -72,76 +72,71 @@ public final class Cylinder extends Tube {
     public List<Point> findIntersections(Ray ray) {
         List<Point> intersections = null;
 
-        final Point TubeOrig = this._axis.getOrigin();
-        final Vector TubeDir = this._axis.getDirection();
-        final Vector RayDir = ray.getDirection();
+        final Point tubeOrig = this._axis.getOrigin();
+        final Vector tubeDir = this._axis.getDirection();
 
         // Check the infinite tube first
         List<Point> tubeIntersections = super.findIntersections(ray);
 
         if (tubeIntersections != null) {
             for (Point p : tubeIntersections) {
-                // Prevent zero-vector exception
-                if (p.equals(TubeOrig)) continue;
+                // Prevent zero-vector exception on subtraction if point is at origin
+                double tProj;
+                if (p.equals(tubeOrig)) {
+                    tProj = 0;
+                } else {
+                    tProj = alignZero(p.subtract(tubeOrig).dotProduct(tubeDir));
+                }
 
-                // Verify the point is within the cylinder's height
-                double tProj = alignZero(p.subtract(TubeOrig).dotProduct(TubeDir));
-                if (tProj > 0 && tProj < _height) {
-                    // Initialize the intersections result list if needed
+                // Verify the point is within the cylinder's height boundary (0 < t < height)
+                if (tProj > 0 && tProj < this._height) {
                     if (intersections == null) intersections = new LinkedList<>();
-                    // Add the intersection point to the list
                     intersections.add(p);
                 }
             }
         }
 
-        // Check bottom and top caps
-        double nv = alignZero(TubeDir.dotProduct(RayDir));
+        // Check Bottom Cap (at origin)
+        Point bottomIntersection = getPointOnCap(ray, tubeOrig);
+        if (bottomIntersection != null) {
+            if (intersections == null) intersections = new LinkedList<>();
+            intersections.add(bottomIntersection);
+        }
 
-        // Proceed only if the ray is not parallel to the caps
-        if (nv != 0) {
-            // Bottom cap
-            if (!ray.getOrigin().equals(TubeOrig)) {
-                double tBottom = alignZero(TubeDir.dotProduct(TubeOrig.subtract(ray.getOrigin())) / nv);
-                intersections = getPointsOnCap(ray, intersections, TubeOrig, tBottom);
-            }
-
-            // Top cap
-            Point topCenter = TubeOrig.add(TubeDir.scale(this._height));
-            if (!ray.getOrigin().equals(topCenter)) {
-                double tTop = alignZero(TubeDir.dotProduct(topCenter.subtract(ray.getOrigin())) / nv);
-                intersections = getPointsOnCap(ray, intersections, topCenter, tTop);
-            }
+        // Check Top Cap (at origin + height)
+        Point topIntersection = getPointOnCap(ray, this._axis.getPoint(this._height));
+        if (topIntersection != null) {
+            if (intersections == null) intersections = new LinkedList<>();
+            intersections.add(topIntersection);
         }
 
         return intersections;
     }
 
     /**
-     * Helper function to determine if a ray's intersection with the plane of a cylinder's cap
-     * falls within the actual boundaries of the disk (cap).
+     * Helper function to get the intersection point between a ray and cylinder disk (cap)
      *
-     * @param ray           the ray being tested for intersection
-     * @param intersections the current list of found intersection points (may be null)
-     * @param capCenter     the center point of the cap (either bottom origin or top center)
-     * @param t             the distance from the ray origin to the intersection with the cap's plane
-     * @return an updated list of intersection points including the cap intersection if valid
+     * @param ray    the ray being tested for intersection
+     * @param midCap the center point of the given cap
+     * @return the intersection point between the ray and the cap, or null if no valid intersection
      */
-    private List<Point> getPointsOnCap(Ray ray, List<Point> intersections, Point capCenter, double t) {
-        // Intersection must be in the positive direction of the ray
-        if (t > 0) {
-            Point p = ray.getPoint(t);
-            // Verify the point is inside the cap's radius (on the disk)
-            // Using distanceSquared is more efficient than distance to avoid a square root
-            if (alignZero(p.distanceSquared(capCenter) - this._radiusSquared) <= 0) {
-                if (intersections == null)
-                    intersections = new LinkedList<>();
-                intersections.add(p);
+    private Point getPointOnCap(Ray ray, Point midCap) {
+        // Create the plane representing the base/cap
+        final Plane plane = new Plane(midCap, this._axis.getDirection());
+
+        // Get the intersection with the infinite plane
+        var capIntersections = plane.findIntersections(ray);
+
+        if (capIntersections != null) {
+            final Point p = capIntersections.getFirst();
+            // Point must be within the disk boundary (distance <= radius)
+            // Using alignZero to handle floating point precision
+            if (alignZero(p.distanceSquared(midCap) - this._radiusSquared) <= 0) {
+                return p;
             }
         }
-        return intersections;
+        return null;
     }
-
 
     @Override
     public String toString() {

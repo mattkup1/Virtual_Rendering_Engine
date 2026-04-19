@@ -90,49 +90,6 @@ public final class Triangle extends Polygon {
         return alignZero(t) <= 0 ? null : List.of(ray.getPoint(t));
     }
 
-// baricentric algorithm - checks for intersection with plane first
-//    @Override
-//    public List<Point> findIntersections(Ray ray) {
-//        // Get triangle vertices and ray origin
-//        final Point A = _vertices.get(0),
-//                B = _vertices.get(1),
-//                C = _vertices.get(2),
-//                RayOrigin = ray.getOrigin();
-//
-//        // Get the ray's intersection point with the triangle's plane
-//        final Plane triPlane = new Plane(A, B, C);
-//        final var planeIntersection = triPlane.findIntersections(ray);
-//        if (planeIntersection == null)
-//            return null;
-//
-//        // Get the vectors from the ray origin to the triangle vertices
-//        final Vector v1 = A.subtract(RayOrigin);
-//        final Vector v2 = B.subtract(RayOrigin);
-//        final Vector v3 = C.subtract(RayOrigin);
-//
-//        // Get the normalized normal vectors to the planes represented by each 2 of the above vectors
-//        // together with the ray origin
-//        final Vector n1 = v1.crossProduct(v2).normalize();
-//        final Vector n2 = v2.crossProduct(v3).normalize();
-//        final Vector n3 = v3.crossProduct(v1).normalize();
-//
-//        // Get the ray direction vector
-//        final Vector rayDirection = ray.getDirection();
-//
-//        // Get the dot product of each pair of the above normal vectors
-//        final double s1 = alignZero(rayDirection.dotProduct(n1)),
-//                s2 = alignZero(rayDirection.dotProduct(n2)),
-//                s3 = alignZero(rayDirection.dotProduct(n3));
-//
-//        // If all dot products produce the same sign - the intersection point is inside the triangle
-//        // If one or more of the dot products produce zero, then the ray intersects the triangle edge (or vertex)
-//        if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
-//            return planeIntersection;
-//        }
-//
-//        return null;
-//    }
-
     @Override
     public String toString() {
         return "Triangle: " + super.toString();
