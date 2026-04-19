@@ -103,31 +103,42 @@ public final class Cylinder extends Tube {
             // Bottom cap
             if (!ray.getOrigin().equals(TubeOrig)) {
                 double tBottom = alignZero(TubeDir.dotProduct(TubeOrig.subtract(ray.getOrigin())) / nv);
-                if (tBottom > 0) {
-                    Point pBottom = ray.getPoint(tBottom);
-                    // Verify the point is inside the cap's radius
-                    if (alignZero(pBottom.distanceSquared(TubeOrig)) <= _radius * _radius) {
-                        if (intersections == null) intersections = new LinkedList<>();
-                        intersections.add(pBottom);
-                    }
-                }
+                intersections = getPointsOnCap(ray, intersections, TubeOrig, tBottom);
             }
 
             // Top cap
-            Point topCenter = TubeOrig.add(TubeDir.scale(_height));
+            Point topCenter = TubeOrig.add(TubeDir.scale(this._height));
             if (!ray.getOrigin().equals(topCenter)) {
                 double tTop = alignZero(TubeDir.dotProduct(topCenter.subtract(ray.getOrigin())) / nv);
-                if (tTop > 0) {
-                    Point pTop = ray.getPoint(tTop);
-                    // Verify the point is inside the cap's radius
-                    if (alignZero(pTop.distanceSquared(topCenter)) <= _radius * _radius) {
-                        if (intersections == null) intersections = new LinkedList<>();
-                        intersections.add(pTop);
-                    }
-                }
+                intersections = getPointsOnCap(ray, intersections, topCenter, tTop);
             }
         }
 
+        return intersections;
+    }
+
+    /**
+     * Helper function to determine if a ray's intersection with the plane of a cylinder's cap
+     * falls within the actual boundaries of the disk (cap).
+     *
+     * @param ray           the ray being tested for intersection
+     * @param intersections the current list of found intersection points (may be null)
+     * @param capCenter     the center point of the cap (either bottom origin or top center)
+     * @param t             the distance from the ray origin to the intersection with the cap's plane
+     * @return an updated list of intersection points including the cap intersection if valid
+     */
+    private List<Point> getPointsOnCap(Ray ray, List<Point> intersections, Point capCenter, double t) {
+        // Intersection must be in the positive direction of the ray
+        if (t > 0) {
+            Point p = ray.getPoint(t);
+            // Verify the point is inside the cap's radius (on the disk)
+            // Using distanceSquared is more efficient than distance to avoid a square root
+            if (alignZero(p.distanceSquared(capCenter) - _radius * _radius) <= 0) {
+                if (intersections == null)
+                    intersections = new LinkedList<>();
+                intersections.add(p);
+            }
+        }
         return intersections;
     }
 
