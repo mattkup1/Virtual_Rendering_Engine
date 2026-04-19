@@ -75,8 +75,12 @@ public class Tube extends RadialGeometry {
 
         // Compute the squared equation coefficients  At^2 + Bt + C = 0 (A already computed above)
         // using mathematical identities helps avoid constructing unnecessary vectors
+        // b represents the absolute value of the direction in which the ray moves in relative to the tube axis
+        // Or in other words, the distance between a point P on the ray and the tube axis as we move P along the ray
         double b = alignZero(2 * (vD_dot_dP - vD_dot_vC * dP_dot_vC));
-        double c = alignZero(dP_dot_dP - dP_dot_vC * dP_dot_vC - _radius * _radius);
+        // c represents the squared distance between the ray origin and the closest point on the tube axis
+        // after subtracting the tube radius squared
+        double c = alignZero(dP_dot_dP - dP_dot_vC * dP_dot_vC - this._radiusSquared);
 
         // Solve the equation
         double discriminant = alignZero(b * b - 4 * a * c);
