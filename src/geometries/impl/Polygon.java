@@ -87,11 +87,13 @@ public class Polygon extends Geometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        // Get polygon vertices
+        // Get 3 polygon vertices to define the plane containing the polygon
         final Point A = _vertices.get(0),
                 B = _vertices.get(1),
                 C = _vertices.get(2),
-                RayOrigin = ray.getOrigin();
+                rayOrigin = ray.getOrigin();
+
+        final int numVertices = this._vertices.size();
 
         // Get the ray's intersection point with the triangle's plane
         final Plane PolyPlane = new Plane(A, B, C);
@@ -100,19 +102,18 @@ public class Polygon extends Geometry {
             return null;
 
         // Get the vectors from the ray origin to the polygon vertices
-        Vector[] vList = new Vector[_vertices.size()];
-        // Get the number of vertices
-        int vSize = _vertices.size();
-        for (int i = 0; i < vSize; ++i) {
-            vList[i] = _vertices.get(i).subtract(ray.getOrigin());
+        Vector[] vList = new Vector[numVertices];
+
+        for (int i = 0; i < numVertices; ++i) {
+            vList[i] = this._vertices.get(i).subtract(rayOrigin);
         }
 
 
         // Get the normalized normal vectors to the planes represented by each 2 of the above vectors
         // together with the ray origin
-        Vector[] nList = new Vector[vSize];
-        for (int i = 0; i < vSize; ++i) {
-            nList[i] = vList[i].crossProduct(vList[(i + 1) % vSize]);
+        Vector[] nList = new Vector[numVertices];
+        for (int i = 0; i < numVertices; ++i) {
+            nList[i] = vList[i].crossProduct(vList[(i + 1) % numVertices]);
         }
 
 
@@ -120,20 +121,20 @@ public class Polygon extends Geometry {
         final Vector rayDirection = ray.getDirection();
 
         // Get the dot product of each pair of the above normal vectors
-        double[] sList = new double[vSize];
-        for (int i = 0; i < vSize; ++i) {
+        double[] sList = new double[numVertices];
+        for (int i = 0; i < numVertices; ++i) {
             sList[i] = alignZero(rayDirection.dotProduct(nList[i]));
-            if (sList[i] == 0) return null;
+            if (isZero(sList[i])) return null;
         }
 
         // If all dot products produce the same sign - the intersection point is inside the polygon
         // If one or more of the dot products produce zero, then the ray intersects a polygon edge (or vertex)
         if (sList[0] > 0) {
-            for (int i = 1; i < vSize; ++i) {
+            for (int i = 1; i < numVertices; ++i) {
                 if (sList[i] < 0) return null;
             }
         } else {
-            for (int i = 1; i < vSize; ++i) {
+            for (int i = 1; i < numVertices; ++i) {
                 if (sList[i] > 0) return null;
             }
         }

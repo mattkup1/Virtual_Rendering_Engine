@@ -42,11 +42,11 @@ public final class Sphere extends RadialGeometry {
         Vector v = ray.getDirection();
 
         // Vector from ray origin to sphere center
-        if (_center.equals(p0)) {
-            return List.of(ray.getPoint(_radius));
+        if (this._center.equals(p0)) {
+            return List.of(ray.getPoint(this._radius));
         }
 
-        Vector u = _center.subtract(p0);
+        Vector u = this._center.subtract(p0);
         double t_p = v.dotProduct(u);
 
         // Squared distance from center to the projection point on the ray
@@ -54,11 +54,11 @@ public final class Sphere extends RadialGeometry {
         double dSquared = u.lengthSquared() - t_p * t_p;
 
         // Check if the perpendicular distance is greater than or equal to radius
-        if (dSquared > _radiusSquared || isZero(dSquared - _radiusSquared))
+        if (dSquared > this._radiusSquared || isZero(dSquared - this._radiusSquared))
             return null;
 
         // Distance from the perpendicular point to the intersection points
-        double th = Math.sqrt(_radiusSquared - dSquared);
+        double th = Math.sqrt(this._radiusSquared - dSquared);
 
         double t1 = Util.alignZero(t_p - th);
         double t2 = Util.alignZero(t_p + th);
