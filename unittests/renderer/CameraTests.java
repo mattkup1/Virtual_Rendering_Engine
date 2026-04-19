@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * /* Unit tests for class {@link Camera}.
- * /* <p>
- * /* The tests verify:
- * /* </p>
- * /* <ul>
- * /* <li>Camera construction validity using {@link renderer.Camera.Builder}</li>
- * /* <li>{@link Camera#constructRay(int, int)}</li>
- * /* </ul>
+ * Unit tests for class {@link Camera}.
+ * <p>
+ * The tests verify:
+ * </p>
+ * <ul>
+ * <li>Camera construction validity using {@link renderer.Camera.Builder}</li>
+ * <li>{@link Camera#constructRay(int, int)}</li>
+ * </ul>
  */
 class CameraTests {
 

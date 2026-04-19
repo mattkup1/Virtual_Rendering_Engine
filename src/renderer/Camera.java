@@ -107,9 +107,16 @@ public class Camera implements Cloneable {
      * {@link Camera} builder class
      */
     public static class Builder {
+
+        /**
+         * Default constructor to satisfy Javadoc generator
+         */
+        public Builder() { /* To satisfy Javadoc generator */ }
+
         /**
          * Initialize {@link Camera} object
          */
+
         private final Camera _camera = new Camera();
         /**
          * A {@link Point} which the camera is facing
@@ -159,11 +166,11 @@ public class Camera implements Cloneable {
 
         /**
          * Sets the {@link Camera} direction based on a single point
-         * The upward direction is assumed to be the y axis
+         * The upward direction is assumed to be the y-axis
          *
          * @param p the point at which the camera is pointing
          * @return the builder object
-         * @throws IllegalArgumentException if the camera direction and the y axis are not orthogonal
+         * @throws IllegalArgumentException if the camera direction and the y-axis are not orthogonal
          */
         public Builder setDirection(Point p) {
             this._pTarget = p;

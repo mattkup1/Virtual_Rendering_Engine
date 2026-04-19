@@ -6,10 +6,20 @@ import geometries.impl.Sphere;
 import geometries.impl.Triangle;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Integration tests for methods {@link Camera#constructRay(int, int)}
+ * and {@link geometries.api.Intersectable#findIntersections(Ray)}.
+ * These tests verify the interaction between the camera ray generation
+ * and the intersection logic for spheres, planes, and triangles.
+ *
+ * @author mattkuperwasser
+ * @author moshehanau
+ */
 public class CameraIntersectionIntegration {
 
     /**
@@ -18,52 +28,58 @@ public class CameraIntersectionIntegration {
     CameraIntersectionIntegration() { /* to satisfy Javadoc generator */ }
 
     /**
-     * Default vTo vector used in test cameras
+     * Direction vector from the camera towards the view plane (Negative Z axis).
      */
     private static final Vector V_TO = new Vector(0, 0, -1);
+
     /**
-     * Default view-plane distance used in tests.
+     * Distance from the camera location to the view plane.
      */
     private static final double VP_DISTANCE = 1d;
 
     /**
-     * Default number of pixel columns in view plane
+     * Number of horizontal pixels in the test resolution (3x3 grid).
      */
     private static final int nX = 3;
 
     /**
-     * Default number of pixel rows in view plane
+     * Number of vertical pixels in the test resolution (3x3 grid).
      */
     private static final int nY = 3;
+
     /**
-     * Default view plane width
+     * Total width of the view plane.
      */
     private static final double width = 3d;
 
     /**
-     * Default view plane height
+     * Total height of the view plane.
      */
     private static final double height = 3d;
 
     /**
-     * Common point at z = -2 used for plane and sphere integration test cases.
+     * Common point used for positioning geometries in front of the camera.
      */
-    private static final Point P00N2 = new Point(0,0,-2);
+    private static final Point P00N2 = new Point(0, 0, -2);
+
     /**
-     * Error message for invalid argument in camera build.
+     * Error message constant for intersection count mismatches.
      */
     private static final String ERR_INCORRECT_NUM_INTERSECTIONS = "ERROR: Incorrect number of intersections";
+
     /**
-     * Default camera1 located at the origin, used in the integration test cases.
+     * Base camera instance located at the origin (0,0,0).
+     * Used as a standard starting point for most integration cases.
      */
     final Camera camera1 = baseBuilder()
             .setLocation(Point.ZERO)
             .build();
 
     /**
-     * Creates a basic builder with valid location and view-plane distance.
+     * Creates a pre-configured camera builder with the default resolution,
+     * view-plane size, and direction vectors used across all integration tests.
      *
-     * @return initialized camera builder
+     * @return a builder initialized with standard test parameters
      */
     private Camera.Builder baseBuilder() {
         return Camera.getBuilder()
@@ -74,12 +90,13 @@ public class CameraIntersectionIntegration {
     }
 
     /**
-     * Helper function to assert correct intersections count in test cases
+     * Helper function to iterate through all pixels in the 3x3 grid, construct rays,
+     * and sum up all intersections with the given geometric shape.
      *
-     * @param camera        the camera
-     * @param intersectable the intersectable geometric shape
-     * @param expectedCount the expected number of intersection points between the camera rays and the intersectable
-     * @param errorMessage  error message in case of test failure
+     * @param camera        the camera instance to generate rays
+     * @param intersectable the geometric shape to check for intersections
+     * @param expectedCount the expected total number of intersection points
+     * @param errorMessage  message to display if the actual count differs from expected
      */
     private void assertIntersectionsCount(Camera camera, Intersectable intersectable, int expectedCount, String errorMessage) {
         int count = 0;
@@ -90,68 +107,76 @@ public class CameraIntersectionIntegration {
                     count += intersections.size();
             }
         }
-
-        assertEquals(count, expectedCount, errorMessage);
+        assertEquals(expectedCount, count, errorMessage);
     }
 
+    /**
+     * Integration tests for camera rays intersecting a {@link Sphere}.
+     * Covers cases where the sphere is small, large, containing the camera, or behind the camera.
+     */
     @Test
     void testCameraRaySphereIntegration() {
-
+        // Camera moved slightly forward to test sphere proximity
         final Camera camera2 = baseBuilder()
                 .setLocation(new Point(0, 0, 0.5))
                 .build();
 
-        // TC01: Intersection through center pixel only - 2 intersection points
+        // TC01: Small sphere in front of the center pixel (2 points)
         final Sphere sphereTC01 = new Sphere(new Point(0, 0, -3), 1d);
         assertIntersectionsCount(camera1, sphereTC01, 2, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC02: All pixel rays intersect the sphere twice - 18 intersection points
+        // TC02: Large sphere where every ray hits twice (18 points)
         final Sphere sphereTC02 = new Sphere(new Point(0, 0, -2.5), 2.5);
         assertIntersectionsCount(camera2, sphereTC02, 18, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC03: Intersection through non-corner pixels only - 10 intersection points
+        // TC03: Medium sphere intersecting center and side pixels (10 points)
         final Sphere sphereTC03 = new Sphere(P00N2, 2d);
         assertIntersectionsCount(camera2, sphereTC03, 10, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC04: Camera inside sphere - 9 Intersection points
+        // TC04: Camera is inside the sphere - all rays hit once from the inside (9 points)
         final Sphere sphereTC04 = new Sphere(new Point(1, 0, 0), 4d);
         assertIntersectionsCount(camera1, sphereTC04, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC05: Camera is in front the sphere - 0 Intersection points
-        final Sphere sphereTC05 = new Sphere(new Point(0,0,1) , 0.5);
+        // TC05: Sphere is behind the camera location (0 points)
+        final Sphere sphereTC05 = new Sphere(new Point(0, 0, 1), 0.5);
         assertIntersectionsCount(camera1, sphereTC05, 0, ERR_INCORRECT_NUM_INTERSECTIONS);
-
     }
 
+    /**
+     * Integration tests for camera rays intersecting a {@link Plane}.
+     * Covers parallel planes and planes at various tilted angles.
+     */
     @Test
     void testCameraRayPlaneIntegration() {
-
-        // TC01: All pixel rays intersect the plane - 9 Intersection points
+        // TC01: Plane parallel to the view plane (9 points)
         final Plane planeTC01 = new Plane(P00N2, Vector.AXIS_Z);
-        assertIntersectionsCount(camera1 ,planeTC01, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
+        assertIntersectionsCount(camera1, planeTC01, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC02: All pixel rays intersect the tilted plane - 9 Intersection points
-        final Plane planeTC02 = new Plane(P00N2, new Vector(0,1,-2));
+        // TC02: Plane tilted slightly - all rays still intersect (9 points)
+        final Plane planeTC02 = new Plane(P00N2, new Vector(0, 1, -2));
         assertIntersectionsCount(camera1, planeTC02, 9, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC03: Only 6 pixel rays intersect the tilted plane - 6 Intersection points
-        final Plane planeTC03 = new Plane(P00N2, new Vector(0,2,-1));
+        // TC03: Plane tilted sharply - upper rows of rays miss the plane (6 points)
+        final Plane planeTC03 = new Plane(P00N2, new Vector(0, 2, -1));
         assertIntersectionsCount(camera1, planeTC03, 6, ERR_INCORRECT_NUM_INTERSECTIONS);
     }
 
+    /**
+     * Integration tests for camera rays intersecting a {@link Triangle}.
+     * Verifies intersections with small and large triangles positioned in front of the camera.
+     */
     @Test
     void testCameraRayTriangleIntegration() {
-
-        // TC01: Intersection through center pixel only - 1 Intersection points
-        final Triangle triangleTC01 = new Triangle(new Point(0,1,-2)
-                ,new Point(1,-1,-2)
-                ,new Point(-1,-1,-2));
+        // TC01: Small triangle in front of the center pixel only (1 point)
+        final Triangle triangleTC01 = new Triangle(new Point(0, 1, -2)
+                , new Point(1, -1, -2)
+                , new Point(-1, -1, -2));
         assertIntersectionsCount(camera1, triangleTC01, 1, ERR_INCORRECT_NUM_INTERSECTIONS);
 
-        // TC02: Intersection through center and upper-middle pixels - 2 intersection points
-        final Triangle triangleTC02 = new Triangle(new Point(0,10,-2)
-                ,new Point(1,-1,-2)
-                ,new Point(-1,-1,-2));
-        assertIntersectionsCount(camera1, triangleTC02, 2,  ERR_INCORRECT_NUM_INTERSECTIONS);
+        // TC02: Tall triangle intersecting the center and top-middle pixel (2 points)
+        final Triangle triangleTC02 = new Triangle(new Point(0, 10, -2)
+                , new Point(1, -1, -2)
+                , new Point(-1, -1, -2));
+        assertIntersectionsCount(camera1, triangleTC02, 2, ERR_INCORRECT_NUM_INTERSECTIONS);
     }
 }

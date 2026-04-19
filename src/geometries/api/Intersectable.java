@@ -11,6 +11,12 @@ import primitives.Ray;
  * @author moshehanau
  */
 public abstract class Intersectable {
+
+    /**
+     * Default constructor to satisfy Javadoc generator
+     */
+    public Intersectable() { /* To satisfy Javadoc generator */ }
+
     /**
      * Get all intersection points between a ray and the geometric shape
      *
