@@ -133,7 +133,7 @@ public final class Cylinder extends Tube {
             Point p = ray.getPoint(t);
             // Verify the point is inside the cap's radius (on the disk)
             // Using distanceSquared is more efficient than distance to avoid a square root
-            if (alignZero(p.distanceSquared(capCenter) - _radius * _radius) <= 0) {
+            if (alignZero(p.distanceSquared(capCenter) - this._radiusSquared) <= 0) {
                 if (intersections == null)
                     intersections = new LinkedList<>();
                 intersections.add(p);
