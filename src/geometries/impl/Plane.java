@@ -27,7 +27,7 @@ public class Plane extends Geometry {
     /**
      * The normal vector to the plane
      */
-    private Vector _normal;
+    final private Vector _normal;
 
     /**
      * Constructs a plane from three points on the plane.
@@ -70,15 +70,15 @@ public class Plane extends Geometry {
         if (P0.equals(this._point)) return null;
 
         // Compute the dot product between the plane's normal vector and the ray's direction vector
-        double nv = _normal.dotProduct(ray.getDirection());
+        final double nv = _normal.dotProduct(ray.getDirection());
         // Case ray is parallel to the plane (dot product returns zero) - no intersection
         if (isZero(nv)) return null;
 
         // Compute the value by which the ray's normalized direction vector
         // needs to be scaled by to reach the intersection point
         // double t = alignZero(nQMinusP0 / nv);
-        double nQMinusP0 = _normal.dotProduct(getPoint().subtract(ray.getOrigin()));
-        double t = alignZero(nQMinusP0 / nv);
+        final double nQMinusP0 = this._normal.dotProduct(this.getPoint().subtract(ray.getOrigin()));
+        final double t = alignZero(nQMinusP0 / nv);
         // Return intersection point in a list
         // If no intersection, Return null
         return t <= 0 ? null : List.of(ray.getPoint(t));
