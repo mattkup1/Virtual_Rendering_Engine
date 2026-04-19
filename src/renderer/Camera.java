@@ -241,7 +241,7 @@ public class Camera implements Cloneable {
                         "Camera vTo vector or pTarget point must be initialized before rotation",
                         "Camera.Builder", "vTo or pTarget");
 
-            if (_camera._vTo == null && _camera._p0 == null)
+            if (_camera._p0 == null)
                 throw new MissingResourceException("Camera location must be initialized before rotation",
                         "Camera.Builder", "p0");
 
@@ -251,9 +251,9 @@ public class Camera implements Cloneable {
             if (_camera._vRight == null)
                 _camera._vRight = _camera._vTo.crossProduct(_camera._vUp).normalize();
 
-            double radians = Math.toRadians(angle);
-            double cos = Math.cos(radians);
-            double sin = Math.sin(radians);
+            final double radians = Math.toRadians(angle);
+            final double cos = Math.cos(radians);
+            final double sin = Math.sin(radians);
 
             Vector oldVUp = _camera._vUp;
             Vector oldVRight = _camera._vRight;
