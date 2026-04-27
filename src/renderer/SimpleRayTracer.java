@@ -38,9 +38,9 @@ class SimpleRayTracer extends RayTracerBase {
      */
     @Override
     public Color traceRay(Ray ray) {
-        var intersections = this._scene._geometries.findIntersections(ray);
+        var intersections = this._scene.geometries.findIntersections(ray);
         if (intersections == null)
-            return this._scene._background;
+            return this._scene.background;
 
         return calcColor(ray.findClosestPoint(intersections));
     }
@@ -52,6 +52,6 @@ class SimpleRayTracer extends RayTracerBase {
      * @return the calculated color intensity
      */
     private Color calcColor(Point intersection) {
-        return this._scene._ambientLight.getIntensity();
+        return this._scene.ambientLight.getIntensity();
     }
 }

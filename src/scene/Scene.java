@@ -10,18 +10,27 @@ import primitives.Color;
  * The Scene class uses a "Fluent Interface" (setter-chaining) to allow easy
  * configuration of the environment before rendering.
  * </p>
+ *
  * @author mattkuperwasser
  * @author moshehanau
  */
 public class Scene {
-    /** The name of the scene. */
-    public final String _name;
-    /** The background color of the scene, defaults to Black. */
-    public Color _background = Color.BLACK;
-    /** The ambient lighting of the scene, defaults to None. */
-    public AmbientLight _ambientLight = AmbientLight.NONE;
-    /** The collection of geometric shapes in the scene. */
-    public Geometries _geometries = new Geometries();
+    /**
+     * The name of the scene.
+     */
+    public final String name;
+    /**
+     * The background color of the scene, defaults to Black.
+     */
+    public Color background = Color.BLACK;
+    /**
+     * The ambient lighting of the scene, defaults to None.
+     */
+    public AmbientLight ambientLight = AmbientLight.NONE;
+    /**
+     * The collection of geometric shapes in the scene.
+     */
+    public Geometries geometries = new Geometries();
 
     /**
      * Constructs a scene with a given name and an empty collection of geometries.
@@ -29,7 +38,7 @@ public class Scene {
      * @param name the name of the scene
      */
     public Scene(String name) {
-        this._name = name;
+        this.name = name;
     }
 
     /**
@@ -39,7 +48,7 @@ public class Scene {
      * @return the scene object itself for builder-like chaining
      */
     public Scene setBackground(Color background) {
-        this._background = background;
+        this.background = background;
         return this;
     }
 
@@ -50,7 +59,7 @@ public class Scene {
      * @return the scene object itself for builder-like chaining
      */
     public Scene setAmbientLight(AmbientLight ambientLight) {
-        this._ambientLight = ambientLight;
+        this.ambientLight = ambientLight;
         return this;
     }
 
@@ -61,7 +70,7 @@ public class Scene {
      * @return the scene object itself for builder-like chaining
      */
     public Scene setGeometries(Geometries geometries) {
-        this._geometries = geometries;
+        this.geometries = geometries;
         return this;
     }
 }

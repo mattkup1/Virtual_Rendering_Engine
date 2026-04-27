@@ -1,9 +1,11 @@
 package renderer;
 
 import java.util.MissingResourceException;
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import scene.Scene;
 
 import static primitives.Util.isZero;
 
@@ -62,6 +64,14 @@ public class Camera implements Cloneable {
      * Individual pixel height
      */
     private double _pixelHeight;
+    /**
+     * Image writer object
+     */
+    private ImageWriter _imageWriter;
+    /**
+     * Ray tracer object
+     */
+    private RayTracerBase _rayTracerBase;
 
     /**
      * Empty camera constructor
@@ -101,6 +111,63 @@ public class Camera implements Cloneable {
         else intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ)).add(this._vUp.scale(yI));
 
         return new Ray(this._p0, intersectionPoint.subtract(this._p0).normalize());
+    }
+
+    /**
+     * Renders the image by iterating over all pixels in the view plane.
+     * For each pixel, a ray is constructed and cast into the scene to determine its color.
+     *
+     * @return the camera object itself for builder-like chaining
+     */
+    public Camera renderImage() {
+        for (int x = 0; x < _nX; ++x) {
+            for (int y = 0; y < _nY; ++y) {
+                castRay(x, y);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Helper function to cast a single ray through a specific pixel,
+     * calculate the resulting color, and write it to the image.
+     *
+     * @param xIndex the pixel's column index
+     * @param yIndex the pixel's row index
+     */
+    private void castRay(int xIndex, int yIndex) {
+        final Ray ray = constructRay(xIndex, yIndex);
+        final Color color = this._rayTracerBase.traceRay(ray);
+        this._imageWriter.writePixel(xIndex, yIndex, color);
+    }
+
+    /**
+     * Prints a grid of lines over the image at specified intervals.
+     * This is primarily used for debugging and visualizing pixel alignment.
+     *
+     * @param interval the gap between grid lines (in pixels)
+     * @param color    the color of the grid lines
+     * @return the camera object itself for builder-like chaining
+     */
+    public Camera printGrid(int interval, Color color) {
+        for (int x = 0; x < _nX; ++x) {
+            for (int y = 0; y < _nY; ++y) {
+                if (x % interval == 0 || y % interval == 0)
+                    this._imageWriter.writePixel(x, y, color);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Delegates the final image file creation to the image writer.
+     * This method triggers the actual saving of the pixel data to a file
+     * on the disk with the specified name.
+     *
+     * @param filename the name of the output image file (without extension)
+     */
+    public void writeToImage(String filename) {
+        this._imageWriter.writeToImage(filename);
     }
 
     /**
@@ -294,10 +361,13 @@ public class Camera implements Cloneable {
 
         /**
          * Validate number of pixels in the rows and columns of the view plane
+         * and construct the camera image writer
          */
         private void checkResolution() {
             if (_camera._nX <= 0 || _camera._nY <= 0)
                 throw new IllegalArgumentException("Number of pixels must be positive");
+
+            _camera._imageWriter = new ImageWriter(_camera._nX, _camera._nY);
         }
 
         /**
@@ -340,6 +410,24 @@ public class Camera implements Cloneable {
         }
 
         /**
+         * Configures the ray tracer for the camera by specifying the scene and the
+         * type of tracer to be used.
+         *
+         * @param scene the scene to be rendered by the camera
+         * @param type  the type of ray tracer to instantiate (must be SIMPLE)
+         * @return the builder object itself for fluent chaining
+         * @throws IllegalArgumentException if an unsupported ray tracer type is provided
+         */
+        public Builder setRayTracer(Scene scene, RayTracerType type) {
+            if (type == RayTracerType.SIMPLE) {
+                _camera._rayTracerBase = new SimpleRayTracer(scene);
+            } else {
+                throw new IllegalArgumentException("RayTracer type must be SIMPLE");
+            }
+            return this;
+        }
+
+        /**
          * Final camera build method
          *
          * @return the initialized camera object
@@ -350,6 +438,10 @@ public class Camera implements Cloneable {
             checkResolution();
             checkLocationAndDirection();
             checkViewPlane();
+
+            if (_camera._rayTracerBase == null)
+                setRayTracer(new Scene("test"), RayTracerType.SIMPLE);
+
             try {
                 return (Camera) _camera.clone();
             } catch (CloneNotSupportedException _) {
