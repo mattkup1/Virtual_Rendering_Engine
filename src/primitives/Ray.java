@@ -1,5 +1,6 @@
 package primitives;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -75,6 +76,16 @@ public final class Ray {
         } catch (IllegalArgumentException e) { // Zero vector produced in try
             return _origin;
         }
+    }
+
+    /**
+     * Returns the closest point to the ray origin from the given list of points
+     *
+     * @param points the list of points
+     * @return the closest point to the ray origin
+     */
+    public Point findClosestPoint(List<Point> points) {
+        return null;
     }
 
 
