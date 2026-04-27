@@ -129,13 +129,11 @@ public class XmlSceneLoader {
     }
 
     private static Point parsePoint(String str) {
-        String[] parts = str.trim().split("\\s+");
-        return new Point(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]), Double.parseDouble(parts[2]));
+        return new Point(parseDouble3(str));
     }
 
     private static Vector parseVector(String str) {
-        String[] parts = str.trim().split("\\s+");
-        return new Vector(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]), Double.parseDouble(parts[2]));
+        return new Vector(parseDouble3(str));
     }
 
     private static Double3 parseDouble3(String str) {

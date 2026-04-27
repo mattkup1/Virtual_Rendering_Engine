@@ -3,10 +3,10 @@ package renderer;
 import geometries.impl.Sphere;
 import geometries.impl.Triangle;
 import lighting.AmbientLight;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Point;
+import scene.JsonSceneLoader;
 import scene.Scene;
 import scene.XmlSceneLoader;
 
@@ -113,6 +113,7 @@ class RenderTests {
      * @return the camera after rendering
      */
     Camera renderSceneXML(Camera.Builder builder, String xmlName) {
+
         Scene scene = new Scene("Using XML");
 
         XmlSceneLoader.loadScene(xmlName, scene);
@@ -133,16 +134,15 @@ class RenderTests {
      * @return the camera after rendering
      */
     static Camera renderSceneJSON(Camera.Builder builder, String jsonName) {
-        Scene scene = new Scene("Using JSON");
-        // Parse from JSON file into scene object instead of the new Scene above,
-        // Use the code you added in appropriate packages.
-        // ...
-        // NB: unit tests is not the correct place to put JSON parsing code.
 
-        return builder //
-                .setRayTracer(scene, RayTracerType.SIMPLE) //
-                .build() //
-                .renderImage(); //
+        Scene scene = new Scene("Using JSON");
+
+        JsonSceneLoader.loadScene(jsonName, scene);
+
+        return builder
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .build()
+                .renderImage();
     }
 
     /**
@@ -158,10 +158,9 @@ class RenderTests {
     /**
      * Test for JSON based scene - for bonus
      */
-    @Disabled
     @Test
     void testBasicRenderJson() {
-        renderSceneJSON(baseCameraBuilder(), "basicRenderTestTwoColors") //
+        renderSceneJSON(baseCameraBuilder(), "basicRenderTestTwoColors.json") //
                 .printGrid(100, new Color(YELLOW)) //
                 .writeToImage("render test json");
     }
