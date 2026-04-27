@@ -115,6 +115,7 @@ class RayTests {
         final Ray ray = new Ray(P100, Vector.AXIS_Z);
 
         // ============ Equivalence Partitions Tests ==============
+
         // EP01: Correct ray construction with unit vector
         assertDoesNotThrow(() -> new Ray(P123, Vector.AXIS_X), ERROR_CTOR);
         assertEquals(Vector.AXIS_X, RAYp123v100.getDirection(), ERROR_CTOR_DIRECTION);
@@ -124,6 +125,7 @@ class RayTests {
         assertEquals(1.0, ray2.getDirection().length(), DELTA, ERROR_CTOR_NORMALIZE_DIRECTION);
 
         // =============== Boundary Values Tests ==================
+
         // BV01: Ray construction with zero vector as direction (should throw exception)
         assertThrows(IllegalArgumentException.class,
                 () -> new Ray(P123, new Vector(0, 0, 0)), ERROR_CTOR_ZERO_DIRECTION);
@@ -151,25 +153,28 @@ class RayTests {
     @Test
     void testFindClosestPoint() {
 
+        final Point closest = new Point(2, 0, 0); // Closest point
         final Point pn300 = new Point(-3, 0, 0);
         final Point pn200 = new Point(-2, 0, 0);
-        // Closest point
-        final Point closest = new Point(2, 0, 0);
         final Point p500 = new Point(5, 0, 0);
         final Point p600 = new Point(6, 0, 0);
         final Ray ray = new Ray(P100, Vector.AXIS_Z);
 
         // ============ Equivalence Partitions Tests ==============
+
         // EP01: Middle point is the closest to ray origin
         final var points1 = List.of(pn300, pn200, closest, p500, p600);
         assertEquals(closest, ray.findClosestPoint(points1), ERR_CLOSEST_POINT);
 
         // =============== Boundary Values Tests ==================
+
         // BV11: Points list is null
         assertNull(ray1Same.findClosestPoint(null), ERR_CLOSEST_POINT);
+
         // BV12: First point in the list is the closest to the ray origin
         final var points2 = List.of(closest, pn300, pn200, p600, p500);
         assertEquals(closest, ray.findClosestPoint(points2), ERR_CLOSEST_POINT);
+
         // BV13: Last point in the list is the closest to the ray origin
         final var points3 = List.of(pn300, pn200, p500, p600, closest);
         assertEquals(closest, ray.findClosestPoint(points3), ERR_CLOSEST_POINT);
