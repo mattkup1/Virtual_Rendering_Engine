@@ -85,6 +85,7 @@ public final class Ray {
      * @return the closest point to the ray origin
      */
     public Point findClosestPoint(List<Point> points) {
+
         if (points == null) return null;
 
         double minDistSq = Double.POSITIVE_INFINITY;
