@@ -16,28 +16,57 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+/**
+ * Abstract base class for scene loading operations.
+ * <p>
+ * This class implements the Template Method Pattern. It defines the high-level
+ * algorithm for populating a {@link Scene} (background, light, and geometries) from a file.
+ * while delegating format-specific data extraction (XML or JSON) to subclasses.
+ * </p>
+ *
+ * @author mattkuperwasser
+ * @author moshehanau
+ */
 public abstract class SceneLoader {
 
+    /**
+     * The scene object being populated by this loader
+     */
     private final Scene scene;
 
+    /**
+     * Initializes a new loader and creates a new Scene with the given name.
+     * * @param sceneName the identifier for the scene
+     */
     public SceneLoader(String sceneName) {
         this.scene = new Scene(sceneName);
     }
 
-    // Keep this static if you want to call SceneLoader.loadScene(...)
-    // But it needs to create an instance of the specific loader!
+    /**
+     * The Template Method. Orchestrates the loading process.
+     * <p>
+     * It executes the algorithm steps in order:
+     * 1. Setting the background color.
+     * 2. Initializing ambient lighting.
+     * 3. Constructing all geometric shapes.
+     * </p>
+     * * @return the fully populated {@link Scene}
+     */
     public Scene loadScene() {
-        // 1. Background
+        // 1. Process Background Color
         String bgColor = getBackgroundColor();
-        if (bgColor != null) scene.background = parseColor(bgColor);
+        if (bgColor != null) {
+            scene.background = parseColor(bgColor);
+        }
 
-        // 2. Ambient Light (Fixed name to match your subclass)
+        // 2. Process Ambient Light
         String ambientColor = getAmbientLight();
         if (ambientColor != null) {
             scene.ambientLight = new AmbientLight(parseColor(ambientColor));
         }
 
-        // 3. Geometries
+        // 3. Process Geometries
+        // Subclasses provide raw string data in maps, this class builds the objects.
         List<Map<String, String>> geometryData = getGeometries();
         for (var data : geometryData) {
             scene.geometries.add(buildGeometry(data));
@@ -46,6 +75,17 @@ public abstract class SceneLoader {
         return scene;
     }
 
+    /**
+     * Centralized Factory Method for creating geometric objects.
+     * <p>
+     * This method handles the logic of converting raw string attributes into
+     * concrete geometry implementations.
+     * </p>
+     *
+     * @param data a map containing the attributes for the geometry
+     * @return the constructed {@link Geometry} object
+     * @throws IllegalArgumentException if the geometry type is unsupported
+     */
     private Geometry buildGeometry(Map<String, String> data) {
         String type = data.get("type");
         switch (type) {
@@ -62,10 +102,13 @@ public abstract class SceneLoader {
             }
             case "plane" -> {
                 Point p0 = parsePoint(data.get("p0"));
+                // Supports Plane(point, normal) or Plane(p0, p1, p2)
                 if (data.containsKey("normal")) {
                     return new Plane(p0, parseVector(data.get("normal")));
                 } else {
-                    return new Plane(p0, parsePoint(data.get("p1")), parsePoint(data.get("p2")));
+                    Point p1 = parsePoint(data.get("p1"));
+                    Point p2 = parsePoint(data.get("p2"));
+                    return new Plane(p0, p1, p2);
                 }
             }
             case "tube" -> {
@@ -80,37 +123,61 @@ public abstract class SceneLoader {
                 return new Cylinder(radius, axis, height);
             }
             case "polygon" -> {
+                // Dynamically parses vertices labeled p0, p1, p2... based on the count
                 int numVertices = Integer.parseInt(data.get("number of vertices"));
                 Point[] vertices = new Point[numVertices];
                 for (int k = 0; k < numVertices; ++k)
                     vertices[k] = parsePoint(data.get("p" + k));
                 return new Polygon(vertices);
             }
-            default -> throw new IllegalArgumentException("Unknown type: " + type);
+            default -> throw new IllegalArgumentException("Unknown geometry type: " + type);
         }
     }
 
-    // --- MUST BE PROTECTED ABSTRACT (No static here!) ---
+    // --- Abstract Hooks: To be implemented by format-specific subclasses ---
+
+    /**
+     * @return the background color string from the source file
+     */
     protected abstract String getBackgroundColor();
 
+    /**
+     * @return the ambient light color string from the source file
+     */
     protected abstract String getAmbientLight();
 
+    /**
+     * @return a list of maps, where each map contains string-based attributes for one geometry
+     */
     protected abstract List<Map<String, String>> getGeometries();
 
-    // Helpers can stay static or be instanced (safer)
+    // --- Shared Internal Helpers ---
+
+    /**
+     * Converts a coordinate string "x y z" into a Point
+     */
     protected Point parsePoint(String str) {
         return new Point(parseDouble3(str));
     }
 
+    /**
+     * Converts a direction string "x y z" into a Vector
+     */
     protected Vector parseVector(String str) {
         return new Vector(parseDouble3(str));
     }
 
+    /**
+     * Converts a color string "r g b" into a Color object
+     */
     protected Color parseColor(String str) {
         Double3 d = parseDouble3(str);
         return new Color(d._d1(), d._d2(), d._d3());
     }
 
+    /**
+     * Splits a string by whitespace and converts it to a Double3 primitive
+     */
     private Double3 parseDouble3(String str) {
         String[] p = str.trim().split("\\s+");
         return new Double3(Double.parseDouble(p[0]), Double.parseDouble(p[1]), Double.parseDouble(p[2]));
