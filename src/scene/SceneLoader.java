@@ -36,7 +36,8 @@ public abstract class SceneLoader {
 
     /**
      * Initializes a new loader and creates a new Scene with the given name.
-     * * @param sceneName the identifier for the scene
+     *
+     * @param sceneName the identifier for the scene
      */
     public SceneLoader(String sceneName) {
         this.scene = new Scene(sceneName);
@@ -50,7 +51,8 @@ public abstract class SceneLoader {
      * 2. Initializing ambient lighting.
      * 3. Constructing all geometric shapes.
      * </p>
-     * * @return the fully populated {@link Scene}
+     *
+     * @return the fully populated {@link Scene}
      */
     public Scene loadScene() {
         // 1. Process Background Color
@@ -137,16 +139,22 @@ public abstract class SceneLoader {
     // --- Abstract Hooks: To be implemented by format-specific subclasses ---
 
     /**
+     * Returns the scene background color from the source file as a String
+     *
      * @return the background color string from the source file
      */
     protected abstract String getBackgroundColor();
 
     /**
+     * Returns the ambient light color from the source file as a String
+     *
      * @return the ambient light color string from the source file
      */
     protected abstract String getAmbientLight();
 
     /**
+     * Returns a list of maps representing the string-based attributes for a single geometry
+     *
      * @return a list of maps, where each map contains string-based attributes for one geometry
      */
     protected abstract List<Map<String, String>> getGeometries();
@@ -154,21 +162,30 @@ public abstract class SceneLoader {
     // --- Shared Internal Helpers ---
 
     /**
-     * Converts a coordinate string "x y z" into a Point
+     * Converts a coordinate string "x y z" into a {@link Point}
+     *
+     * @param str the point coordinates in string format
+     * @return the constructed point
      */
     protected Point parsePoint(String str) {
         return new Point(parseDouble3(str));
     }
 
     /**
-     * Converts a direction string "x y z" into a Vector
+     * Converts a direction string "x y z" into a {@link Vector}
+     *
+     * @param str the Vector coordinates in string format
+     * @return the constructed vector
      */
     protected Vector parseVector(String str) {
         return new Vector(parseDouble3(str));
     }
 
     /**
-     * Converts a color string "r g b" into a Color object
+     * Converts a color string "r g b" into a {@link Color} object
+     *
+     * @param str the color components in string format
+     * @return the constructed color object
      */
     protected Color parseColor(String str) {
         Double3 d = parseDouble3(str);
@@ -176,7 +193,10 @@ public abstract class SceneLoader {
     }
 
     /**
-     * Splits a string by whitespace and converts it to a Double3 primitive
+     * Splits a string by whitespace and converts it to a {@link Double3} primitive
+     *
+     * @param str the Double3 components in string format
+     * @return the constructed Double3 object
      */
     private Double3 parseDouble3(String str) {
         String[] p = str.trim().split("\\s+");

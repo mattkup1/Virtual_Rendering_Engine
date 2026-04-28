@@ -32,9 +32,9 @@ public class XmlSceneLoader extends SceneLoader {
 
     /**
      * Constructs an XML scene loader and parses the file into a DOM Document.
-     * * @param sceneName the name of the scene to be created
      *
-     * @param xmlPath the path to the XML source file
+     * @param sceneName the name of the scene to be created
+     * @param xmlPath   the path to the XML source file
      * @throws RuntimeException if the XML file cannot be read or parsed
      */
     public XmlSceneLoader(String sceneName, String xmlPath) {

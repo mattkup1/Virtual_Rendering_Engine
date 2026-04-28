@@ -95,11 +95,11 @@ class RenderTests {
                         // down right
                         new Triangle(pRM, pMB, pRB));
 
-        baseCameraBuilder() //
-                .setRayTracer(scene, RayTracerType.SIMPLE) //
-                .build() //
-                .renderImage() //
-                .printGrid(100, new Color(YELLOW)) //
+        baseCameraBuilder()
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .build()
+                .renderImage()
+                .printGrid(100, new Color(YELLOW))
                 .writeToImage("Two colors render test");
     }
 
