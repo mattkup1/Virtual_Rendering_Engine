@@ -25,7 +25,7 @@ import static java.awt.Color.YELLOW;
 @SuppressWarnings("java:S109")
 class RenderTests {
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy Javadoc generator
      */
     RenderTests() { /* to satisfy Javadoc generator */ }
 
@@ -114,9 +114,9 @@ class RenderTests {
      */
     Camera renderSceneXML(Camera.Builder builder, String xmlName) {
 
-        Scene scene = new Scene("Using XML");
+        XmlSceneLoader SceneLoader = new XmlSceneLoader("Using XML", xmlName);
 
-        XmlSceneLoader.loadScene(xmlName, scene);
+        Scene scene = SceneLoader.loadScene();
 
         return builder
                 .setRayTracer(scene, RayTracerType.SIMPLE)
@@ -135,9 +135,9 @@ class RenderTests {
      */
     static Camera renderSceneJSON(Camera.Builder builder, String jsonName) {
 
-        Scene scene = new Scene("Using JSON");
+        JsonSceneLoader SceneLoader = new JsonSceneLoader("Using JSON", jsonName);
 
-        JsonSceneLoader.loadScene(jsonName, scene);
+        Scene scene = SceneLoader.loadScene();
 
         return builder
                 .setRayTracer(scene, RayTracerType.SIMPLE)
