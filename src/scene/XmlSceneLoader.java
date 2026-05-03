@@ -85,10 +85,10 @@ public class XmlSceneLoader extends SceneLoader {
                     Element el = (Element) node;
                     Map<String, String> map = new HashMap<>();
 
-                    // 1. Map the tag name (e.g., "sphere") to the "type" key
+                    // Map the tag name (e.g., "sphere") to the "type" key
                     map.put("type", el.getTagName());
 
-                    // 2. Extract all attributes (radius, center, p0, etc.) into the map
+                    // Extract all attributes (radius, center, p0, etc.) into the map
                     var attributes = el.getAttributes();
                     for (int j = 0; j < attributes.getLength(); j++) {
                         Node attr = attributes.item(j);

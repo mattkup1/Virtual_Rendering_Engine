@@ -55,23 +55,23 @@ public abstract class SceneLoader {
      * @return the fully populated {@link Scene}
      */
     public Scene loadScene() {
-        // 1. Process Background Color
-        String bgColor = getBackgroundColor();
-        if (bgColor != null) {
-            scene.background = parseColor(bgColor);
+        // Process Background Color
+        String backgroundColor = getBackgroundColor();
+        if (backgroundColor != null) {
+            scene.background = parseColor(backgroundColor);
         }
 
-        // 2. Process Ambient Light
+        // Process Ambient Light
         String ambientColor = getAmbientLight();
         if (ambientColor != null) {
             scene.ambientLight = new AmbientLight(parseColor(ambientColor));
         }
 
-        // 3. Process Geometries
+        // Process Geometries
         // Subclasses provide raw string data in maps, this class builds the objects.
         List<Map<String, String>> geometryData = getGeometries();
         for (var data : geometryData) {
-            scene.geometries.add(buildGeometry(data));
+            scene.geometries.add(buildGeometries(data));
         }
 
         return scene;
@@ -88,7 +88,7 @@ public abstract class SceneLoader {
      * @return the constructed {@link Geometry} object
      * @throws IllegalArgumentException if the geometry type is unsupported
      */
-    private Geometry buildGeometry(Map<String, String> data) {
+    private Geometry buildGeometries(Map<String, String> data) {
         String type = data.get("type");
         switch (type) {
             case "sphere" -> {
@@ -162,6 +162,17 @@ public abstract class SceneLoader {
     // --- Shared Internal Helpers ---
 
     /**
+     * Splits a string by whitespace and converts it to a {@link Double3} primitive
+     *
+     * @param str the Double3 components in string format
+     * @return the constructed Double3 object
+     */
+    private Double3 parseDouble3(String str) {
+        String[] p = str.trim().split("\\s+");
+        return new Double3(Double.parseDouble(p[0]), Double.parseDouble(p[1]), Double.parseDouble(p[2]));
+    }
+
+    /**
      * Converts a coordinate string "x y z" into a {@link Point}
      *
      * @param str the point coordinates in string format
@@ -190,16 +201,5 @@ public abstract class SceneLoader {
     protected Color parseColor(String str) {
         Double3 d = parseDouble3(str);
         return new Color(d._d1(), d._d2(), d._d3());
-    }
-
-    /**
-     * Splits a string by whitespace and converts it to a {@link Double3} primitive
-     *
-     * @param str the Double3 components in string format
-     * @return the constructed Double3 object
-     */
-    private Double3 parseDouble3(String str) {
-        String[] p = str.trim().split("\\s+");
-        return new Double3(Double.parseDouble(p[0]), Double.parseDouble(p[1]), Double.parseDouble(p[2]));
     }
 }
