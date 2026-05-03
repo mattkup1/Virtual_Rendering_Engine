@@ -297,7 +297,7 @@ public class Camera implements Cloneable {
         public Builder rotate(double angle) {
 
             // in case the angle is zero then there is no rotate
-            if (isZero(angle)) return this;
+            if (isZero(angle % 360)) return this;
 
             if (_camera._vUp == null)
                 throw new MissingResourceException("Camera vUp vector must be initialized before rotation",
