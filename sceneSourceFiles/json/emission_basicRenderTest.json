@@ -1,43 +1,35 @@
 {
   "background-color": "10 10 10",
   "ambient-light": {
-    "color": "255 255 255"
+    "color": "51 45 51"
   },
   "geometries": [
     {
       "type": "sphere",
       "center": "0 0 -100",
       "radius": 50,
-      "material": {
-        "kA": "0.4 0.4 0.4"
-      }
+      "emission": "20 20 20"
     },
     {
       "type": "triangle",
       "p0": "-100 0 -100",
       "p1": "0 100 -100",
       "p2": "-100 100 -100",
-      "material": {
-        "kA": "0 0.8 0"
-      }
+      "emission": "0 255 0"
     },
     {
       "type": "triangle",
       "p0": "-100 0 -100",
       "p1": "0 -100 -100",
       "p2": "-100 -100 -100",
-      "material": {
-        "kA": "0.8 0 0"
-      }
+      "emission": "255 0 0"
     },
     {
       "type": "triangle",
       "p0": "100 0 -100",
       "p1": "0 -100 -100",
       "p2": "100 -100 -100",
-      "material": {
-        "kA": "0 0 0.8"
-      }
+      "emission": "0 0 255"
     }
   ]
 }

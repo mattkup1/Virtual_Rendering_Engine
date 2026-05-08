@@ -136,11 +136,14 @@ public abstract class SceneLoader {
             }
             default -> throw new IllegalArgumentException("Unknown geometry type: " + type);
         }
-
-        // Supports the new nested JSON material format ("material.kA"), with a legacy fallback ("kA").
+        // Add emission light
+        String emission = data.get("emission");
+        if (emission != null)
+            geometry.setEmission(parseColor(emission));
+        // Add Ambient light coefficient
         String kA = data.get("material.kA");
         if (kA != null)
-            return geometry.setMaterial(new Material().setKA(parseDouble3(kA)));
+            geometry.setMaterial(new Material().setKA(parseDouble3(kA)));
 
         return geometry;
     }

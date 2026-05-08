@@ -68,7 +68,9 @@ class RenderStage6Tests {
      * Sphere radius
      */
     private static final double RADIUS = 50D;
-
+    /**
+     * View plane resolution
+     */
     private static int RESOLUTION = 1000;
 
     /**

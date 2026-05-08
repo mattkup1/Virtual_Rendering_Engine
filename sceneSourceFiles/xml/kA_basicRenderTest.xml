@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scene background-color="75 127 190">
+	<ambient-light color="255 191 191" />
+	<geometries>
+		<sphere center="0 0 -100" radius="50">
+			<material kA="0.4 0.4 0.4" />
+		</sphere>
+
+		<triangle p0="-100 0 -100" p1="0 100 -100" p2="-100 100 -100">
+			<material kA="0 0.8 0" />
+		</triangle>
+		<triangle p0="-100 0 -100" p1="0 -100 -100" p2="-100 -100 -100">
+			<material kA="0.8 0 0" />
+		</triangle>
+		<triangle p0="100 0 -100" p1="0 -100 -100" p2="100 -100 -100">
+			<material kA="0 0 0.8" />
+		</triangle>
+	</geometries>
+</scene>

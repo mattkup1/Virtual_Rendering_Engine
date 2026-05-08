@@ -50,6 +50,14 @@ class RenderTests {
      * Image resolution (it is a square: NxN)
      */
     static final int RESOLUTION = 1000;
+    /**
+     * json scene source file - file path
+     */
+    static final String jsonFilePath = "sceneSourceFiles/json/";
+    /**
+     * xml scene source file - file path
+     */
+    static final String xmlFilePath = "sceneSourceFiles/xml/";
 
     /**
      * Creates a base camera builder for the tests.
@@ -146,13 +154,33 @@ class RenderTests {
     }
 
     /**
-     * Test for XML based scene - for bonus
+     * Test for XML base scene - for bonus
      */
     @Test
     void testBasicRenderXml() {
-        renderSceneXML(baseCameraBuilder(), "basicRenderTestTwoColors.xml")
+        renderSceneXML(baseCameraBuilder(), xmlFilePath + "basicRenderTestTwoColors.xml")
                 .printGrid(100, new Color(YELLOW))
                 .writeToImage("render test xml");
+    }
+
+    /**
+     * Test for XML base scene with kA factor - for bonus
+     */
+    @Test
+    void testBasicRenderXml_kA() {
+        renderSceneXML(baseCameraBuilder(), xmlFilePath + "kA_basicRenderTest.xml")
+                .printGrid(100, new Color(YELLOW))
+                .writeToImage("xml with kA test");
+    }
+
+    /**
+     * Test for XML base scene with emission light - for bonus
+     */
+    @Test
+    void testBasicRenderXml_emission() {
+        renderSceneXML(baseCameraBuilder(), xmlFilePath + "emission_basicRenderTest.xml")
+                .printGrid(100, new Color(YELLOW))
+                .writeToImage("xml with emission test");
     }
 
     /**
@@ -160,8 +188,28 @@ class RenderTests {
      */
     @Test
     void testBasicRenderJson() {
-        renderSceneJSON(baseCameraBuilder(), "basicRenderTestTwoColors.json") //
+        renderSceneJSON(baseCameraBuilder(), jsonFilePath + "basicRenderTestTwoColors.json") //
                 .printGrid(100, new Color(YELLOW)) //
                 .writeToImage("render test json");
+    }
+
+    /**
+     * Test for JSON base scene with kA - for bonus
+     */
+    @Test
+    void testBasicRenderJson_kA() {
+        renderSceneJSON(baseCameraBuilder(), jsonFilePath + "kA_basicRenderTest.json") //
+                .printGrid(100, new Color(YELLOW)) //
+                .writeToImage("json with kA test");
+    }
+
+    /**
+     * Test for JSON base scene with emission light - for bonus
+     */
+    @Test
+    void testBasicRenderJson_emission() {
+        renderSceneJSON(baseCameraBuilder(), jsonFilePath + "emission_basicRenderTest.json") //
+                .printGrid(100, new Color(YELLOW)) //
+                .writeToImage("json with emission test");
     }
 }

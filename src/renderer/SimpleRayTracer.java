@@ -13,8 +13,8 @@ import scene.Scene;
  * point and colors it using the scene's ambient light intensity, without
  * accounting for direct light sources, shadows, or reflections.
  * </p>
- * * @author mattkuperwasser
- *
+ * 
+ * @author mattkuperwasser
  * @author moshehanau
  */
 class SimpleRayTracer extends RayTracerBase {

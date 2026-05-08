@@ -95,6 +95,17 @@ public class XmlSceneLoader extends SceneLoader {
                         map.put(attr.getNodeName(), attr.getNodeValue());
                     }
 
+                    // Extract nested <material .../> into namespaced keys (e.g., material.kA)
+                    NodeList materialNodes = el.getElementsByTagName("material");
+                    if (materialNodes.getLength() > 0) {
+                        Element materialEl = (Element) materialNodes.item(0);
+                        var materialAttributes = materialEl.getAttributes();
+                        for (int j = 0; j < materialAttributes.getLength(); j++) {
+                            Node attr = materialAttributes.item(j);
+                            map.put("material." + attr.getNodeName(), attr.getNodeValue());
+                        }
+                    }
+
                     list.add(map);
                 }
             }

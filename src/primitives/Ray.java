@@ -79,6 +79,20 @@ public final class Ray {
         }
     }
 
+
+    /**
+     * Finds the closest intersection point to the ray's origin from a list of intersections.
+     * <p>
+     * This method iterates through the provided list and identifies the intersection
+     * with the minimum squared distance to the ray's origin
+     * Using {@link Point#distanceSquared(Point)} is more efficient for comparisons
+     * as it avoids the overhead of square root operations.
+     * </p>
+     *
+     * @param intersections a list of potential intersections; may be {@code null}
+     * @return the {@link Intersection} object closest to the ray's origin,
+     * or {@code null} if the input list is null or empty
+     */
     public Intersection findClosestIntersection(List<Intersection> intersections) {
         if (intersections == null) return null;
 
@@ -86,6 +100,7 @@ public final class Ray {
         Intersection closestIntersection = null;
 
         for (Intersection intersection : intersections) {
+            // Calculate squared distance to origin to optimize performance
             double distSq = intersection.point.distanceSquared(this._origin);
             if (distSq < minDistSq) {
                 closestIntersection = intersection;
@@ -96,13 +111,18 @@ public final class Ray {
     }
 
     /**
-     * Returns the closest point to the ray origin from the given list of points
+     * Finds the closest point to the ray's origin from a given list of points.
+     * <p>
+     * This is a convenience method that wraps points into {@link Intersection}
+     * objects to utilize the optimized {@link #findClosestIntersection(List)} logic
+     * </p>
      *
-     * @param points the list of points
-     * @return the closest point to the ray origin
+     * @param points the list of points to check; may be {@code null}
+     * @return the {@link Point} closest to the ray's origin,
+     * or {@code null} if the input list is null or empty
      */
     public Point findClosestPoint(List<Point> points) {
-        return points == null ? null
+        return points == null || points.isEmpty() ? null
                 : findClosestIntersection(
                 points.stream()
                 .map(point -> new Intersection(null, point))

@@ -48,20 +48,31 @@ public abstract class Geometry extends Intersectable {
         return this;
     }
 
+    /**
+     * Material getter
+     *
+     * @return the geometry's material
+     */
     public Material getMaterial() {
         return _material;
     }
 
+    /**
+     * Material setter
+     * this method returns the geometry to allow chained method calls
+     *
+     * @param material the material
+     * @return the geometry
+     */
     public Geometry setMaterial(Material material) {
         _material = material;
         return this;
     }
 
     /**
-     * Abstract method to get the geometry's Normal vector
-     * Every geometry must implement this method
+     * Get the geometry's Normal vector
      *
-     * @param point point representing the direction relative to the origin
+     * @param point a point on the geometry
      * @return the geometry's normal vector
      */
     public abstract Vector getNormal(Point point);
