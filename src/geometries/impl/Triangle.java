@@ -36,7 +36,7 @@ public final class Triangle extends Polygon {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
         // Setup basic components of the ray and triangle
         Point p0 = ray.getOrigin();
         Vector rayDir = ray.getDirection();
@@ -87,7 +87,7 @@ public final class Triangle extends Polygon {
         double t = edge2.dotProduct(qvec) * invDet;
 
         // If t is negative or zero, the intersection is behind the ray origin.
-        return alignZero(t) <= 0 ? null : List.of(ray.getPoint(t));
+        return alignZero(t) <= 0 ? null : List.of(new Intersection(this, ray.getPoint(t)));
     }
 
     @Override

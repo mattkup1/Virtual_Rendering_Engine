@@ -64,7 +64,7 @@ public class Plane extends Geometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
         // Get the ray's origin
         final Point P0 = ray.getOrigin();
         if (P0.equals(this._point)) return null;
@@ -81,7 +81,7 @@ public class Plane extends Geometry {
         final double t = alignZero(nQMinusP0 / nv);
         // Return intersection point in a list
         // If no intersection, Return null
-        return t <= 0 ? null : List.of(ray.getPoint(t));
+        return t <= 0 ? null : List.of(new Intersection(this, ray.getPoint(t)));
     }
 
     /**

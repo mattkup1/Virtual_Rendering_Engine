@@ -4,7 +4,6 @@ import geometries.api.Intersectable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import primitives.Point;
 import primitives.Ray;
 
 /**
@@ -44,10 +43,10 @@ public class Geometries extends Intersectable {
      * @param ray the intersecting ray
      * @return the list of intersection points with the ray
      */
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = null;
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+        List<Intersection> intersections = null;
         for (Intersectable geometry : geometries) {
-            final var geometry_intersection = geometry.findIntersections(ray);
+            final var geometry_intersection = geometry.calcIntersections(ray);
             if (geometry_intersection != null) {
                 if (intersections == null) {
                     intersections = new ArrayList<>();

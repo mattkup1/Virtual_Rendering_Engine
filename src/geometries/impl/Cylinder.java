@@ -69,23 +69,23 @@ public final class Cylinder extends Tube {
 
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = null;
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+        List<Intersection> intersections = null;
 
         final Point tubeOrig = this._axis.getOrigin();
         final Vector tubeDir = this._axis.getDirection();
 
         // Check the infinite tube first
-        List<Point> tubeIntersections = super.findIntersections(ray);
+        List<Intersection> tubeIntersections = super.calcIntersectionsHelper(ray);
 
         if (tubeIntersections != null) {
-            for (Point p : tubeIntersections) {
+            for (Intersection p : tubeIntersections) {
                 // Prevent zero-vector exception on subtraction if point is at origin
                 double tProj;
-                if (p.equals(tubeOrig)) {
+                if (p.point.equals(tubeOrig)) {
                     tProj = 0;
                 } else {
-                    tProj = alignZero(p.subtract(tubeOrig).dotProduct(tubeDir));
+                    tProj = alignZero(p.point.subtract(tubeOrig).dotProduct(tubeDir));
                 }
 
                 // Verify the point is within the cylinder's height boundary (0 < t < height)
@@ -100,14 +100,14 @@ public final class Cylinder extends Tube {
         Point bottomIntersection = getPointOnCap(ray, tubeOrig);
         if (bottomIntersection != null) {
             if (intersections == null) intersections = new LinkedList<>();
-            intersections.add(bottomIntersection);
+            intersections.add(new Intersection(this, bottomIntersection));
         }
 
         // Check Top Cap (at origin + height)
         Point topIntersection = getPointOnCap(ray, this._axis.getPoint(this._height));
         if (topIntersection != null) {
             if (intersections == null) intersections = new LinkedList<>();
-            intersections.add(topIntersection);
+            intersections.add(new Intersection(this, topIntersection));
         }
 
         return intersections;

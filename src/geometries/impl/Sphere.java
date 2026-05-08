@@ -2,6 +2,7 @@ package geometries.impl;
 
 import java.util.List;
 import java.util.Objects;
+import org.junit.jupiter.api.extension.InvocationInterceptor;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -37,13 +38,13 @@ public final class Sphere extends RadialGeometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    protected List<Intersection> calcIntersectionsHelper(Ray ray) {
         Point p0 = ray.getOrigin();
         Vector v = ray.getDirection();
 
         // Vector from ray origin to sphere center
         if (this._center.equals(p0)) {
-            return List.of(ray.getPoint(this._radius));
+            return List.of(new Intersection(this, ray.getPoint(this._radius)));
         }
 
         Vector u = this._center.subtract(p0);
@@ -67,11 +68,16 @@ public final class Sphere extends RadialGeometry {
         if (t1 <= 0 && t2 <= 0) return null;
 
         if (t1 > 0 && t2 > 0) {
-            return List.of(ray.getPoint(t1), ray.getPoint(t2));
+            return List.of(
+                    new Intersection(this, ray.getPoint(t1)),
+                    new Intersection(this, ray.getPoint(t2))
+            );
         }
 
         // Case only one intersection
-        return t1 > 0 ? List.of(ray.getPoint(t1)) : List.of(ray.getPoint(t2));
+        return t1 > 0 ?
+                List.of(new Intersection(this, ray.getPoint(t1)))
+                : List.of(new Intersection(this, ray.getPoint(t2)));
     }
 
     @Override
