@@ -12,6 +12,7 @@ import java.util.Map;
 import lighting.AmbientLight;
 import primitives.Color;
 import primitives.Double3;
+import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -90,39 +91,40 @@ public abstract class SceneLoader {
      */
     private Geometry buildGeometries(Map<String, String> data) {
         String type = data.get("type");
+        Geometry geometry;
         switch (type) {
             case "sphere" -> {
                 Point center = parsePoint(data.get("center"));
                 double radius = Double.parseDouble(data.get("radius"));
-                return new Sphere(center, radius);
+                geometry = new Sphere(center, radius);
             }
             case "triangle" -> {
                 Point p0 = parsePoint(data.get("p0"));
                 Point p1 = parsePoint(data.get("p1"));
                 Point p2 = parsePoint(data.get("p2"));
-                return new Triangle(p0, p1, p2);
+                geometry = new Triangle(p0, p1, p2);
             }
             case "plane" -> {
                 Point p0 = parsePoint(data.get("p0"));
                 // Supports Plane(point, normal) or Plane(p0, p1, p2)
                 if (data.containsKey("normal")) {
-                    return new Plane(p0, parseVector(data.get("normal")));
+                    geometry = new Plane(p0, parseVector(data.get("normal")));
                 } else {
                     Point p1 = parsePoint(data.get("p1"));
                     Point p2 = parsePoint(data.get("p2"));
-                    return new Plane(p0, p1, p2);
+                    geometry = new Plane(p0, p1, p2);
                 }
             }
             case "tube" -> {
                 double radius = Double.parseDouble(data.get("radius"));
                 Ray axis = new Ray(parsePoint(data.get("origin")), parseVector(data.get("AxisDirection")));
-                return new Tube(radius, axis);
+                geometry = new Tube(radius, axis);
             }
             case "cylinder" -> {
                 double radius = Double.parseDouble(data.get("radius"));
                 Ray axis = new Ray(parsePoint(data.get("origin")), parseVector(data.get("AxisDirection")));
                 double height = Double.parseDouble(data.get("height"));
-                return new Cylinder(radius, axis, height);
+                geometry = new Cylinder(radius, axis, height);
             }
             case "polygon" -> {
                 // Dynamically parses vertices labeled p0, p1, p2... based on the count
@@ -130,10 +132,17 @@ public abstract class SceneLoader {
                 Point[] vertices = new Point[numVertices];
                 for (int k = 0; k < numVertices; ++k)
                     vertices[k] = parsePoint(data.get("p" + k));
-                return new Polygon(vertices);
+                geometry = new Polygon(vertices);
             }
             default -> throw new IllegalArgumentException("Unknown geometry type: " + type);
         }
+
+        // Supports the new nested JSON material format ("material.kA"), with a legacy fallback ("kA").
+        String kA = data.get("material.kA");
+        if (kA != null)
+            return geometry.setMaterial(new Material().setKA(parseDouble3(kA)));
+
+        return geometry;
     }
 
     // --- Abstract Hooks: To be implemented by format-specific subclasses ---

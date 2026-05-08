@@ -68,7 +68,16 @@ public class JsonSceneLoader extends SceneLoader {
 
                 // Map every key-value pair in the JSON object to the string-based attribute map
                 for (String key : obj.keySet()) {
-                    map.put(key, String.valueOf(obj.get(key)));
+                    Object value = obj.get(key);
+
+                    // Keep material properties namespaced so the base loader can read them safely.
+                    if ("material".equals(key) && value instanceof JSONObject materialObj) {
+                        for (String materialKey : materialObj.keySet()) {
+                            map.put("material." + materialKey, String.valueOf(materialObj.get(materialKey)));
+                        }
+                    } else {
+                        map.put(key, String.valueOf(value));
+                    }
                 }
                 list.add(map);
             }
