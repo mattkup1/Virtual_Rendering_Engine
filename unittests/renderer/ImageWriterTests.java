@@ -3,8 +3,6 @@ package renderer;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 /**
  * Unit tests for class {@link ImageWriter}
  */
@@ -54,6 +52,6 @@ public class ImageWriterTests {
             }
         }
 
-        assertDoesNotThrow(() -> IW.writeToImage("our_first_image"), "ERROR: Failed to create image - Exception thrown");
+        IW.writeToImage("our_first_image");
     }
 }
