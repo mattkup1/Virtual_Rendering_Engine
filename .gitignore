@@ -4,6 +4,7 @@ out/
 !**/src/test/**/out/
 .kotlin
 doc
+images
 
 .idea/libraries/json.xml
 lib/json.jar
