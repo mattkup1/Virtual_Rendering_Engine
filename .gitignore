@@ -5,6 +5,11 @@ out/
 .kotlin
 doc
 
+.idea/libraries/json.xml
+lib/json.jar
+
+images/*.png
+
 ### Eclipse ###
 .apt_generated
 .classpath
