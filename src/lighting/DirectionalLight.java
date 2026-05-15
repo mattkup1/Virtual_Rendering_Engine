@@ -13,10 +13,10 @@ public class DirectionalLight extends Light implements LightSource {
     }
 
     public Vector getL(Point P) {
-        return null;
+        return _direction;
     }
 
     public Color getIntensity(Point p) {
-        return null;
+        return _intensity;
     }
 }
