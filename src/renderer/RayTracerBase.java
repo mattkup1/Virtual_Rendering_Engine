@@ -59,7 +59,7 @@ abstract class RayTracerBase {
      */
     protected boolean preprocessIntersection(Intersectable.Intersection intersection, Vector v) {
         intersection.v = v;
-        intersection.normal = intersection.geometry.getNormal(intersection.point);
+        intersection.normal = intersection.geometry.getNormal(intersection.point).normalize();
         intersection.vNormal = alignZero(intersection.v.dotProduct(intersection.normal));
         return intersection.vNormal != 0;
     }
@@ -80,7 +80,7 @@ abstract class RayTracerBase {
     protected boolean preprocessLightSource(Intersectable.Intersection intersection, LightSource light) {
         intersection.light = light;
         intersection.l = light.getL(intersection.point);
-        intersection.lNormal = alignZero(intersection.l.dotProduct(intersection.normal));
+        intersection.lNormal = alignZero(intersection.normal.dotProduct(intersection.l));
         return intersection.lNormal * intersection.vNormal > 0;
     }
 }

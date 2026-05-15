@@ -29,22 +29,22 @@ class LightsTests {
     private static final int RESOLUTION = 500;
 
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy Javadoc generator
      */
-    LightsTests() { /* to satisfy JavaDoc generator */ }
+    LightsTests() { /* to satisfy Javadoc generator */ }
 
     /**
-     * First scene for some of tests
+     * First scene for some of the tests
      */
     private final Scene _scene1 = new Scene("Test scene");
     /**
-     * Second scene for some of tests
+     * Second scene for some of the tests
      */
     private final Scene _scene2 = new Scene("Test scene")
             .setAmbientLight(new AmbientLight(new Color(38, 38, 38)));
 
     /**
-     * First camera builder for some of tests
+     * First camera builder for some of the tests
      */
     private final Camera.Builder _camera1 = Camera.getBuilder()                                //
             .setRayTracer(_scene1, RayTracerType.SIMPLE)                                                              //
@@ -53,7 +53,7 @@ class LightsTests {
             .setVpSize(150, 150).setVpDistance(1000);
 
     /**
-     * Second camera builder for some of tests
+     * Second camera builder for some of the tests
      */
     private final Camera.Builder _camera2 = Camera.getBuilder()                                //
             .setRayTracer(_scene2, RayTracerType.SIMPLE)                                                              //
@@ -256,7 +256,7 @@ class LightsTests {
 //    /**
 //     * Produce a picture of a sphere lighted by a narrow spotlight
 //     */
-//    @Disabled
+//
 //    @SuppressWarnings("java:S109")
 //    void testSphereSpotSharp() {
 //        _scene1.geometries.add(SPHERE);
