@@ -92,7 +92,7 @@ class SimpleRayTracer extends RayTracerBase {
     private Double3 calcSpecular(Intersection intersection) {
         // Reflection vector formula: r = l - 2 * (l . n) * n
         final Vector r =
-                intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal));
+                intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal)).normalize();
 
         double minusVR = alignZero(-intersection.v.dotProduct(r));
 
