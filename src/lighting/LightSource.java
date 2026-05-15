@@ -20,7 +20,7 @@ public interface LightSource {
      * @param p the point in space
      * @return the direction vector from the light source to the point
      */
-    Vector getL(Point p);
+    public Vector getL(Point p);
 
     /**
      * Get the intensity of the light at a given point.
@@ -30,5 +30,5 @@ public interface LightSource {
      * @param p the point in space
      * @return the {@link Color} representing the light intensity at the point
      */
-    Color getIntensity(Point p);
+    public Color getIntensity(Point p);
 }
