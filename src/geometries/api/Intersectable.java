@@ -1,9 +1,11 @@
 package geometries.api;
 
 import java.util.List;
+import lighting.LightSource;
 import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
 
 /**
  * Abstract class representing intersectable bodies in 3D space
@@ -55,18 +57,51 @@ public abstract class Intersectable {
      * An intersection consists of the point in space as well as the physical geometry
      */
     public static final class Intersection {
+
         /**
          * The geometry
          */
         public final Geometry geometry;
+
         /**
          * The geometry's material
          */
         public final Material material;
+
         /**
          * The intersection point
          */
         public final Point point;
+
+        /**
+         * The normal vector to the geometry at the intersection point
+         */
+        public Vector normal;
+
+        /**
+         * The direction vector of the ray that caused the intersection
+         */
+        public Vector v;
+
+        /**
+         * The dot product of the ray's direction vector (v) and the normal vector
+         */
+        public double vNormal;
+
+        /**
+         * The light source affecting this specific intersection point
+         */
+        public LightSource light;
+
+        /**
+         * The direction vector from the light source to the intersection point
+         */
+        public Vector l;
+
+        /**
+         * The dot product of the light direction vector (l) and the normal vector
+         */
+        public double lNormal;
 
         /**
          * Constructs an Intersection object

@@ -16,6 +16,11 @@ public class PointLight extends Light implements LightSource {
         _kQ = kQ;
     }
 
+    public PointLight(Color intensity, Point position) {
+        super(intensity);
+        _position = position;
+    }
+
     public Vector getL(Point p) {
         return p.subtract(_position).normalize();
     }
@@ -28,17 +33,17 @@ public class PointLight extends Light implements LightSource {
         return _intensity.scale(1d / (_kC + (_kL * d) + (_kQ * d * d)));
     }
 
-    public PointLight setKC(double kC) {
+    public PointLight setKc(double kC) {
         _kC = kC;
         return this;
     }
 
-    public PointLight setKL(double kL) {
+    public PointLight setKl(double kL) {
         _kL = kL;
         return this;
     }
 
-    public PointLight setKQ(double kQ) {
+    public PointLight setKq(double kQ) {
         _kQ = kQ;
         return this;
     }
