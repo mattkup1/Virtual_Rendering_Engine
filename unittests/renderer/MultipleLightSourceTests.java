@@ -22,30 +22,53 @@ import static java.awt.Color.BLUE;
  * <p>
  * Verifies that diffuse and specular contributions from directional, point,
  * and spot lights are combined correctly on the same geometry.
+ *
+ * @author mattkuperwasser
+ * @author moshehanau
  */
 class MultipleLightSourceTests {
-    /** Image resolution for all tests in this class */
+    /**
+     * Image resolution for all tests in this class
+     */
     private static final int RESOLUTION = 500;
 
-    /** Default constructor to satisfy Javadoc generator */
+    /**
+     * Default constructor to satisfy Javadoc generator
+     */
     MultipleLightSourceTests() { /* to satisfy Javadoc generator */ }
 
-    /** Shininess value for most of the geometries in the tests */
+    /**
+     * Shininess value for most of the geometries in the tests
+     */
     private static final int SHININESS = 301;
-    /** Diffusion attenuation factor for the sphere */
+    /**
+     * Diffusion attenuation factor for the sphere
+     */
     private static final double KD = 0.5;
-    /** Diffusion attenuation factor for the triangles */
+    /**
+     * Diffusion attenuation factor for the triangles
+     */
     private static final Double3 KD3 = new Double3(0.2, 0.6, 0.4);
-    /** Specular attenuation factor for the sphere */
+    /**
+     * Specular attenuation factor for the sphere
+     */
     private static final double KS = 0.5;
-    /** Specular attenuation factor for the triangles */
+    /**
+     * Specular attenuation factor for the triangles
+     */
     private static final Double3 KS3 = new Double3(0.2, 0.4, 0.3);
 
-    /** Color of the sphere (copied from {@link LightsTests}) */
+    /**
+     * Color of the sphere (copied from {@link LightsTests})
+     */
     private static final Color SPHERE_COLOR = new Color(BLUE).reduce(2);
-    /** Center of the sphere (copied from {@link LightsTests}) */
+    /**
+     * Center of the sphere (copied from {@link LightsTests})
+     */
     private static final Point SPHERE_CENTER = new Point(0, 0, -50);
-    /** Radius of the sphere (copied from {@link LightsTests}) */
+    /**
+     * Radius of the sphere (copied from {@link LightsTests})
+     */
     private static final double SPHERE_RADIUS = 50D;
 
     /**
@@ -61,9 +84,9 @@ class MultipleLightSourceTests {
     /**
      * Creates a camera builder aimed at the origin for the given scene.
      *
-     * @param scene     the scene to render
-     * @param vpWidth   view-plane width
-     * @param vpHeight  view-plane height
+     * @param scene    the scene to render
+     * @param vpWidth  view-plane width
+     * @param vpHeight view-plane height
      * @return a configured camera builder
      */
     private static Camera.Builder baseCamera(Scene scene, double vpWidth, double vpHeight) {

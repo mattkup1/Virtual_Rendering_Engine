@@ -7,6 +7,12 @@ import primitives.Vector;
 public class SpotLight extends PointLight {
     private final Vector _direction;
 
+    /**
+     * Factor for narrow beam spotlight.
+     * 1 means regular spotlight.
+     */
+    private int _narrowBeam = 1;
+
     public SpotLight(Color intensity, Point position, double kC, double kL, double kQ, Vector direction) {
         super(intensity, position, kC, kL, kQ);
         _direction = direction.normalize();
@@ -23,8 +29,24 @@ public class SpotLight extends PointLight {
 
     public Color getIntensity(Point p) {
         if (p.equals(_position)) return _intensity;
+
         final Color point_intensity = super.getIntensity(p);
-        return point_intensity.scale(Math.max(0d, _direction.dotProduct(getL(p))));
+
+        double projection = Math.max(0d, _direction.dotProduct(getL(p)));
+
+        return point_intensity.scale(Math.pow(projection, _narrowBeam));
+    }
+
+    /**
+     * Sets narrow beam factor for the spotlight.
+     * Larger value means a narrower and more focused beam.
+     *
+     * @param narrowBeam the narrow beam factor
+     * @return this spotlight
+     */
+    public SpotLight setNarrowBeam(int narrowBeam) {
+        _narrowBeam = narrowBeam;
+        return this;
     }
 
     @Override

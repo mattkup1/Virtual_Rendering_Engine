@@ -253,37 +253,37 @@ class LightsTests {
     }
 
 
-//    /**
-//     * Produce a picture of a sphere lighted by a narrow spotlight
-//     */
-//
-//    @SuppressWarnings("java:S109")
-//    void testSphereSpotSharp() {
-//        _scene1.geometries.add(SPHERE);
-//        _scene1.lights
-//                .add(new SpotLight(SPHERE_LIGHT_COLOR, SPHERE_LIGHT_POSITION, new Vector(1, 1, -0.5)) //
-//                        .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
-//
-//        _camera1.setResolution(500, 500) //
-//                .build() //
-//                .renderImage() //
-//                .writeToImage("lightSphereSpotSharp");
-//    }
-//
-//    /**
-//     * Produce a picture of two triangles lighted by a narrow spotlight
-//     */
-//    @Disabled
-//    @SuppressWarnings("java:S109")
-//    void testTrianglesSpotSharp() {
-//        _scene2.geometries.add(TRIANGLE1, TRIANGLE2);
-//        _scene2.lights.add(new SpotLight(TRIANGLES_LIGHT_COLOR, TRIANGLES_LIGHT_POSITION, TRIANGLES_LIGHT_DIRECTION) //
-//                .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
-//
-//        _camera2.setResolution(500, 500) //
-//                .build() //
-//                .renderImage() //
-//                .writeToImage("lightTrianglesSpotSharp");
-//    }
+    /**
+     * Produce a picture of a sphere lighted by a narrow spotlight
+     */
+    @Test
+    @SuppressWarnings("java:S109")
+    void testSphereSpotSharp() {
+        _scene1.geometries.add(SPHERE);
+        _scene1.lights
+                .add(new SpotLight(SPHERE_LIGHT_COLOR, SPHERE_LIGHT_POSITION, new Vector(1, 1, -0.5)) //
+                        .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+
+        _camera1.setResolution(500, 500) //
+                .build() //
+                .renderImage() //
+                .writeToImage("lightSphereSpotSharp");
+    }
+
+    /**
+     * Produce a picture of two triangles lighted by a narrow spotlight
+     */
+    @Test
+    @SuppressWarnings("java:S109")
+    void testTrianglesSpotSharp() {
+        _scene2.geometries.add(TRIANGLE1, TRIANGLE2);
+        _scene2.lights.add(new SpotLight(TRIANGLES_LIGHT_COLOR, TRIANGLES_LIGHT_POSITION, TRIANGLES_LIGHT_DIRECTION) //
+                .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+
+        _camera2.setResolution(500, 500) //
+                .build() //
+                .renderImage() //
+                .writeToImage("lightTrianglesSpotSharp");
+    }
 
 }
