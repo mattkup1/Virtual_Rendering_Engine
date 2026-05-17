@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Museum exhibit scene: a lit pedestal display in a dark gallery corner.
+  Lights are placed with clear roles — overhead key, warm fill, and a focused accent.
+-->
+<scene background-color="6 8 18">
+	<lights>
+		<ambient-light color="22 26 38" />
+		<directional-light color="200 215 255" direction="0.15 -1 -0.25" />
+		<point-light color="255 175 95" position="0 45 25" kL="0.001" kQ="0.00012" />
+		<spot-light color="420 310 140" position="-55 15 35" direction="0.85 -0.55 -1"
+		            kL="0.0009" kQ="0.00006" narrowBeam="18" />
+	</lights>
+
+	<geometries>
+		<!-- Gallery floor -->
+		<plane p0="0 -90 -145" normal="0 1 0">
+			<material kD="0.14 0.13 0.16" kS="0.06 0.06 0.08" shininess="50" />
+		</plane>
+
+		<!-- Back wall -->
+		<plane p0="0 40 -148" normal="0 0 1">
+			<material kD="0.1 0.12 0.18" kS="0.04 0.05 0.07" shininess="40" />
+		</plane>
+
+		<!-- Pedestal base -->
+		<cylinder origin="0 -88 -112" AxisDirection="0 1 0" radius="24" height="32">
+			<material kD="0.22 0.2 0.24" kS="0.18 0.17 0.2" shininess="120" />
+		</cylinder>
+
+		<!-- Centerpiece artifact on the pedestal -->
+		<sphere center="0 -48 -108" radius="28" emission="18 16 12">
+			<material kD="0.62 0.48 0.22" kS="0.75 0.7 0.55" shininess="420" />
+		</sphere>
+
+		<!-- Left gallery column -->
+		<cylinder origin="-75 -88 -118" AxisDirection="0 1 0" radius="9" height="58">
+			<material kD="0.2 0.22 0.28" kS="0.22 0.24 0.3" shininess="160" />
+		</cylinder>
+
+		<!-- Right floating accent orb -->
+		<sphere center="68 -42 -114" radius="16">
+			<material kD="0.18 0.35 0.42" kS="0.5 0.58 0.62" shininess="340" />
+		</sphere>
+
+		<!-- Curved railing leading toward the exhibit -->
+		<tube origin="-95 -82 -108" AxisDirection="0.85 0.15 -0.35" radius="7">
+			<material kD="0.28 0.18 0.22" kS="0.32 0.24 0.28" shininess="200" />
+		</tube>
+
+		<!-- Left backdrop panel -->
+		<triangle p0="-125 -88 -132" p1="-30 70 -132" p2="-125 70 -132">
+			<material kD="0.32 0.14 0.2" kS="0.2 0.12 0.16" shininess="80" />
+		</triangle>
+
+		<!-- Right backdrop panel -->
+		<triangle p0="125 -88 -132" p1="125 70 -132" p2="35 55 -132">
+			<material kD="0.12 0.28 0.32" kS="0.16 0.26 0.3" shininess="85" />
+		</triangle>
+
+		<!-- Low front platform edge (grounds the composition) -->
+		<triangle p0="-70 -90 -88" p1="70 -90 -88" p2="0 -90 -72">
+			<material kD="0.18 0.16 0.22" kS="0.12 0.11 0.15" shininess="70" />
+		</triangle>
+	</geometries>
+</scene>

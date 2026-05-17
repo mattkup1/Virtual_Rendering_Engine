@@ -53,6 +53,7 @@ class SimpleRayTracer extends RayTracerBase {
      * Calculates the color at a specific intersection point.
      *
      * @param intersection the point on a geometry surface
+     * @param v            the direction vector of the intersecting ray
      * @return the calculated color intensity
      */
     private Color calcColor(Intersection intersection, Vector v) {

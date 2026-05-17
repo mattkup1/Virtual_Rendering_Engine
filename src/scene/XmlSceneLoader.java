@@ -61,13 +61,65 @@ public class XmlSceneLoader extends SceneLoader {
 
     @Override
     protected String getAmbientLight() {
-        // Look for the <ambient-light> tag and extract its color attribute
+        // Prefer ambient light nested under <lights>, then fall back to a top-level tag
+        Node lightsNode = doc.getElementsByTagName("lights").item(0);
+        if (lightsNode != null) {
+            NodeList children = lightsNode.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node node = children.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE
+                        && "ambient-light".equals(node.getNodeName())) {
+                    String color = ((Element) node).getAttribute("color");
+                    return color.isEmpty() ? null : color;
+                }
+            }
+        }
+
         NodeList ambientList = doc.getElementsByTagName("ambient-light");
         if (ambientList.getLength() > 0) {
-            Element ambient = (Element) ambientList.item(0);
-            return ambient.getAttribute("color");
+            String color = ((Element) ambientList.item(0)).getAttribute("color");
+            return color.isEmpty() ? null : color;
         }
+
         return null;
+    }
+
+    @Override
+    protected List<Map<String, String>> getLights() {
+        List<Map<String, String>> list = new ArrayList<>();
+        Node lightsNode = doc.getElementsByTagName("lights").item(0);
+
+        if (lightsNode == null) {
+            return list;
+        }
+
+        NodeList children = lightsNode.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node node = children.item(i);
+
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
+            Element el = (Element) node;
+            String type = el.getTagName();
+            if ("ambient-light".equals(type)) {
+                continue;
+            }
+
+            Map<String, String> map = new HashMap<>();
+            map.put("type", type);
+
+            var attributes = el.getAttributes();
+            for (int j = 0; j < attributes.getLength(); j++) {
+                Node attr = attributes.item(j);
+                map.put(attr.getNodeName(), attr.getNodeValue());
+            }
+
+            list.add(map);
+        }
+
+        return list;
     }
 
     @Override

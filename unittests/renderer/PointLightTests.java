@@ -9,25 +9,72 @@ import primitives.Vector;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Unit tests for {@link PointLight}.
+ * <p>
+ * Verifies the light direction vector and distance-based intensity attenuation,
+ * including standard and boundary-value cases.
+ * </p>
+ *
+ * @author mattkuperwasser
+ * @author moshehanau
+ */
 public class PointLightTests {
 
+    /**
+     * Default constructor to satisfy Javadoc generator
+     */
+    PointLightTests() { /* to satisfy Javadoc generator */ }
+
+    /**
+     * A uniform white light intensity used in the tests.
+     */
     private static final Color INTENSITY_1 = new Color(100d, 100d, 100d);
 
+    /**
+     * The position of the point light source.
+     */
     private static final Point SOURCE = new Point(0, 0, 5);
 
+    /**
+     * A sample point in space used for light calculations.
+     */
     private static final Point P001 = new Point(0, 0, 1);
 
+    /**
+     * Constant attenuation coefficient for {@link #POINT_LIGHT_1}.
+     */
     private static final double kC_1 = 1d;
 
+    /**
+     * Linear attenuation coefficient for {@link #POINT_LIGHT_1}.
+     */
     private static final double kL_1 = 0d;
 
+    /**
+     * Quadratic attenuation coefficient for {@link #POINT_LIGHT_1}.
+     */
     private static final double kQ_1 = 0.0001;
 
+    /**
+     * A point light with intensity {@link #INTENSITY_1} at {@link #SOURCE}.
+     */
     private static final PointLight POINT_LIGHT_1 = new PointLight(INTENSITY_1, SOURCE, kC_1, kL_1, kQ_1);
 
+    /**
+     * Error message used when {@link PointLight#getIntensity(Point)} fails.
+     */
     private static final String ERR_INTENSITY = "ERROR: getIntensity produced Wrong intensity";
+
+    /**
+     * Error message used when {@link PointLight#getL(Point)} fails.
+     */
     private static final String ERR_GETL = "ERROR: getL produced Wrong vector";
 
+    /**
+     * Tests {@link PointLight#getL(Point)} for a standard point and for the boundary
+     * case where the query point coincides with the light source.
+     */
     @Test
     public void testGetL() {
 
@@ -41,6 +88,10 @@ public class PointLightTests {
         assertThrows(IllegalArgumentException.class, () -> POINT_LIGHT_1.getL(SOURCE), ERR_GETL);
     }
 
+    /**
+     * Tests {@link PointLight#getIntensity(Point)} for a standard point and for the boundary
+     * case where the query point coincides with the light source.
+     */
     @Test
     public void testGetIntensity() {
 

@@ -2,15 +2,25 @@ package lighting;
 
 import primitives.Color;
 
+/**
+ * Abstract base class for all light sources in the scene.
+ * <p>
+ * Stores the base color/intensity shared by every concrete light implementation.
+ * Subclasses may apply distance attenuation, direction, or other lighting models.
+ * </p>
+ *
+ * @author mattkuperwasser
+ * @author moshehanau
+ */
 abstract class Light {
 
     /**
-     * The intensity (color) of the ambient light.
+     * The base intensity (color) of the light source.
      */
     protected final Color _intensity;
 
     /**
-     * Constructs a Light object with the given intensity value
+     * Constructs a light with the given intensity.
      *
      * @param intensity the light intensity (color)
      */
@@ -19,9 +29,9 @@ abstract class Light {
     }
 
     /**
-     * Returns the intensity of the ambient light.
+     * Returns the base intensity of the light source.
      *
-     * @return the color intensity
+     * @return the light intensity (color)
      */
     public Color getIntensity() {
         return this._intensity;

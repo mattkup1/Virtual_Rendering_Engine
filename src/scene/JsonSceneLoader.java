@@ -51,9 +51,44 @@ public class JsonSceneLoader extends SceneLoader {
 
     @Override
     protected String getAmbientLight() {
-        // Navigates to the "ambient-light" object and extracts the "color" string
+        // Supports ambient light inside a "lights" object or at the root level
+        if (root.has("lights")) {
+            JSONObject lights = root.getJSONObject("lights");
+            if (lights.has("ambient-light")) {
+                return lights.getJSONObject("ambient-light").optString("color", null);
+            }
+        }
+
         return root.has("ambient-light") ?
                 root.getJSONObject("ambient-light").optString("color", null) : null;
+    }
+
+    @Override
+    protected List<Map<String, String>> getLights() {
+        List<Map<String, String>> list = new ArrayList<>();
+
+        if (!root.has("lights")) {
+            return list;
+        }
+
+        JSONObject lights = root.getJSONObject("lights");
+        for (String key : lights.keySet()) {
+            if ("ambient-light".equals(key)) {
+                continue;
+            }
+
+            JSONObject lightObj = lights.getJSONObject(key);
+            Map<String, String> map = new HashMap<>();
+            map.put("type", key);
+
+            for (String attr : lightObj.keySet()) {
+                map.put(attr, String.valueOf(lightObj.get(attr)));
+            }
+
+            list.add(map);
+        }
+
+        return list;
     }
 
     @Override

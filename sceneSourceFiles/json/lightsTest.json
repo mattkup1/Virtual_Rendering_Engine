@@ -1,0 +1,126 @@
+{
+  "background-color": "8 6 22",
+  "lights": {
+    "ambient-light": {
+      "color": "28 32 48"
+    },
+    "directional-light": {
+      "color": "240 210 160",
+      "direction": "-0.7 -1 -0.35"
+    },
+    "point-light": {
+      "color": "90 160 255",
+      "position": "70 50 35",
+      "kL": 0.0012,
+      "kQ": 0.00018
+    },
+    "spot-light": {
+      "color": "380 160 90",
+      "position": "-90 -70 45",
+      "direction": "1.1 1.2 -0.9",
+      "kL": 0.001,
+      "kQ": 0.00008,
+      "narrowBeam": 14
+    }
+  },
+  "geometries": [
+    {
+      "type": "sphere",
+      "center": "0 5 -82",
+      "radius": 48,
+      "emission": "12 14 22",
+      "material": {
+        "kD": "0.28 0.32 0.48",
+        "kS": "0.65 0.68 0.78",
+        "shininess": 380
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-72 28 -98",
+      "radius": 20,
+      "emission": "35 18 10",
+      "material": {
+        "kD": "0.55 0.28 0.18",
+        "kS": "0.5 0.42 0.32",
+        "shininess": 280
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "78 -15 -108",
+      "radius": 14,
+      "material": {
+        "kD": "0.22 0.42 0.38",
+        "kS": "0.55 0.6 0.55",
+        "shininess": 320
+      }
+    },
+    {
+      "type": "cylinder",
+      "origin": "95 -55 -118",
+      "AxisDirection": "0 1 0",
+      "radius": 16,
+      "height": 65,
+      "material": {
+        "kD": "0.32 0.48 0.26",
+        "kS": "0.38 0.45 0.3",
+        "shininess": 190
+      }
+    },
+    {
+      "type": "tube",
+      "origin": "-105 -40 -105",
+      "AxisDirection": "0.3 0.8 -0.2",
+      "radius": 10,
+      "material": {
+        "kD": "0.45 0.22 0.42",
+        "kS": "0.35 0.28 0.4",
+        "shininess": 220
+      }
+    },
+    {
+      "type": "plane",
+      "p0": "0 -92 -140",
+      "normal": "0 1 0",
+      "material": {
+        "kD": "0.12 0.14 0.2",
+        "kS": "0.08 0.1 0.14",
+        "shininess": 60
+      }
+    },
+    {
+      "type": "triangle",
+      "p0": "-135 -88 -128",
+      "p1": "5 95 -128",
+      "p2": "-135 95 -128",
+      "material": {
+        "kD": "0.48 0.22 0.32",
+        "kS": "0.28 0.18 0.22",
+        "shininess": 100
+      }
+    },
+    {
+      "type": "triangle",
+      "p0": "135 -88 -128",
+      "p1": "135 95 -128",
+      "p2": "0 75 -128",
+      "material": {
+        "kD": "0.18 0.38 0.42",
+        "kS": "0.22 0.32 0.38",
+        "shininess": 110
+      }
+    },
+    {
+      "type": "triangle",
+      "p0": "-60 -88 -75",
+      "p1": "60 -88 -75",
+      "p2": "0 -88 -55",
+      "material": {
+        "kD": "0.25 0.2 0.35",
+        "kS": "0.2 0.18 0.28",
+        "shininess": 90
+      }
+    }
+  ]
+}

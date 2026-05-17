@@ -112,40 +112,28 @@ class RenderTests {
     }
 
     /**
-     * Renders a scene loaded from an XML file.
+     * Renders a scene loaded from a JSON or XML source file.
      * <p>
-     * Note: parsing logic should not be implemented inside tests.
+     * The appropriate loader is selected according to the file extension.
+     * Parsing logic should not be implemented inside tests.
      *
-     * @param builder the camera builder to use
-     * @param xmlName the XML scene file name
+     * @param builder       the camera builder to use
+     * @param sceneFileName path to the scene file ({@code .json} or {@code .xml})
      * @return the camera after rendering
+     * @throws IllegalArgumentException if the file extension is not supported
      */
-    Camera renderSceneXML(Camera.Builder builder, String xmlName) {
+    static Camera renderScene(Camera.Builder builder, String sceneFileName) {
+        int extensionIndex = sceneFileName.lastIndexOf('.');
+        if (extensionIndex < 0) {
+            throw new IllegalArgumentException("Scene file must have an extension: " + sceneFileName);
+        }
 
-        XmlSceneLoader SceneLoader = new XmlSceneLoader("Using XML", xmlName);
-
-        Scene scene = SceneLoader.loadScene();
-
-        return builder
-                .setRayTracer(scene, RayTracerType.SIMPLE)
-                .build()
-                .renderImage();
-    }
-
-    /**
-     * Renders a scene loaded from a JSON file.
-     * <p>
-     * Note: parsing logic should not be implemented inside tests.
-     *
-     * @param builder  the camera builder to use
-     * @param jsonName the JSON scene file name
-     * @return the camera after rendering
-     */
-    static Camera renderSceneJSON(Camera.Builder builder, String jsonName) {
-
-        JsonSceneLoader SceneLoader = new JsonSceneLoader("Using JSON", jsonName);
-
-        Scene scene = SceneLoader.loadScene();
+        String extension = sceneFileName.substring(extensionIndex + 1).toLowerCase();
+        Scene scene = switch (extension) {
+            case "json" -> new JsonSceneLoader("Loaded scene", sceneFileName).loadScene();
+            case "xml" -> new XmlSceneLoader("Loaded scene", sceneFileName).loadScene();
+            default -> throw new IllegalArgumentException("Unsupported scene file extension: " + extension);
+        };
 
         return builder
                 .setRayTracer(scene, RayTracerType.SIMPLE)
@@ -157,59 +145,77 @@ class RenderTests {
      * Test for XML base scene - for bonus
      */
     @Test
-    void testBasicRenderXml() {
-        renderSceneXML(baseCameraBuilder(), xmlFilePath + "basicRenderTestTwoColors.xml")
+    void testBasicRenderXML() {
+        renderScene(baseCameraBuilder(), xmlFilePath + "basicRenderTestTwoColors.xml")
                 .printGrid(100, new Color(YELLOW))
-                .writeToImage("render test xml");
+                .writeToImage("XML basic render test");
     }
 
     /**
      * Test for XML base scene with kA factor - for bonus
      */
     @Test
-    void testBasicRenderXml_kA() {
-        renderSceneXML(baseCameraBuilder(), xmlFilePath + "kA_basicRenderTest.xml")
+    void testKaXML() {
+        renderScene(baseCameraBuilder(), xmlFilePath + "kA_basicRenderTest.xml")
                 .printGrid(100, new Color(YELLOW))
-                .writeToImage("xml with kA test");
+                .writeToImage("XML kA test");
     }
 
     /**
      * Test for XML base scene with emission light - for bonus
      */
     @Test
-    void testBasicRenderXml_emission() {
-        renderSceneXML(baseCameraBuilder(), xmlFilePath + "emission_basicRenderTest.xml")
+    void testEmissionXML() {
+        renderScene(baseCameraBuilder(), xmlFilePath + "emission_basicRenderTest.xml")
                 .printGrid(100, new Color(YELLOW))
-                .writeToImage("xml with emission test");
+                .writeToImage("XML emission test");
+    }
+
+    /**
+     * Test for XML scene with spot and point light - for bonus
+     */
+    @Test
+    void testLightsXML() {
+        renderScene(baseCameraBuilder(), xmlFilePath + "lightsTest.xml")
+                .writeToImage("XML lights test");
     }
 
     /**
      * Test for JSON based scene - for bonus
      */
     @Test
-    void testBasicRenderJson() {
-        renderSceneJSON(baseCameraBuilder(), jsonFilePath + "basicRenderTestTwoColors.json") //
+    void testBasicRenderJSON() {
+        renderScene(baseCameraBuilder(), jsonFilePath + "basicRenderTestTwoColors.json") //
                 .printGrid(100, new Color(YELLOW)) //
-                .writeToImage("render test json");
+                .writeToImage("JSON basic render test");
     }
 
     /**
      * Test for JSON base scene with kA - for bonus
      */
     @Test
-    void testBasicRenderJson_kA() {
-        renderSceneJSON(baseCameraBuilder(), jsonFilePath + "kA_basicRenderTest.json") //
+    void testKaJSON() {
+        renderScene(baseCameraBuilder(), jsonFilePath + "kA_basicRenderTest.json") //
                 .printGrid(100, new Color(YELLOW)) //
-                .writeToImage("json with kA test");
+                .writeToImage("JSON kA test");
     }
 
     /**
      * Test for JSON base scene with emission light - for bonus
      */
     @Test
-    void testBasicRenderJson_emission() {
-        renderSceneJSON(baseCameraBuilder(), jsonFilePath + "emission_basicRenderTest.json") //
+    void testBasicRenderEmissionJSON() {
+        renderScene(baseCameraBuilder(), jsonFilePath + "emission_basicRenderTest.json")
                 .printGrid(100, new Color(YELLOW)) //
-                .writeToImage("json with emission test");
+                .writeToImage("JSON emission test");
+    }
+
+    /**
+     * Test for JSON scene with spot and point light - for bonus
+     */
+    @Test
+    void testLightsJSON() {
+        renderScene(baseCameraBuilder(), jsonFilePath + "lightsTest.json")
+                .writeToImage("JSON lights test");
     }
 }
