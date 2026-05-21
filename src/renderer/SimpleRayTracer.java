@@ -62,8 +62,8 @@ class SimpleRayTracer extends RayTracerBase {
         Vector pointToLight = intersection.l.scale(-1);
         Vector delta = intersection.normal.scale(intersection.lNormal < 0 ? DELTA : -DELTA);
         Ray shadowRay = new Ray(intersection.point.add(delta), pointToLight);
-        // double lightDistance = intersection.light.getDistance(intersection.point);
-        return _scene.geometries.calcIntersections(shadowRay) == null;
+        double lightDistance = intersection.light.getDistance(intersection.point);
+        return _scene.geometries.calcIntersections(shadowRay, lightDistance) == null;
     }
 
     /**
