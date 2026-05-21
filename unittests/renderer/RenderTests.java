@@ -218,4 +218,13 @@ class RenderTests {
         renderScene(baseCameraBuilder(), jsonFilePath + "lightsTest.json")
                 .writeToImage("JSON lights test");
     }
+
+    /**
+     * Test for JSON scene resembling the course home page picture
+     */
+    @Test
+    void testCourseHomeJSON() {
+        renderScene(baseCameraBuilder(), jsonFilePath + "JSONcourseHome.json")
+                .writeToImage("JSON course home pic");
+    }
 }

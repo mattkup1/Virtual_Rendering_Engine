@@ -1,0 +1,118 @@
+{
+  "background-color": "0 0 0",
+  "lights": {
+    "ambient-light": {
+      "color": "18 18 24"
+    },
+    "directional-light": {
+      "color": "220 225 255",
+      "direction": "-0.45 -0.75 -0.55"
+    },
+    "point-light": {
+      "color": "160 130 220",
+      "position": "90 55 30",
+      "kL": 0.001,
+      "kQ": 0.0001
+    },
+    "spot-light": {
+      "color": "420 400 360",
+      "position": "-70 50 55",
+      "direction": "0.55 -0.45 -1",
+      "kL": 0.0008,
+      "kQ": 0.00005,
+      "narrowBeam": 10
+    }
+  },
+  "geometries": [
+    {
+      "type": "sphere",
+      "center": "0 0 -118",
+      "radius": 34,
+      "material": {
+        "kD": "0.82 0.82 0.86",
+        "kS": "0.88 0.88 0.92",
+        "shininess": 520
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-145 -25 -92",
+      "radius": 78,
+      "material": {
+        "kD": "0.12 0.22 0.78",
+        "kS": "0.55 0.62 0.95",
+        "shininess": 480
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "105 -55 -108",
+      "radius": 40,
+      "material": {
+        "kD": "0.48 0.18 0.72",
+        "kS": "0.72 0.55 0.88",
+        "shininess": 460
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-88 38 -148",
+      "radius": 26,
+      "material": {
+        "kD": "0.78 0.18 0.16",
+        "kS": "0.9 0.45 0.4",
+        "shininess": 440
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "22 18 -162",
+      "radius": 17,
+      "material": {
+        "kD": "0.18 0.68 0.32",
+        "kS": "0.5 0.85 0.58",
+        "shininess": 430
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "158 28 -178",
+      "radius": 88,
+      "material": {
+        "kD": "0.82 0.38 0.14",
+        "kS": "0.92 0.62 0.35",
+        "shininess": 400
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "205 -8 -125",
+      "radius": 24,
+      "material": {
+        "kD": "0.16 0.62 0.28",
+        "kS": "0.48 0.82 0.52",
+        "shininess": 450
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-35 -70 -135",
+      "radius": 14,
+      "material": {
+        "kD": "0.7 0.72 0.78",
+        "kS": "0.85 0.86 0.9",
+        "shininess": 500
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "55 62 -155",
+      "radius": 20,
+      "material": {
+        "kD": "0.72 0.22 0.55",
+        "kS": "0.88 0.5 0.75",
+        "shininess": 470
+      }
+    }
+  ]
+}

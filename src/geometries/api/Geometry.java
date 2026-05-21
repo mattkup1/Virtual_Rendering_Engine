@@ -13,7 +13,7 @@ import primitives.Vector;
  */
 public abstract class Geometry extends Intersectable {
     /**
-     * Default constructor to satisfy JavaDoc generator and other problems in children classes
+     * Default constructor to satisfy Javadoc generator and other problems in children classes
      */
     public Geometry() { /* To satisfy Javadoc generator */ }
 
