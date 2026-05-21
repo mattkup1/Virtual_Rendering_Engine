@@ -86,7 +86,7 @@ public class Polygon extends Geometry {
     }
 
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
 
         final Point rayOrigin = ray.getOrigin();
         // Get the intersection point with the plane containing the polygon
@@ -131,7 +131,11 @@ public class Polygon extends Geometry {
                 if (sList[i] > 0) return null;
             }
         }
-        return List.of(new Intersection(this, planeIntersection.getFirst()));
+        var intersection = planeIntersection.getFirst();
+        if (alignZero(intersection.distance(rayOrigin) - maxDistance) <= 0)
+            return List.of(new Intersection(this, intersection));
+
+        return null;
     }
 
     @Override

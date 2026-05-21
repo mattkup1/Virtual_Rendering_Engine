@@ -31,4 +31,17 @@ public interface LightSource {
      * @return the {@link Color} representing the light intensity at the point
      */
     public Color getIntensity(Point p);
+
+    /**
+     * Calculates the distance from the light source to a given point in 3D space.
+     * <p>
+     * This distance is typically used during shadow mapping computations to determine
+     * if an intersecting geometry sits between the light source and the point being shaded.
+     * </p>
+     *
+     * @param p the target point in space
+     * @return the Euclidean distance from the light source to the point,
+     * or {@code Double.POSITIVE_INFINITY} for directional light sources (like the sun)
+     */
+    public double getDistance(Point p);
 }

@@ -69,14 +69,16 @@ public final class Cylinder extends Tube {
 
 
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         List<Intersection> intersections = null;
 
         final Point tubeOrig = this._axis.getOrigin();
         final Vector tubeDir = this._axis.getDirection();
 
+        final Point rayOrigin = ray.getOrigin();
+
         // Check the infinite tube first
-        List<Intersection> tubeIntersections = super.calcIntersectionsHelper(ray);
+        List<Intersection> tubeIntersections = super.calcIntersectionsHelper(ray, maxDistance);
 
         if (tubeIntersections != null) {
             for (Intersection p : tubeIntersections) {
@@ -89,7 +91,8 @@ public final class Cylinder extends Tube {
                 }
 
                 // Verify the point is within the cylinder's height boundary (0 < t < height)
-                if (tProj > 0 && tProj < this._height) {
+                if (tProj > 0 && tProj < this._height &&
+                        alignZero(p.point.distance(rayOrigin) - maxDistance) <= maxDistance) {
                     if (intersections == null) intersections = new LinkedList<>();
                     intersections.add(p);
                 }
@@ -98,14 +101,14 @@ public final class Cylinder extends Tube {
 
         // Check Bottom Cap (at origin)
         Point bottomIntersection = getPointOnCap(ray, tubeOrig);
-        if (bottomIntersection != null) {
+        if (bottomIntersection != null && alignZero(bottomIntersection.distance(rayOrigin) - maxDistance) <= 0) {
             if (intersections == null) intersections = new LinkedList<>();
             intersections.add(new Intersection(this, bottomIntersection));
         }
 
         // Check Top Cap (at origin + height)
         Point topIntersection = getPointOnCap(ray, this._axis.getPoint(this._height));
-        if (topIntersection != null) {
+        if (topIntersection != null && alignZero(topIntersection.distance(rayOrigin) - maxDistance) <= 0) {
             if (intersections == null) intersections = new LinkedList<>();
             intersections.add(new Intersection(this, topIntersection));
         }

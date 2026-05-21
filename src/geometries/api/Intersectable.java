@@ -30,27 +30,19 @@ public abstract class Intersectable {
         var intersections = calcIntersections(ray);
         return intersections == null ? null
                 : intersections.stream()
-                  .map(intersection -> intersection.point)
-                  .toList();
+                .map(intersection -> intersection.point)
+                .toList();
     }
 
-    /**
-     * Helper function to calculate the intersections between a ray and an intersectable
-     *
-     * @param ray the ray
-     * @return the list of intersections or null if no intersections
-     */
-    protected abstract List<Intersection> calcIntersectionsHelper(Ray ray);
-
-    /**
-     * Computes the intersections between a ray and an intersectable
-     *
-     * @param ray the ray
-     * @return the list of intersections or null if no intersections
-     */
     public final List<Intersection> calcIntersections(Ray ray) {
-        return calcIntersectionsHelper(ray);
+        return calcIntersections(ray, Double.POSITIVE_INFINITY);
     }
+
+    public final List<Intersection> calcIntersections(Ray ray, double maxDistance) {
+        return calcIntersectionsHelper(ray, maxDistance);
+    }
+
+    protected abstract List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance);
 
     /**
      * Passive Data Structure (PDS) representing an intersection point between a ray and a geometry

@@ -2,12 +2,11 @@ package geometries.impl;
 
 import java.util.List;
 import java.util.Objects;
-import org.junit.jupiter.api.extension.InvocationInterceptor;
 import primitives.Point;
 import primitives.Ray;
-import primitives.Util;
 import primitives.Vector;
 
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
@@ -38,7 +37,7 @@ public final class Sphere extends RadialGeometry {
     }
 
     @Override
-    protected List<Intersection> calcIntersectionsHelper(Ray ray) {
+    protected List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         Point p0 = ray.getOrigin();
         Vector v = ray.getDirection();
 
@@ -61,23 +60,42 @@ public final class Sphere extends RadialGeometry {
         // Distance from the perpendicular point to the intersection points
         double th = Math.sqrt(this._radiusSquared - dSquared);
 
-        double t1 = Util.alignZero(t_p - th);
-        double t2 = Util.alignZero(t_p + th);
+        double t1 = alignZero(t_p - th);
+        double t2 = alignZero(t_p + th);
 
         // Only return points where t > 0 (in front of the ray)
         if (t1 <= 0 && t2 <= 0) return null;
 
+        final Point potential1 = ray.getPoint(t1);
+        final Point potential2 = ray.getPoint(t2);
+
+        final boolean validP1Dist = alignZero(potential1.distance(p0) - maxDistance) <= 0;
+        final boolean validP2Dist = alignZero(potential2.distance(p0) - maxDistance) <= 0;
+
+        if (!validP1Dist && !validP2Dist) return null;
+
         if (t1 > 0 && t2 > 0) {
-            return List.of(
-                    new Intersection(this, ray.getPoint(t1)),
-                    new Intersection(this, ray.getPoint(t2))
-            );
+            if (validP1Dist && validP2Dist) {
+                return List.of(
+                        new Intersection(this, potential1),
+                        new Intersection(this, potential2)
+                );
+            }
+
+            return validP1Dist ?
+                    List.of(new Intersection(this, potential1)) :
+                    List.of(new Intersection(this, potential2));
         }
 
         // Case only one intersection
-        return t1 > 0 ?
-                List.of(new Intersection(this, ray.getPoint(t1)))
-                : List.of(new Intersection(this, ray.getPoint(t2)));
+        if (t1 > 0 && validP1Dist) {
+            return List.of(new Intersection(this, potential1));
+        }
+        if (t2 > 0 && validP2Dist) {
+            return List.of(new Intersection(this, potential2));
+        }
+
+        return null;
     }
 
     @Override

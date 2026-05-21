@@ -8,6 +8,7 @@ import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
@@ -226,6 +227,52 @@ public class SphereTests {
                 ERR_INTERSECTIONS);
         // BV42: Ray starts inside and is orthogonal to sphere's center line
         assertNull(SPHERE_P100.findIntersections(new Ray(new Point(1, 0.5, 1), Vector.AXIS_Z)),
+                ERR_INTERSECTIONS);
+    }
+
+    /**
+     * Test {@link Sphere#calcIntersections(Ray, double)} with a bounded {@code maxDistance}.
+     * <p>
+     * Uses {@link #SPHERE_P111} (center (1,1,1), radius 1). For a ray along the X-axis
+     * starting at (-1, 1, 1) the sphere is entered at distance 1 and exited at distance 3.
+     * For a ray starting at (0.5, 1, 1) (inside the sphere) the exit is at distance 1.5.
+     * The six cases below correspond to the textbook diagram.
+     * </p>
+     */
+    @Test
+    void testCalcIntersectionsWithMaxDistance() {
+        // Rays along the X-axis used in the cases below
+        final Ray rayInto   = new Ray(new Point(-1, 1, 1), V100);  // starts outside, points into sphere
+        final Ray rayInside = new Ray(new Point(0.5, 1, 1), V100); // starts inside the sphere
+        final Ray rayPast   = new Ray(new Point(3, 1, 1), V100);   // starts past sphere, points away
+
+        // ============ Equivalence Partitions Tests (maxDistance) ============
+
+        // EP01 (ray1): max distance ends before sphere → 0 intersections
+        assertNull(SPHERE_P111.calcIntersections(rayInto, 0.5),
+                ERR_INTERSECTIONS);
+
+        // EP02 (ray2): max distance ends inside sphere (after entry, before exit) → 1 intersection
+        final var oneEntry = SPHERE_P111.calcIntersections(rayInto, 2);
+        assertNotNull(oneEntry, ERR_INTERSECTIONS);
+        assertEquals(1, oneEntry.size(), ERR_INTERSECTIONS);
+
+        // EP03 (ray3): max distance past the sphere → 2 intersections
+        final var twoPoints = SPHERE_P111.calcIntersections(rayInto, 5);
+        assertNotNull(twoPoints, ERR_INTERSECTIONS);
+        assertEquals(2, twoPoints.size(), ERR_INTERSECTIONS);
+
+        // EP04 (ray4): starts inside, max distance past exit → 1 intersection (exit)
+        final var oneExit = SPHERE_P111.calcIntersections(rayInside, 5);
+        assertNotNull(oneExit, ERR_INTERSECTIONS);
+        assertEquals(1, oneExit.size(), ERR_INTERSECTIONS);
+
+        // EP05 (ray5): starts inside, max distance ends before exit → 0 intersections
+        assertNull(SPHERE_P111.calcIntersections(rayInside, 0.5),
+                ERR_INTERSECTIONS);
+
+        // EP06 (ray6): ray entirely past the sphere → 0 intersections
+        assertNull(SPHERE_P111.calcIntersections(rayPast, 5),
                 ERR_INTERSECTIONS);
     }
 }

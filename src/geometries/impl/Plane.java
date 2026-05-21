@@ -64,7 +64,7 @@ public class Plane extends Geometry {
     }
 
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         // Get the ray's origin
         final Point P0 = ray.getOrigin();
         if (P0.equals(this._point)) return null;
@@ -80,8 +80,8 @@ public class Plane extends Geometry {
         final double nQMinusP0 = this._normal.dotProduct(this.getPoint().subtract(ray.getOrigin()));
         final double t = alignZero(nQMinusP0 / nv);
         // Return intersection point in a list
-        // If no intersection, Return null
-        return t <= 0 ? null : List.of(new Intersection(this, ray.getPoint(t)));
+        // If no intersection, Or intersection farther than the max distance, Return null
+        return t <= 0 || t >= maxDistance ? null : List.of(new Intersection(this, ray.getPoint(t)));
     }
 
     /**

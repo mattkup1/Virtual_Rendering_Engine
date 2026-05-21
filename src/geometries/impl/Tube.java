@@ -37,7 +37,7 @@ public class Tube extends RadialGeometry {
     }
 
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         Point p0 = ray.getOrigin();
         Vector vD = ray.getDirection();
         Point pC = this._axis.getOrigin();
@@ -96,19 +96,34 @@ public class Tube extends RadialGeometry {
         double t2 = alignZero((-b + sqrtDelta) / (2 * a));
 
         // Return all intersection points where t > 0 in order
-        if (t1 <= 0 && t2 <= 0) {
+        if ((t1 <= 0 && t2 <= 0) ||
+                (t1 >= maxDistance && t2 >= maxDistance) ||
+                (t1 < 0 && t2 > maxDistance) ||
+                (t2 < 0 && t1 > maxDistance)) {
             return null;
         }
 
-        if (t1 > 0 && t2 > 0)
-            return List.of(
-                    new Intersection(this, ray.getPoint(t1)),
-                    new Intersection(this, ray.getPoint(t2))
-            );
+        final Point potential1 = ray.getPoint(t1);
+        final Point potential2 = ray.getPoint(t2);
+
+        final boolean validP1Dist = alignZero(t1 - maxDistance) <= 0;
+        final boolean validP2Dist = alignZero(t2 - maxDistance) <= 0;
+
+        if (t1 > 0 && t2 > 0) {
+            if (validP1Dist && validP2Dist) {
+                return List.of(
+                        new Intersection(this, potential1),
+                        new Intersection(this, potential2)
+                );
+            }
+            return validP1Dist ?
+                    List.of(new Intersection(this, potential1)) :
+                    List.of(new Intersection(this, potential2));
+        }
 
         return t1 > 0 ?
-                List.of(new Intersection(this, ray.getPoint(t1)))
-                : List.of(new Intersection(this, ray.getPoint(t2)));
+                List.of(new Intersection(this, potential1)) :
+                List.of(new Intersection(this, potential2));
     }
 
     @Override
