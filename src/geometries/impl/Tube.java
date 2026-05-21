@@ -98,8 +98,7 @@ public class Tube extends RadialGeometry {
         // Return all intersection points where t > 0 in order
         if ((t1 <= 0 && t2 <= 0) ||
                 (t1 >= maxDistance && t2 >= maxDistance) ||
-                (t1 < 0 && t2 > maxDistance) ||
-                (t2 < 0 && t1 > maxDistance)) {
+                (t1 < 0 && t2 > maxDistance)) {
             return null;
         }
 
@@ -109,7 +108,8 @@ public class Tube extends RadialGeometry {
         final boolean validP1Dist = alignZero(t1 - maxDistance) <= 0;
         final boolean validP2Dist = alignZero(t2 - maxDistance) <= 0;
 
-        if (t1 > 0 && t2 > 0) {
+        // Since t2 > t1, This test suffices for both
+        if (t1 > 0) {
             if (validP1Dist && validP2Dist) {
                 return List.of(
                         new Intersection(this, potential1),
@@ -121,9 +121,7 @@ public class Tube extends RadialGeometry {
                     List.of(new Intersection(this, potential2));
         }
 
-        return t1 > 0 ?
-                List.of(new Intersection(this, potential1)) :
-                List.of(new Intersection(this, potential2));
+        return t2 > 0 ? List.of(new Intersection(this, potential2)) : null;
     }
 
     @Override

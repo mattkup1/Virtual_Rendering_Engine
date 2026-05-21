@@ -57,7 +57,17 @@ public class DirectionalLight extends Light implements LightSource {
     public Color getIntensity(Point p) {
         return _intensity;
     }
-    
+
+    /**
+     * Returns the distance from the directional light source to a given point.
+     * <p>
+     * Directional lights are modeled as infinitely far away, so this always returns
+     * {@link Double#POSITIVE_INFINITY}.
+     * </p>
+     *
+     * @param p the target point in space
+     * @return {@link Double#POSITIVE_INFINITY}
+     */
     public double getDistance(Point p) {
         return Double.POSITIVE_INFINITY;
     }

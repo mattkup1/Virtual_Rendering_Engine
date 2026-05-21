@@ -96,7 +96,13 @@ public class PointLight extends Light implements LightSource {
         final double d = _position.distance(p);
         return _intensity.scale(1d / (_kC + (_kL * d) + (_kQ * d * d)));
     }
-    
+
+    /**
+     * Returns the Euclidean distance from the light source to a given point.
+     *
+     * @param p the target point in space
+     * @return the distance from the light's position to {@code p}
+     */
     public double getDistance(Point p) {
         return _position.distance(p);
     }

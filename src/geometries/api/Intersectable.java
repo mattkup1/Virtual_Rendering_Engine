@@ -34,14 +34,45 @@ public abstract class Intersectable {
                 .toList();
     }
 
+    /**
+     * Computes all intersections between a ray and this intersectable.
+     * <p>
+     * Equivalent to {@link #calcIntersections(Ray, double)} with
+     * {@link Double#POSITIVE_INFINITY} as the maximum distance.
+     * </p>
+     *
+     * @param ray the ray
+     * @return the list of intersections, or {@code null} if no intersections exist
+     */
     public final List<Intersection> calcIntersections(Ray ray) {
         return calcIntersections(ray, Double.POSITIVE_INFINITY);
     }
 
+    /**
+     * Computes all intersections between a ray and this intersectable that lie within
+     * the given maximum distance from the ray origin.
+     *
+     * @param ray         the ray
+     * @param maxDistance the maximum distance from the ray origin to consider
+     * @return the list of intersections within the distance bound,
+     *         or {@code null} if no intersections exist
+     */
     public final List<Intersection> calcIntersections(Ray ray, double maxDistance) {
         return calcIntersectionsHelper(ray, maxDistance);
     }
 
+    /**
+     * Subclass-specific intersection calculation.
+     * <p>
+     * Implementations must return only intersection points that lie at distance
+     * less than or equal to {@code maxDistance} from the ray origin.
+     * </p>
+     *
+     * @param ray         the ray
+     * @param maxDistance the maximum distance from the ray origin
+     * @return the list of intersections within the distance bound,
+     *         or {@code null} if no intersections exist
+     */
     protected abstract List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance);
 
     /**

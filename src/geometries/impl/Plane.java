@@ -81,7 +81,8 @@ public class Plane extends Geometry {
         final double t = alignZero(nQMinusP0 / nv);
         // Return intersection point in a list
         // If no intersection, Or intersection farther than the max distance, Return null
-        return t <= 0 || t >= maxDistance ? null : List.of(new Intersection(this, ray.getPoint(t)));
+        return t <= 0 || alignZero(t - maxDistance) > 0 ?
+                null : List.of(new Intersection(this, ray.getPoint(t)));
     }
 
     /**

@@ -142,10 +142,10 @@ public final class Vector extends Point {
      * Normalizes the vector.
      * <p>
      * Returns a new vector with the same direction but with a length of 1.
+     * The zero vector is never produced because it is rejected at construction time.
      * </p>
      *
      * @return a new {@link Vector} representing the unit vector
-     * @throws ArithmeticException if the vector's length is zero (though validate() prevents this)
      */
     public Vector normalize() {
         return new Vector(_xyz.divide(length())); // Assuming 'reduce' or 'divide' scales each component by 1/len

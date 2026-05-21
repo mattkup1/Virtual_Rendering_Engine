@@ -202,12 +202,15 @@ public class Camera implements Cloneable {
         }
 
         /**
-         * Set the {@link Camera} direction
+         * Sets the {@link Camera} direction vectors.
+         * <p>
+         * Both vectors are normalized internally. Orthogonality is not enforced here;
+         * it is resolved during {@link #build()} by re-computing the right and up vectors.
+         * </p>
          *
          * @param vTo the direction in which the camera is pointing
          * @param vUp the upward direction relative to the camera
          * @return the builder object
-         * @throws IllegalArgumentException if the vectors are not orthogonal
          */
         public Builder setDirection(Vector vTo, Vector vUp) {
             _camera._vTo = vTo.normalize();
@@ -232,12 +235,15 @@ public class Camera implements Cloneable {
         }
 
         /**
-         * Sets the {@link Camera} direction based on a single point
-         * The upward direction is assumed to be the y-axis
+         * Sets the {@link Camera} direction based on a single target point.
+         * The upward direction is assumed to be the y-axis.
+         * <p>
+         * Orthogonality is not enforced here; it is resolved during {@link #build()}
+         * by re-computing the right and up vectors.
+         * </p>
          *
          * @param p the point at which the camera is pointing
          * @return the builder object
-         * @throws IllegalArgumentException if the camera direction and the y-axis are not orthogonal
          */
         public Builder setDirection(Point p) {
             this._pTarget = p;

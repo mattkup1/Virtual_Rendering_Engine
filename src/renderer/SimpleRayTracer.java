@@ -34,7 +34,7 @@ class SimpleRayTracer extends RayTracerBase {
      * factor prevents self-shading.
      * </p>
      */
-    private static final double DELTA = 0.1;
+    private static final double DELTA = 1e-3;
 
     /**
      * Constructs a SimpleRayTracer with a given scene.

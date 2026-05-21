@@ -70,10 +70,13 @@ public abstract class Geometry extends Intersectable {
     }
 
     /**
-     * Get the geometry's Normal vector
+     * Returns the geometry's unit normal vector at the given surface point.
+     * <p>
+     * Implementations are expected to return a normalized vector.
+     * </p>
      *
-     * @param point a point on the geometry
-     * @return the geometry's normal vector
+     * @param point a point on the geometry's surface
+     * @return the unit normal vector at the point
      */
     public abstract Vector getNormal(Point point);
 }
