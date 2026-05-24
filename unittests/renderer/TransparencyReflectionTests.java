@@ -3,6 +3,7 @@ package renderer;
 import static java.awt.Color.BLUE;
 import static java.awt.Color.RED;
 
+import geometries.impl.Tube;
 import org.junit.jupiter.api.Test;
 
 import geometries.impl.Sphere;
@@ -112,5 +113,96 @@ class TransparencyReflectionTests {
          .build() //
          .renderImage() //
          .writeToImage("refractionShadow");
+   }
+
+
+   /**
+    * Original scene combining transparency, reflection, partial shadows
+    * and an infinite cylinder.
+    */
+   @Test
+   @SuppressWarnings("java:S109")
+   void testMyTransparencyReflectionScene() {
+      _scene.geometries.add(
+              // Floor - simple dark stage
+              new Triangle(new Point(-230, -120, -190),
+                      new Point(230, -120, -190),
+                      new Point(230, 150, -190))
+                      .setEmission(new Color(28, 30, 42))
+                      .setMaterial(new Material()
+                              .setKD(0.65)
+                              .setKS(0.18)
+                              .setShininess(60)),
+
+              new Triangle(new Point(-230, -120, -190),
+                      new Point(230, 150, -190),
+                      new Point(-230, 150, -190))
+                      .setEmission(new Color(28, 30, 42))
+                      .setMaterial(new Material()
+                              .setKD(0.65)
+                              .setKS(0.18)
+                              .setShininess(60)),
+
+              // One mirror triangle in the background
+              // Demonstrates reflection without cluttering the scene
+              new Triangle(new Point(-145, 90, -185),
+                      new Point(-20, 90, -185),
+                      new Point(-85, 90, 40))
+                      .setEmission(new Color(42, 28, 48))
+                      .setMaterial(new Material()
+                              .setKD(0.10)
+                              .setKS(0.55)
+                              .setShininess(180)
+                              .setKR(0.58)),
+
+              // Transparent sphere on the right
+              // Demonstrates transparency and partial shadow
+              new Sphere(new Point(70, -15, -130), 36D)
+                      .setEmission(new Color(35, 115, 150))
+                      .setMaterial(new Material()
+                              .setKD(0.14)
+                              .setKS(0.60)
+                              .setShininess(180)
+                              .setKT(0.55)),
+
+              // Infinite cylinder / tube in the foreground
+              // Smaller and lower so it does not dominate the scene
+              new Tube(11D,
+                      new Ray(new Point(-115, -92, -178),
+                              new Vector(1.3, 0.35, 0.08)))
+                      .setEmission(new Color(70, 45, 88))
+                      .setMaterial(new Material()
+                              .setKD(0.45)
+                              .setKS(0.35)
+                              .setShininess(100))
+      );
+
+      _scene.setBackground(new Color(20, 36, 48));
+      _scene.setAmbientLight(new AmbientLight(new Color(14, 16, 20)));
+
+      _scene.lights.add(
+              new SpotLight(new Color(310, 230, 160),
+                      new Point(-130, -220, 150),
+                      new Vector(0.8, 1.4, -1.8))
+                      .setKl(0.00055)
+                      .setKq(0.0000018));
+
+      _scene.lights.add(
+              // Weak cool fill light
+              new SpotLight(new Color(45, 70, 110),
+                      new Point(160, -170, 110),
+                      new Vector(-1.2, 1.0, -1.3))
+                      .setKl(0.0008)
+                      .setKq(0.0000028));
+
+      _cameraBuilder
+              .setLocation(new Point(0, -285, 75))
+              .setDirection(new Point(0, -5, -130), Vector.AXIS_Z)
+              .setVpDistance(430)
+              .setVpSize(245, 245)
+              .setResolution(800, 800)
+              .build()
+              .renderImage()
+              .writeToImage("TransparencyReflectionScene");
    }
 }
