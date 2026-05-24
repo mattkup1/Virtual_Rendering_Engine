@@ -124,7 +124,7 @@ class SimpleRayTracer extends RayTracerBase {
      * @return the scaling factor triad for the specular light component
      */
     private Double3 calcSpecular(Intersection intersection) {
-        // Reflection vector formula: r = l - 2 * (l . n) * n
+        // Reflection vector formula: r = l - 2 * (l * n) * n - normalized
         final Vector r =
                 intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal)).normalize();
 
