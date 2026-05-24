@@ -41,6 +41,16 @@ public class Material {
     public int nShininess = 0;
 
     /**
+     * Transparency coefficient (kT)
+     */
+    public Double3 kT = Double3.ZERO;
+
+    /**
+     * Reflection coefficient (kR)
+     */
+    public Double3 kR = Double3.ZERO;
+
+    /**
      * Default constructor for the {@link Material} class.
      */
     public Material() { /* To satisfy Javadoc generator */ }
@@ -119,6 +129,50 @@ public class Material {
      */
     public Material setShininess(int nShininess) {
         this.nShininess = nShininess;
+        return this;
+    }
+
+    /**
+     * Sets the transparency coefficient using a {@link Double3} triad.
+     *
+     * @param kT the transparency coefficient triad
+     * @return this material for builder-style chaining
+     */
+    public Material setKT(Double3 kT) {
+        this.kT = kT;
+        return this;
+    }
+
+    /**
+     * Sets the transparency coefficient to a uniform value across all components.
+     *
+     * @param kT the scalar transparency coefficient
+     * @return this material for builder-style chaining
+     */
+    public Material setKT(double kT) {
+        this.kT = new Double3(kT);
+        return this;
+    }
+
+    /**
+     * Sets the reflection coefficient using a {@link Double3} triad.
+     *
+     * @param kR the reflection coefficient triad
+     * @return this material for builder-style chaining
+     */
+    public Material setKR(Double3 kR) {
+        this.kR = kR;
+        return this;
+    }
+
+    /**
+     * Sets the reflection coefficient to a uniform value across all components.
+     *
+     * @param kR the scalar reflection coefficient
+     * @return this material for builder-style chaining
+     */
+    public Material setKR(double kR) {
+        this.kR = new Double3(kR);
         return this;
     }
 }

@@ -39,6 +39,23 @@ public final class Ray {
     }
 
     /**
+     * Constant displacement factor used to offset shadow/secondary ray origins.
+     * <p>
+     * Due to floating-point precision limitations, a secondary ray originating exactly
+     * at a surface intersection point may erroneously intersect the same geometry surface
+     * again. This causes visual artifacts known as "shadow acne." Moving the ray's
+     * starting point slightly along the surface normal (or away from it) by this small
+     * factor prevents self-shading.
+     * </p>
+     */
+    private static final double DELTA = 1e-3;
+
+    public Ray(Point origin, Vector direction, Vector normal) {
+        Vector delta = normal.scale(direction.dotProduct(normal) > 0 ? DELTA : -DELTA);
+        this(origin.add(delta), direction);
+    }
+
+    /**
      * Returns the origin point of the ray.
      *
      * @return the origin point
@@ -125,8 +142,8 @@ public final class Ray {
         return points == null || points.isEmpty() ? null
                 : findClosestIntersection(
                 points.stream()
-                .map(point -> new Intersection(null, point))
-                .toList()
+                        .map(point -> new Intersection(null, point))
+                        .toList()
         ).point;
     }
 
