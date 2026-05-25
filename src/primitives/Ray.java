@@ -50,6 +50,21 @@ public final class Ray {
      */
     private static final double DELTA = 1e-3;
 
+    /**
+     * Constructs a ray whose origin is offset slightly off the given surface to
+     * avoid self-intersection ("shadow acne").
+     * <p>
+     * The origin is displaced by {@link #DELTA} along {@code normal}, in whichever
+     * sign places the new origin on the same side of the surface as {@code direction}
+     * (i.e. along {@code +normal} when {@code direction &middot; normal &gt; 0},
+     * otherwise along {@code -normal}). The direction is normalized by the
+     * delegated two-argument constructor.
+     * </p>
+     *
+     * @param origin    the nominal starting point on the surface
+     * @param direction the direction vector (will be normalized)
+     * @param normal    the surface normal at {@code origin} used to displace it
+     */
     public Ray(Point origin, Vector direction, Vector normal) {
         Vector delta = normal.scale(direction.dotProduct(normal) > 0 ? DELTA : -DELTA);
         this(origin.add(delta), direction);
