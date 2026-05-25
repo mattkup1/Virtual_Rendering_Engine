@@ -205,4 +205,117 @@ class TransparencyReflectionTests {
               .renderImage()
               .writeToImage("TransparencyReflectionScene");
    }
+
+   /**
+    * "Crystal Gallery" — three tinted glass spheres on a glossy dark floor,
+    * with a mirrored back wall, a tiny gold marble suspended inside the
+    * middle sphere (visible through the glass) and a floating chrome
+    * accent above. Lit with a warm key, a cool fill and a back rim.
+    * <p>
+    * Showcases tinted transparency, nested transparent/opaque geometry,
+    * a full-mirror reflection of the whole scene, secondary reflections
+    * on the glossy floor, and overlapping partial shadows on the floor.
+    * </p>
+    */
+   @Test
+   @SuppressWarnings("java:S109")
+   void testCrystalGallery() {
+      // ---- Floor (two triangles forming a wide quad), glossy with a soft reflection ----
+      final Color floorEmission = new Color(15, 18, 26);
+      final Material floorMaterial = new Material()
+              .setKD(0.35).setKS(0.45).setShininess(150).setKR(0.18);
+
+      // ---- Back wall (two triangles forming a quad), nearly a perfect mirror ----
+      final Color wallEmission = new Color(8, 8, 12);
+      final Material wallMaterial = new Material()
+              .setKD(0.05).setKS(0.30).setShininess(200).setKR(0.85);
+
+      // ---- Glass material template (per-sphere emission gives each one its tint) ----
+      final Material glassMaterial = new Material()
+              .setKD(0.05).setKS(0.55).setShininess(280).setKT(0.72);
+
+      _scene.geometries.add(
+              new Triangle(new Point(-400, -80, 200),
+                      new Point(400, -80, 200),
+                      new Point(400, -80, -400))
+                      .setEmission(floorEmission).setMaterial(floorMaterial),
+              new Triangle(new Point(-400, -80, 200),
+                      new Point(400, -80, -400),
+                      new Point(-400, -80, -400))
+                      .setEmission(floorEmission).setMaterial(floorMaterial),
+
+              new Triangle(new Point(-260, -80, -400),
+                      new Point(260, -80, -400),
+                      new Point(260, 220, -400))
+                      .setEmission(wallEmission).setMaterial(wallMaterial),
+              new Triangle(new Point(-260, -80, -400),
+                      new Point(260, 220, -400),
+                      new Point(-260, 220, -400))
+                      .setEmission(wallEmission).setMaterial(wallMaterial),
+
+              // Red-tinted glass sphere on the left
+              new Sphere(new Point(-100, -45, -160), 35D)
+                      .setEmission(new Color(40, 8, 14))
+                      .setMaterial(glassMaterial),
+
+              // Blue-tinted glass sphere in the middle (slightly further back)
+              new Sphere(new Point(0, -45, -200), 35D)
+                      .setEmission(new Color(8, 18, 38))
+                      .setMaterial(glassMaterial),
+
+              // Green-tinted glass sphere on the right
+              new Sphere(new Point(100, -45, -160), 35D)
+                      .setEmission(new Color(10, 36, 16))
+                      .setMaterial(glassMaterial),
+
+              // Opaque gold marble suspended inside the middle glass sphere
+              // It is visible through the surrounding blue-tinted glass shell.
+              new Sphere(new Point(0, -45, -200), 13D)
+                      .setEmission(new Color(160, 110, 22))
+                      .setMaterial(new Material()
+                              .setKD(0.55).setKS(0.45).setShininess(120)),
+
+              // Floating chrome accent above and behind, reflected in the
+              // back wall, in the floor, and in each glass sphere
+              new Sphere(new Point(0, 95, -280), 22D)
+                      .setEmission(new Color(6, 6, 6))
+                      .setMaterial(new Material()
+                              .setKD(0.05).setKS(0.30).setShininess(250).setKR(0.85))
+      );
+
+      _scene.setBackground(new Color(6, 10, 18));
+      _scene.setAmbientLight(new AmbientLight(new Color(18, 20, 28)));
+
+      // Warm key light from upper-right
+      _scene.lights.add(
+              new SpotLight(new Color(720, 490, 280),
+                      new Point(180, 220, 60),
+                      new Vector(-1.0, -1.4, -1.8))
+                      .setKl(0.00025).setKq(0.0000010));
+
+      // Cool fill light from upper-left
+      _scene.lights.add(
+              new SpotLight(new Color(140, 200, 320),
+                      new Point(-200, 180, 80),
+                      new Vector(1.2, -1.0, -1.6))
+                      .setKl(0.00045).setKq(0.0000020));
+
+      // Back rim light to outline the chrome ball against the mirror
+      _scene.lights.add(
+              new SpotLight(new Color(240, 240, 280),
+                      new Point(0, 200, -350),
+                      new Vector(0, -0.6, 1.0))
+                      .setKl(0.0006).setKq(0.0000025)
+                      .setNarrowBeam(4));
+
+      _cameraBuilder
+              .setLocation(new Point(0, 40, 400))
+              .setDirection(new Point(0, -10, -180), Vector.AXIS_Y)
+              .setVpDistance(380)
+              .setVpSize(240, 240)
+              .setResolution(600, 600)
+              .build()
+              .renderImage()
+              .writeToImage("CrystalGallery");
+   }
 }

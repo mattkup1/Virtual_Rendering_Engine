@@ -53,43 +53,20 @@ class SimpleRayTracer extends RayTracerBase {
                 : calcColor(intersection, ray.getDirection());
     }
 
-    /**
-     * Determines whether an intersection point is directly visible to a specific light source.
-     * <p>
-     * This method implements shadow mapping logic by casting a "shadow ray" from the
-     * slightly offset intersection point towards the direction of the active light source.
-     * If the shadow ray encounters any blocking geometry between the point and the light,
-     * the point is considered shaded; otherwise, it is unshaded and receives light.
-     * </p>
-     *
-     * @param intersection the intersection point data evaluated for illumination
-     * @return {@code true} if there is an unobstructed line of sight ("eye contact")
-     * between the point and the light source, {@code false} if a geometry blocks it
-     */
-
-//    private boolean unshaded(Intersection intersection) {
-//        Vector pointToLight = intersection.l.scale(-1);
-//        Ray shadowRay = new Ray(intersection.point, pointToLight, intersection.normal);
-//        double lightDistance = intersection.light.getDistance(intersection.point);
-//        return _scene.geometries.calcIntersections(shadowRay, lightDistance) == null;
-//    }
     private Double3 transparency(Intersection intersection) {
         var shadowRay = new Ray(intersection.point, intersection.l.scale(-1), intersection.normal);
-        var shadowIntersections = _scene.geometries.calcIntersections(shadowRay);
+        double lightDistance = intersection.light.getDistance(intersection.point);
+        var shadowIntersections = _scene.geometries.calcIntersections(shadowRay, lightDistance);
         Double3 ktr = Double3.ONE;
+
         if (shadowIntersections == null)
             return ktr;
 
-        double lightDistance = intersection.light.getDistance(intersection.point);
-
         for (var shadowIntersection : shadowIntersections) {
-            double shadowIntersectionDistance = shadowIntersection.point.distance(intersection.point);
-            if (alignZero(shadowIntersectionDistance - lightDistance) <= 0) {
-                ktr = ktr.product(shadowIntersection.material.kT);
+            ktr = ktr.product(shadowIntersection.material.kT);
 
-                if (ktr.isLowerThan(MIN_CALC_COLOR_K)) {
-                    return Double3.ZERO;
-                }
+            if (ktr.isLowerThan(MIN_CALC_COLOR_K)) {
+                return Double3.ZERO;
             }
         }
         return ktr;
@@ -217,7 +194,8 @@ class SimpleRayTracer extends RayTracerBase {
         return new Ray(
                 intersection.point,
                 intersection.v.subtract(intersection.normal.scale(2 * intersection.vNormal)),
-                intersection.normal);
+                intersection.normal
+        );
     }
 
     private Intersection findClosestIntersection(Ray ray) {
