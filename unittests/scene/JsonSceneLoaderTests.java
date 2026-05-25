@@ -135,10 +135,19 @@ class JsonSceneLoaderTests {
     }
 
     /**
-     * Renders the JSON scene that resembles the course home-page picture.
+     * Renders the multi-light JSON scene featuring transparent and reflective geometries
      */
     @Test
-    void testCourseHomeJSON() {
+    void testTransparencyReflectionJSON() {
+        createImage("transparencyReflection.json", "JSON trans refl test");
+    }
+
+    /**
+     * Renders given JSON scenes
+     */
+    @Test
+    void miscTestsJSON() {
         createImage("courseHome.json", "JSON course home pic");
+        createImage("coolScene.json", "JSON cool scene");
     }
 }

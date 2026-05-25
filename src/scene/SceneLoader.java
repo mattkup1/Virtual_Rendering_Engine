@@ -166,7 +166,7 @@ public abstract class SceneLoader {
      * Builds a {@link Material} from namespaced material attributes in the geometry map.
      * <p>
      * Recognized keys: {@code material.kA}, {@code material.kD}, {@code material.kS},
-     * and {@code material.shininess}.
+     * {@code material.kT}, {@code material.kR}, and {@code material.shininess}.
      * </p>
      *
      * @param data geometry attribute map
@@ -191,6 +191,18 @@ public abstract class SceneLoader {
         String kS = data.get("material.kS");
         if (kS != null) {
             material.setKS(parseMaterialCoefficient(kS));
+            hasMaterial = true;
+        }
+
+        String kT = data.get("material.kT");
+        if (kT != null) {
+            material.setKT(parseMaterialCoefficient(kT));
+            hasMaterial = true;
+        }
+
+        String kR = data.get("material.kR");
+        if (kR != null) {
+            material.setKR(parseMaterialCoefficient(kR));
             hasMaterial = true;
         }
 

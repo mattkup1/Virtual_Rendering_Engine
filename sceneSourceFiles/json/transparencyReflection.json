@@ -1,0 +1,173 @@
+{
+  "background-color": "172 216 230",
+  "lights": {
+    "ambient-light": {
+      "color": "42 35 55"
+    },
+    "directional-light": {
+      "color": "230 215 180",
+      "direction": "-0.7 -1 -0.35"
+    },
+    "point-light": {
+      "color": "200 100 140",
+      "position": "70 50 35",
+      "kL": 0.0012,
+      "kQ": 0.00018
+    },
+    "spot-light": {
+      "color": "400 280 140",
+      "position": "-90 -70 45",
+      "direction": "1.1 1.2 -0.9",
+      "kL": 0.001,
+      "kQ": 0.00008,
+      "narrowBeam": 14
+    }
+  },
+  "geometries": [
+    {
+      "type": "sphere",
+      "center": "0 -5 -200",
+      "radius": 55,
+      "emission": "32 14 22",
+      "material": {
+        "kD": "0.08 0.05 0.07",
+        "kS": "0.50 0.55 0.62",
+        "shininess": 380,
+        "kT": "0.78 0.65 0.72"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "0 -5 -200",
+      "radius": 18,
+      "emission": "85 55 22",
+      "material": {
+        "kD": "0.55 0.40 0.18",
+        "kS": "0.45 0.38 0.25",
+        "shininess": 240
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-250 0 -200",
+      "radius": 50,
+      "emission": "8 8 12",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0.35 0.35 0.42",
+        "shininess": 320,
+        "kR": "0.82 0.82 0.85"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "250 -10 -200",
+      "radius": 45,
+      "emission": "26 14 52",
+      "material": {
+        "kD": "0.22 0.14 0.42",
+        "kS": "0.55 0.55 0.65",
+        "shininess": 320,
+        "kT": "0.55 0.50 0.78"
+      }
+    },
+    {
+      "type": "cylinder",
+      "origin": "90 -100 -130",
+      "AxisDirection": "0 1 0",
+      "radius": 12,
+      "height": 50,
+      "emission": "32 18 12",
+      "material": {
+        "kD": "0.48 0.30 0.22",
+        "kS": "0.55 0.42 0.28",
+        "shininess": 220,
+        "kR": "0.15 0.10 0.08"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "90 -38 -130",
+      "radius": 12,
+      "emission": "32 22 8",
+      "material": {
+        "kD": "0.20 0.14 0.08",
+        "kS": "0.55 0.45 0.20",
+        "shininess": 360,
+        "kR": "0.55 0.42 0.20"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-330 150 -230",
+      "radius": 7,
+      "emission": "255 200 245",
+      "material": {
+        "kD": "0 0 0",
+        "kS": "0 0 0",
+        "shininess": 1
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "330 170 -230",
+      "radius": 6,
+      "emission": "230 210 255",
+      "material": {
+        "kD": "0 0 0",
+        "kS": "0 0 0",
+        "shininess": 1
+      }
+    },
+    {
+      "type": "plane",
+      "p0": "0 -100 -140",
+      "normal": "0 1 0",
+      "emission": "20 18 30",
+      "material": {
+        "kD": "0.32 0.30 0.40",
+        "kS": "0.18 0.18 0.25",
+        "shininess": 100,
+        "kR": "0.26 0.25 0.30"
+      }
+    },
+    {
+      "type": "triangle",
+      "p0": "-400 -100 -270",
+      "p1": "-150 250 -270",
+      "p2": "-400 250 -270",
+      "emission": "10 10 16",
+      "material": {
+        "kD": "0.05 0.05 0.07",
+        "kS": "0.28 0.28 0.32",
+        "shininess": 220,
+        "kR": "0.80 0.78 0.85"
+      }
+    },
+    {
+      "type": "triangle",
+      "p0": "400 -100 -270",
+      "p1": "400 250 -270",
+      "p2": "150 250 -270",
+      "emission": "12 22 24",
+      "material": {
+        "kD": "0.20 0.42 0.40",
+        "kS": "0.28 0.38 0.40",
+        "shininess": 110
+      }
+    },
+    {
+      "type": "triangle",
+      "p0": "-60 -90 -120",
+      "p1": "60 -90 -120",
+      "p2": "0 -90 -85",
+      "emission": "22 16 22",
+      "material": {
+        "kD": "0.28 0.22 0.30",
+        "kS": "0.30 0.25 0.32",
+        "shininess": 180,
+        "kR": "0.36 0.30 0.34"
+      }
+    }
+  ]
+}

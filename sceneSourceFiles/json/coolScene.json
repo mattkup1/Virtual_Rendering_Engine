@@ -1,0 +1,719 @@
+{
+  "background-color": "100 145 195",
+  "lights": {
+    "ambient-light": {
+      "color": "60 75 55"
+    },
+    "directional-light": {
+      "color": "200 195 175",
+      "direction": "0.2 -1 -0.3"
+    },
+    "point-light": {
+      "color": "220 175 145",
+      "position": "-150 100 -100",
+      "kL": 0.0005,
+      "kQ": 0.0000015
+    }
+  },
+  "geometries": [
+    {
+      "type": "plane",
+      "p0": "0 -100 -200",
+      "normal": "0 1 0",
+      "emission": "20 45 17",
+      "material": {
+        "kD": "0.32 0.65 0.25",
+        "kS": "0.05",
+        "shininess": 1,
+        "kR": "0.02"
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "-270 -100 -180",
+      "AxisDirection": "0 1 0",
+      "radius": 8,
+      "height": 70,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-270 -12.5 -180",
+      "radius": 35,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-245.5 -23 -180",
+      "radius": 18,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-287.5 -9 -180",
+      "radius": 25,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "270 -100 -180",
+      "AxisDirection": "0 1 0",
+      "radius": 8,
+      "height": 70,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "270 -12.5 -180",
+      "radius": 35,
+      "emission": "15 50 22",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "294.5 -23 -180",
+      "radius": 18,
+      "emission": "15 50 22",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "252.5 -9 -180",
+      "radius": 25,
+      "emission": "15 50 22",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "-560 -100 -280",
+      "AxisDirection": "0 1 0",
+      "radius": 7,
+      "height": 60,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-560 -25 -280",
+      "radius": 30,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-539 -34 -280",
+      "radius": 15,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-575 -22 -280",
+      "radius": 22,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "560 -100 -280",
+      "AxisDirection": "0 1 0",
+      "radius": 7,
+      "height": 60,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "560 -25 -280",
+      "radius": 30,
+      "emission": "30 40 12",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "581 -34 -280",
+      "radius": 15,
+      "emission": "30 40 12",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "545 -22 -280",
+      "radius": 22,
+      "emission": "30 40 12",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "-180 -100 -300",
+      "AxisDirection": "0 1 0",
+      "radius": 7,
+      "height": 60,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-180 -25 -300",
+      "radius": 30,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-159 -34 -300",
+      "radius": 15,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-195 -22 -300",
+      "radius": 22,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "180 -100 -300",
+      "AxisDirection": "0 1 0",
+      "radius": 7,
+      "height": 60,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "180 -25 -300",
+      "radius": 30,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "201 -34 -300",
+      "radius": 15,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "165 -22 -300",
+      "radius": 22,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "-330 -100 -420",
+      "AxisDirection": "0 1 0",
+      "radius": 6,
+      "height": 55,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-330 -32.5 -420",
+      "radius": 25,
+      "emission": "3 25 12",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-312.5 -40 -420",
+      "radius": 13,
+      "emission": "3 25 12",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-342.5 -30 -420",
+      "radius": 18,
+      "emission": "3 25 12",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "330 -100 -420",
+      "AxisDirection": "0 1 0",
+      "radius": 6,
+      "height": 55,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "330 -32.5 -420",
+      "radius": 25,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "347.5 -40 -420",
+      "radius": 13,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "317.5 -30 -420",
+      "radius": 18,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "cylinder",
+      "origin": "0 -100 -500",
+      "AxisDirection": "0 1 0",
+      "radius": 6,
+      "height": 55,
+      "emission": "35 12 8",
+      "material": {
+        "kD": "0.50 0.18 0.12",
+        "kS": "0.2",
+        "shininess": 80,
+        "kR": "0.03"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "0 -32.5 -500",
+      "radius": 25,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "17.5 -40 -500",
+      "radius": 13,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-12.5 -30 -500",
+      "radius": 18,
+      "emission": "5 35 18",
+      "material": {
+        "kD": "0.12 0.55 0.22",
+        "kS": "0.05",
+        "shininess": 10
+      }
+    },
+
+    {
+      "type": "sphere",
+      "center": "50 35 -200",
+      "radius": 15,
+      "emission": "240 220 80",
+      "material": {
+        "kD": "0 0 0",
+        "kS": "0 0 0",
+        "shininess": 1
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-50 40 -180",
+      "radius": 12,
+      "emission": "240 220 80",
+      "material": {
+        "kD": "0 0 0",
+        "kS": "0 0 0",
+        "shininess": 1
+      }
+    },
+
+    {
+      "type": "sphere",
+      "center": "-450 380 -700",
+      "radius": 110,
+      "emission": "200 210 220",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.30 0.30 0.35"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-310 360 -700",
+      "radius": 80,
+      "emission": "210 218 225",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.42 0.42 0.48"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-560 410 -700",
+      "radius": 70,
+      "emission": "205 215 225",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.45 0.45 0.50"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-400 460 -700",
+      "radius": 55,
+      "emission": "215 222 230",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.55 0.55 0.60"
+      }
+    },
+
+    {
+      "type": "sphere",
+      "center": "80 470 -800",
+      "radius": 125,
+      "emission": "200 210 220",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.30 0.30 0.35"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "210 440 -800",
+      "radius": 95,
+      "emission": "210 218 225",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.40 0.40 0.45"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-50 490 -800",
+      "radius": 85,
+      "emission": "208 216 225",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.45 0.45 0.50"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "110 540 -800",
+      "radius": 65,
+      "emission": "218 224 232",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.55 0.55 0.60"
+      }
+    },
+
+    {
+      "type": "sphere",
+      "center": "510 320 -700",
+      "radius": 100,
+      "emission": "200 210 220",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.32 0.32 0.37"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "640 290 -700",
+      "radius": 75,
+      "emission": "210 218 225",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.45 0.45 0.50"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "390 340 -700",
+      "radius": 70,
+      "emission": "208 215 222",
+      "material": {
+        "kD": "0.05 0.05 0.06",
+        "kS": "0",
+        "shininess": 1,
+        "kT": "0.50 0.50 0.55"
+      }
+    },
+
+    {
+      "type": "polygon",
+      "number of vertices": 4,
+      "p0": "-36.59 -100 -174.59",
+      "p1": "-5.41 -100 -156.59",
+      "p2": "-23.41 -100 -125.41",
+      "p3": "-54.59 -100 -143.41",
+      "emission": "15 22 38",
+      "material": {
+        "kD": "0.05 0.05 0.10",
+        "kS": "0.95",
+        "shininess": 300,
+        "kR": "0.45 0.45 0.55",
+        "kT": "0.50 0.50 0.62"
+      }
+    },
+    {
+      "type": "polygon",
+      "number of vertices": 4,
+      "p0": "-36.59 -64 -174.59",
+      "p1": "-54.59 -64 -143.41",
+      "p2": "-23.41 -64 -125.41",
+      "p3": "-5.41 -64 -156.59",
+      "emission": "15 22 38",
+      "material": {
+        "kD": "0.05 0.05 0.10",
+        "kS": "0.95",
+        "shininess": 300,
+        "kR": "0.45 0.45 0.55",
+        "kT": "0.50 0.50 0.62"
+      }
+    },
+    {
+      "type": "polygon",
+      "number of vertices": 4,
+      "p0": "-54.59 -100 -143.41",
+      "p1": "-23.41 -100 -125.41",
+      "p2": "-23.41 -64 -125.41",
+      "p3": "-54.59 -64 -143.41",
+      "emission": "15 22 38",
+      "material": {
+        "kD": "0.05 0.05 0.10",
+        "kS": "0.95",
+        "shininess": 300,
+        "kR": "0.45 0.45 0.55",
+        "kT": "0.50 0.50 0.62"
+      }
+    },
+    {
+      "type": "polygon",
+      "number of vertices": 4,
+      "p0": "-36.59 -100 -174.59",
+      "p1": "-36.59 -64 -174.59",
+      "p2": "-5.41 -64 -156.59",
+      "p3": "-5.41 -100 -156.59",
+      "emission": "15 22 38",
+      "material": {
+        "kD": "0.05 0.05 0.10",
+        "kS": "0.95",
+        "shininess": 300,
+        "kR": "0.45 0.45 0.55",
+        "kT": "0.50 0.50 0.62"
+      }
+    },
+    {
+      "type": "polygon",
+      "number of vertices": 4,
+      "p0": "-5.41 -100 -156.59",
+      "p1": "-5.41 -64 -156.59",
+      "p2": "-23.41 -64 -125.41",
+      "p3": "-23.41 -100 -125.41",
+      "emission": "15 22 38",
+      "material": {
+        "kD": "0.05 0.05 0.10",
+        "kS": "0.95",
+        "shininess": 300,
+        "kR": "0.45 0.45 0.55",
+        "kT": "0.50 0.50 0.62"
+      }
+    },
+    {
+      "type": "polygon",
+      "number of vertices": 4,
+      "p0": "-36.59 -100 -174.59",
+      "p1": "-54.59 -100 -143.41",
+      "p2": "-54.59 -64 -143.41",
+      "p3": "-36.59 -64 -174.59",
+      "emission": "15 22 38",
+      "material": {
+        "kD": "0.05 0.05 0.10",
+        "kS": "0.95",
+        "shininess": 300,
+        "kR": "0.45 0.45 0.55",
+        "kT": "0.50 0.50 0.62"
+      }
+    }
+  ]
+}
