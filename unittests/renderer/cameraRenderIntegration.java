@@ -80,7 +80,12 @@ public class cameraRenderIntegration {
      * @param imageName     name to use for the produced image (without extension)
      */
     private static void createImage(String sceneFileName, String imageName, Point location, double rotation) {
-        renderScene(sceneFileName, location, rotation)
+        Scene scene = new JsonSceneLoader("Loaded scene", JSON_FILE_PATH + sceneFileName).loadScene();
+        baseCameraBuilder(location)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .rotate(rotation)
+                .build()
+                .renderImage()
                 .writeToImage(imageName);
     }
 
@@ -96,8 +101,18 @@ public class cameraRenderIntegration {
 
     @Test
     void testLocation() {
-        createImage("coolScene.json", "Location", new Point(1, 1, 1), 0);
-//        createImage("coolScene.json", "Location", LOCATION, 0);
-//        createImage("coolScene.json", "Location", LOCATION, 0);
+        final Point far = new Point(0, 0, 1000);
+        final Point above = new Point(0, 1000, 0);
+        final Point behind = new Point(-300, 0, -1000);
+        final Point behindAbove = new Point(-300, 0, -1000);
+        
+        // Look at scene from further away
+        createImage("coolScene.json", "LocationFar", far, 0);
+        // Look at scene from above
+        createImage("coolScene.json", "LocationAbove", above, 0);
+        // Look at the scene from behind
+        createImage("coolScene.json", "LocationBehind", behind, 0);
+        // Look at the scene from behind and above
+        createImage("coolScene.json", "LocationBehindAbove", behindAbove, 0);
     }
 }
