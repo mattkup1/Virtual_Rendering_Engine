@@ -49,10 +49,13 @@ class SimpleRayTracer extends RayTracerBase {
 
     /**
      * Number of rays in each top-level glossy reflection or diffuse transparency
-     * beam. Materials with zero blur ({@code blurR} / {@code blurT}) still trace
-     * a single ideal ray regardless of this value.
+     * beam. Higher values reduce Monte Carlo noise (speckle / "black dots") at
+     * the cost of proportionally more rays per affected pixel. Materials with
+     * zero blur ({@code blurR} / {@code blurT}) still trace a single ideal ray
+     * regardless of this value, so the cost is paid only on glossy or
+     * blurry-transparent surfaces.
      */
-    private static final int BLUR_SAMPLES = 17;
+    private static final int BLUR_SAMPLES = 65;
 
     /**
      * Constructs a SimpleRayTracer with a given scene.

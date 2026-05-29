@@ -38,20 +38,21 @@ class GlossBlurTests {
 
     /**
      * Blur radius applied to the chrome ball's reflection in the "gloss on"
-     * variants. Tuned to be obvious without being so large that the
-     * {@link SimpleRayTracer#BLUR_SAMPLES low default sample count} makes
-     * the result noisy.
+     * variants. Aggressive enough that the colored band reflected off the
+     * chrome's silhouette turns into an unmistakable brushed-metal smear,
+     * so the gloss-on / gloss-off comparison is the dominant visual cue.
      */
-    private static final double BLUR_R = 7;
+    private static final double BLUR_R = 15;
 
     /**
      * Blur radius applied to the glass ball's transparency in the "blur on"
-     * variants. Slightly larger than {@link #BLUR_R} because diffuse-glass
-     * blur is read through a longer light path (front of glass &rarr; back
-     * of glass &rarr; backdrop) and therefore needs more spread to be
-     * comparably visible.
+     * variants. Substantially larger than {@link #BLUR_R} because the glass
+     * ball acts as a pass-through "window" rather than a curved mirror, so
+     * the blur kernel only has visible effect where the backdrop behind the
+     * window contains sharp edges (orb/background transitions). A wider
+     * kernel is required to span those transitions clearly.
      */
-    private static final double BLUR_T = 9;
+    private static final double BLUR_T = 18;
 
     /**
      * Default constructor to satisfy Javadoc generator.
@@ -81,14 +82,30 @@ class GlossBlurTests {
                                 .setKD(0.25).setKS(0.20).setShininess(80)
                                 .setKR(0.18)));
 
-        // Rainbow wall: five emissive orbs at z = -500. Their alternating
-        // vertical positions make the blur effect immediately readable
-        // (a sharp reflection preserves the zig-zag; a blurry one smears it).
-        addBackdropOrb(scene, -240, 15, new Color(210, 60, 60));
-        addBackdropOrb(scene, -120, -20, new Color(210, 130, 50));
-        addBackdropOrb(scene, 0, 15, new Color(220, 200, 60));
-        addBackdropOrb(scene, 120, 0, new Color(60, 200, 110));
-        addBackdropOrb(scene, 240, 15, new Color(70, 100, 220));
+        // Rainbow wall: five large emissive orbs at z = -500. They are
+        // intentionally spaced so they just touch / very lightly overlap,
+        // producing a near-continuous strip of color across the back of
+        // the scene. That continuous strip is what the chrome ball's
+        // silhouette reflects, and what gives blurR a thick band of color
+        // to smear into a brushed-metal look.
+        addBackdropOrb(scene, -270, 20, new Color(210, 60, 60));
+        addBackdropOrb(scene, -135, -25, new Color(210, 130, 50));
+        addBackdropOrb(scene, 0, 20, new Color(220, 200, 60));
+        addBackdropOrb(scene, 135, -25, new Color(60, 200, 110));
+        addBackdropOrb(scene, 270, 20, new Color(70, 100, 220));
+
+        // Bright "lamp" planted directly behind the glass ball. The glass
+        // ball is a refraction-free "window" onto whatever sits behind it,
+        // so blurT has nothing to do unless that window contains a sharp
+        // high-contrast feature. This single bright point IS that feature:
+        // without blurT it appears as a sharp warm dot through the glass;
+        // with blurT it spreads into a soft glowing halo. Sized small so
+        // it does not dominate the rest of the composition.
+        scene.geometries.add(
+                new Sphere(new Point(130, 0, -380), 12D)
+                        .setEmission(new Color(255, 230, 130))
+                        .setMaterial(new Material()
+                                .setKD(0.05).setKS(0).setShininess(1)));
 
         // Chrome ball on the left — drives blurR
         scene.geometries.add(
@@ -127,6 +144,9 @@ class GlossBlurTests {
 
     /**
      * Helper that drops one purely-emissive backdrop orb into the scene.
+     * The fixed radius is large enough that, at the call-site spacing,
+     * adjacent orbs just touch, forming the continuous strip of color the
+     * chrome ball's edges reflect.
      *
      * @param scene the scene to append to
      * @param x     horizontal position
