@@ -46,12 +46,14 @@ public class cameraRenderIntegration {
      * execution would race on the builder's internal state.
      * </p>
      */
-    private static final Camera.Builder cameraBuilder = Camera.getBuilder()
-            .setLocation(LOCATION)
-            .setDirection(LOOK_AT)
-            .setVpDistance(VP_DISTANCE)
-            .setVpSize(VP_SIZE, VP_SIZE)
-            .setResolution(RESOLUTION, RESOLUTION);
+    private static Camera.Builder baseCameraBuilder() {
+        return Camera.getBuilder()
+                .setLocation(LOCATION)
+                .setDirection(LOOK_AT)
+                .setVpDistance(VP_DISTANCE)
+                .setVpSize(VP_SIZE, VP_SIZE)
+                .setResolution(RESOLUTION, RESOLUTION);
+    }
 
     /**
      * Loads the given JSON scene file, attaches a simple ray tracer and renders
@@ -62,7 +64,7 @@ public class cameraRenderIntegration {
      */
     private static Camera renderScene(String sceneFileName, double rotation) {
         Scene scene = new JsonSceneLoader("Loaded scene", JSON_FILE_PATH + sceneFileName).loadScene();
-        return cameraBuilder
+        return baseCameraBuilder()
                 .setRayTracer(scene, RayTracerType.SIMPLE)
                 .rotate(rotation)
                 .build()
