@@ -9,6 +9,7 @@ import geometries.impl.Triangle;
 import geometries.impl.Tube;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.LightSource;
@@ -176,43 +177,23 @@ public abstract class SceneLoader {
         Material material = new Material();
         boolean hasMaterial = false;
 
-        String kA = data.get("material.kA");
-        if (kA != null) {
-            material.setKA(parseMaterialCoefficient(kA));
-            hasMaterial = true;
-        }
-
-        String kD = data.get("material.kD");
-        if (kD != null) {
-            material.setKD(parseMaterialCoefficient(kD));
-            hasMaterial = true;
-        }
-
-        String kS = data.get("material.kS");
-        if (kS != null) {
-            material.setKS(parseMaterialCoefficient(kS));
-            hasMaterial = true;
-        }
-
-        String kT = data.get("material.kT");
-        if (kT != null) {
-            material.setKT(parseMaterialCoefficient(kT));
-            hasMaterial = true;
-        }
-
-        String kR = data.get("material.kR");
-        if (kR != null) {
-            material.setKR(parseMaterialCoefficient(kR));
-            hasMaterial = true;
-        }
-
-        String shininess = data.get("material.shininess");
-        if (shininess != null) {
-            material.setShininess(Integer.parseInt(shininess));
-            hasMaterial = true;
-        }
+        hasMaterial |= apply(data, "material.kA", v -> material.setKA(parseMaterialCoefficient(v)));
+        hasMaterial |= apply(data, "material.kD", v -> material.setKD(parseMaterialCoefficient(v)));
+        hasMaterial |= apply(data, "material.kS", v -> material.setKS(parseMaterialCoefficient(v)));
+        hasMaterial |= apply(data, "material.kT", v -> material.setKT(parseMaterialCoefficient(v)));
+        hasMaterial |= apply(data, "material.kR", v -> material.setKR(parseMaterialCoefficient(v)));
+        hasMaterial |= apply(data, "material.shininess", v -> material.setShininess(Integer.parseInt(v)));
+        hasMaterial |= apply(data, "material.blurR", v -> material.setBlurR(Double.parseDouble(v)));
+        hasMaterial |= apply(data, "material.blurT", v -> material.setBlurT(Double.parseDouble(v)));
 
         return hasMaterial ? material : null;
+    }
+
+    private static boolean apply(Map<String, String> data, String key, Consumer<String> setter) {
+        String value = data.get(key);
+        if (value == null) return false;
+        setter.accept(value);
+        return true;
     }
 
     /**
@@ -275,9 +256,9 @@ public abstract class SceneLoader {
      * are left unchanged.
      * </p>
      *
-     * @param <T>    a {@link PointLight} or subclass such as {@link SpotLight}
-     * @param light  the light to configure
-     * @param data   attribute map containing attenuation coefficients
+     * @param <T>   a {@link PointLight} or subclass such as {@link SpotLight}
+     * @param light the light to configure
+     * @param data  attribute map containing attenuation coefficients
      * @return the same light instance for chaining
      */
     private <T extends PointLight> T applyAttenuation(T light, Map<String, String> data) {

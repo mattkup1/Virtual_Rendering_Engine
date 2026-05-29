@@ -3,8 +3,10 @@ package primitives;
 /**
  * Represents the physical properties of a geometry's surface in the Phong lighting model.
  * <p>
- * Defines ambient, diffuse, and specular reflection coefficients, as well as surface
- * shininess. This class follows the builder pattern, allowing method chaining during
+ * Defines ambient, diffuse, and specular reflection coefficients, surface shininess,
+ * recursive transparency ({@code kT}) and reflection ({@code kR}) coefficients, and
+ * per-effect blur radii ({@code blurT} for diffuse glass, {@code blurR} for glossy
+ * surfaces). This class follows the builder pattern, allowing method chaining during
  * material definition.
  * </p>
  *
@@ -41,14 +43,45 @@ public class Material {
     public int nShininess = 0;
 
     /**
-     * Transparency coefficient (kT)
+     * Transparency coefficient (kT).
+     * Fraction of incoming light that passes through the surface and continues
+     * along the same direction (refraction is not modeled). A value of
+     * {@code (0, 0, 0)} makes the surface fully opaque.
+     * Initialized to {@code (0, 0, 0)} by default.
      */
     public Double3 kT = Double3.ZERO;
 
     /**
-     * Reflection coefficient (kR)
+     * Reflection coefficient (kR).
+     * Fraction of incoming light that is mirror-reflected by the surface.
+     * A value of {@code (0, 0, 0)} disables the recursive reflection term.
+     * Initialized to {@code (0, 0, 0)} by default.
      */
     public Double3 kR = Double3.ZERO;
+
+    /**
+     * Glossy reflection blur radius.
+     * Radius of the sampling disk placed at
+     * {@link renderer.BeamSampler#sampleBeam BeamSampler}'s target distance
+     * past the surface, used to scatter reflection rays around the ideal
+     * mirror direction. {@code 0} produces a perfectly sharp mirror;
+     * larger values produce progressively blurrier (brushed-metal) reflections.
+     * Has no effect when {@code kR} is {@code (0, 0, 0)}.
+     * Initialized to {@code 0} by default.
+     */
+    public double blurR = 0;
+
+    /**
+     * Diffuse transparency blur radius.
+     * Radius of the sampling disk placed at
+     * {@link renderer.BeamSampler#sampleBeam BeamSampler}'s target distance
+     * past the surface, used to scatter transparency rays around the ideal
+     * through-direction. {@code 0} produces perfectly clear glass; larger
+     * values produce progressively more frosted glass.
+     * Has no effect when {@code kT} is {@code (0, 0, 0)}.
+     * Initialized to {@code 0} by default.
+     */
+    public double blurT = 0;
 
     /**
      * Default constructor for the {@link Material} class.
@@ -173,6 +206,30 @@ public class Material {
      */
     public Material setKR(double kR) {
         this.kR = new Double3(kR);
+        return this;
+    }
+
+    /**
+     * Sets the glossy reflection blur radius.
+     *
+     * @param blurR the disk-sampling radius for reflection rays; {@code 0}
+     *              for a perfectly sharp mirror
+     * @return this material for builder-style chaining
+     */
+    public Material setBlurR(double blurR) {
+        this.blurR = blurR;
+        return this;
+    }
+
+    /**
+     * Sets the diffuse transparency blur radius.
+     *
+     * @param blurT the disk-sampling radius for transparency rays; {@code 0}
+     *              for perfectly clear glass
+     * @return this material for builder-style chaining
+     */
+    public Material setBlurT(double blurT) {
+        this.blurT = blurT;
         return this;
     }
 }

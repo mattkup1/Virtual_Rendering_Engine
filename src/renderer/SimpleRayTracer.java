@@ -1,6 +1,7 @@
 package renderer;
 
 import geometries.api.Intersectable.Intersection;
+import java.util.List;
 import lighting.LightSource;
 import primitives.Color;
 import primitives.Double3;
@@ -17,6 +18,13 @@ import static primitives.Util.alignZero;
  * shadows and recursive reflection / transparency rays. Recursion is bounded by
  * {@link #MAX_CALC_COLOR_LEVEL} and short-circuited once the cumulative attenuation
  * coefficient drops below {@link #MIN_CALC_COLOR_K}.
+ * </p>
+ * <p>
+ * At the top of the recursion stack, glossy reflections and diffuse (blurry)
+ * transparency are simulated by replacing each ideal secondary ray with a
+ * {@link #BLUR_SAMPLES}-ray beam scattered around it (see {@link BeamSampler}).
+ * Deeper recursion levels always trace the single ideal ray, keeping total ray
+ * count tractable.
  * </p>
  *
  * @author mattkuperwasser
@@ -38,6 +46,13 @@ class SimpleRayTracer extends RayTracerBase {
      * Cumulative attenuation coefficient seeded into the recursive color calculation.
      */
     private static final Double3 INITIAL_K = Double3.ONE;
+
+    /**
+     * Number of rays in each top-level glossy reflection or diffuse transparency
+     * beam. Materials with zero blur ({@code blurR} / {@code blurT}) still trace
+     * a single ideal ray regardless of this value.
+     */
+    private static final int BLUR_SAMPLES = 17;
 
     /**
      * Constructs a SimpleRayTracer with a given scene.
@@ -178,6 +193,14 @@ class SimpleRayTracer extends RayTracerBase {
 
     /**
      * Sums the recursive transparency and reflection contributions at an intersection.
+     * <p>
+     * At the top recursion level ({@code level == }{@link #MAX_CALC_COLOR_LEVEL}),
+     * each branch expands its ideal secondary ray into a {@link #BLUR_SAMPLES}-ray
+     * beam via {@link BeamSampler}, producing glossy reflections (driven by
+     * {@code blurR}) and diffuse transparency (driven by {@code blurT}). At
+     * deeper levels each branch traces exactly the single ideal ray, so glossy
+     * and diffuse effects do not multiply the ray count exponentially.
+     * </p>
      *
      * @param intersection the intersection point
      * @param level        remaining recursion budget
@@ -185,16 +208,34 @@ class SimpleRayTracer extends RayTracerBase {
      * @return the combined global color
      */
     private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
-        return calcGlobalEffect(
-                constructTransparencyRay(intersection),
-                level,
-                k,
-                intersection.material.kT)
-                .add(calcGlobalEffect(
-                        constructReflectionRay(intersection),
-                        level,
-                        k,
-                        intersection.material.kR));
+        Ray idealTransparency = constructTransparencyRay(intersection);
+        Ray idealReflection = constructReflectionRay(intersection);
+
+        boolean useBlur = level == MAX_CALC_COLOR_LEVEL;
+
+        Color transparencyColor = useBlur
+                ? calcGlobalBeam(
+                BeamSampler.sampleBeam(
+                        intersection.point,
+                        idealTransparency.getDirection(),
+                        intersection.normal,
+                        intersection.material.blurT,
+                        BLUR_SAMPLES),
+                level, k, intersection.material.kT)
+                : calcGlobalEffect(idealTransparency, level, k, intersection.material.kT);
+
+        Color reflectionColor = useBlur
+                ? calcGlobalBeam(
+                BeamSampler.sampleBeam(
+                        intersection.point,
+                        idealReflection.getDirection(),
+                        intersection.normal,
+                        intersection.material.blurR,
+                        BLUR_SAMPLES),
+                level, k, intersection.material.kR)
+                : calcGlobalEffect(idealReflection, level, k, intersection.material.kR);
+
+        return transparencyColor.add(reflectionColor);
     }
 
     /**
@@ -221,23 +262,26 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Builds the transparency ray that continues through the surface in the same
-     * direction as the incoming ray, offset slightly past the surface to avoid
-     * self-intersection.
+     * Builds the ideal transparency ray that continues through the surface in
+     * the same direction as the incoming ray, offset slightly past the surface
+     * to avoid self-intersection. This is the un-blurred direction that
+     * {@link BeamSampler} scatters around when {@code blurT > 0}.
      *
      * @param intersection the intersection point
-     * @return the transparency ray
+     * @return the ideal transparency ray
      */
     private Ray constructTransparencyRay(Intersection intersection) {
         return new Ray(intersection.point, intersection.v, intersection.normal);
     }
 
     /**
-     * Builds the reflection ray {@code r = v - 2(v &middot; n)n}, offset slightly
-     * along the surface normal to avoid self-intersection.
+     * Builds the ideal reflection ray {@code r = v - 2(v &middot; n)n}, offset
+     * slightly along the surface normal to avoid self-intersection. This is the
+     * un-blurred direction that {@link BeamSampler} scatters around when
+     * {@code blurR > 0}.
      *
      * @param intersection the intersection point
-     * @return the reflection ray
+     * @return the ideal reflection ray
      */
     private Ray constructReflectionRay(Intersection intersection) {
         return new Ray(
@@ -256,5 +300,31 @@ class SimpleRayTracer extends RayTracerBase {
      */
     private Intersection findClosestIntersection(Ray ray) {
         return ray.findClosestIntersection(_scene.geometries.calcIntersections(ray));
+    }
+
+    /**
+     * Averages the recursive global contributions of every ray in a beam.
+     * <p>
+     * Used by {@link #calcGlobalEffects(Intersection, int, Double3)} to combine
+     * the per-ray colors produced by {@link BeamSampler#sampleBeam}. Returns
+     * {@link Color#BLACK} as a safety net for an empty beam, though
+     * {@link BeamSampler#sampleBeam} is documented to never return one.
+     * </p>
+     *
+     * @param rays  the beam of secondary rays to trace
+     * @param level remaining recursion budget for each ray
+     * @param k     cumulative attenuation coefficient prior to this bounce
+     * @param kx    per-bounce attenuation triad ({@code kR} or {@code kT})
+     * @return the average color across the beam
+     */
+    private Color calcGlobalBeam(List<Ray> rays, int level, Double3 k, Double3 kx) {
+        if (rays.isEmpty())
+            return Color.BLACK;
+
+        Color color = Color.BLACK;
+        for (Ray ray : rays) {
+            color = color.add(calcGlobalEffect(ray, level, k, kx));
+        }
+        return color.reduce(rays.size());
     }
 }
