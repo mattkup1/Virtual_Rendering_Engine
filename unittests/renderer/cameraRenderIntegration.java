@@ -46,9 +46,9 @@ public class cameraRenderIntegration {
      * execution would race on the builder's internal state.
      * </p>
      */
-    private static Camera.Builder baseCameraBuilder() {
+    private static Camera.Builder baseCameraBuilder(Point location) {
         return Camera.getBuilder()
-                .setLocation(LOCATION)
+                .setLocation(location)
                 .setDirection(LOOK_AT)
                 .setVpDistance(VP_DISTANCE)
                 .setVpSize(VP_SIZE, VP_SIZE)
@@ -62,9 +62,9 @@ public class cameraRenderIntegration {
      * @param sceneFileName name of the JSON scene file inside {@link #JSON_FILE_PATH}
      * @return the camera after rendering
      */
-    private static Camera renderScene(String sceneFileName, double rotation) {
+    private static Camera renderScene(String sceneFileName, Point location, double rotation) {
         Scene scene = new JsonSceneLoader("Loaded scene", JSON_FILE_PATH + sceneFileName).loadScene();
-        return baseCameraBuilder()
+        return baseCameraBuilder(location)
                 .setRayTracer(scene, RayTracerType.SIMPLE)
                 .rotate(rotation)
                 .build()
@@ -79,16 +79,25 @@ public class cameraRenderIntegration {
      * @param sceneFileName name of the JSON scene file inside {@link #JSON_FILE_PATH}
      * @param imageName     name to use for the produced image (without extension)
      */
-    private static void createImage(String sceneFileName, String imageName, double rotation) {
-        renderScene(sceneFileName, rotation)
+    private static void createImage(String sceneFileName, String imageName, Point location, double rotation) {
+        renderScene(sceneFileName, location, rotation)
                 .writeToImage(imageName);
     }
 
     @Test
     void testRotate() {
-        createImage("coolScene.json", "Rotation 45", 45);
-        createImage("coolScene.json", "Rotation 30", 30);
-        createImage("coolScene.json", "Rotation 70", 70);
-        createImage("coolScene.json", "Rotation 10", 10);
+        // ============ Equivalence Partitions Tests ==============
+        // EP01: Test various angle rotations
+        createImage("coolScene.json", "Rotation 45", LOCATION, 45);
+        createImage("coolScene.json", "Rotation 30", LOCATION, 30);
+        createImage("coolScene.json", "Rotation 70", LOCATION, 70);
+        createImage("coolScene.json", "Rotation 10", LOCATION, 10);
+    }
+
+    @Test
+    void testLocation() {
+        createImage("coolScene.json", "Location", new Point(1, 1, 1), 0);
+//        createImage("coolScene.json", "Location", LOCATION, 0);
+//        createImage("coolScene.json", "Location", LOCATION, 0);
     }
 }
