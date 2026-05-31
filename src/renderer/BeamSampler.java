@@ -6,6 +6,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import static primitives.Util.alignZero;
+
 /**
  * Builds a beam of rays around an ideal reflection or transparency direction so
  * the ray tracer can produce glossy reflections and diffuse (blurry) transparency.
@@ -86,20 +88,23 @@ public final class BeamSampler {
         Vector uAxis = basis[0];
         Vector vAxis = basis[1];
 
+        // Side of ray origin
         double idealSide = direction.dotProduct(surfaceNormal);
         List<Ray> beam = new ArrayList<>(sampleCount);
 
         for (int i = 0; i < sampleCount; i++) {
+            // Get a random point on the target disk
             double[] disk = concentricDiskMap(Math.random(), Math.random());
             double s = disk[0] * blurRadius;
             double t = disk[1] * blurRadius;
-
+            // Go to point on disk
             Point samplePoint = targetCenter.add(uAxis.scale(s)).add(vAxis.scale(t));
+            // Get the direction vector to the point
             Vector sampleDirection = samplePoint.subtract(surfacePoint).normalize();
 
             // Wrong-side filter: drop samples whose direction crossed to the
             // opposite side of the surface relative to the ideal direction.
-            if (idealSide * sampleDirection.dotProduct(surfaceNormal) <= 0) continue;
+            if (alignZero(idealSide * sampleDirection.dotProduct(surfaceNormal)) <= 0) continue;
 
             beam.add(new Ray(surfacePoint, sampleDirection, surfaceNormal));
         }
@@ -118,15 +123,15 @@ public final class BeamSampler {
      *
      * @param direction a unit-length direction vector
      * @return an array {@code [u, v]} of two unit vectors, each perpendicular
-     *         to {@code direction} and to each other
+     * to {@code direction} and to each other
      */
     private static Vector[] orthonormalBasis(Vector direction) {
         // Pick a helper vector that is not (nearly) parallel to direction so the
         // cross product is well-conditioned. If direction is mostly along Y,
         // use the X axis as helper; otherwise use the Y axis.
-        Vector helper = Math.abs(direction.dotProduct(new Vector(0, 1, 0))) > 0.9
-                ? new Vector(1, 0, 0)
-                : new Vector(0, 1, 0);
+        Vector helper = Math.abs(direction.dotProduct(Vector.AXIS_Y)) > 0.9
+                ? Vector.AXIS_X
+                : Vector.AXIS_Y;
 
         Vector u = direction.crossProduct(helper).normalize();
         Vector v = direction.crossProduct(u);   // unit length already (cross of two perpendicular unit vectors)
