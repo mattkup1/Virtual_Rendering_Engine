@@ -92,7 +92,7 @@ public final class BeamSampler {
         double idealSide = direction.dotProduct(surfaceNormal);
         List<Ray> beam = new ArrayList<>(sampleCount);
 
-        for (int i = 0; i < sampleCount; i++) {
+        for (int i = 0; i < sampleCount; ++i) {
             // Get a random point on the target disk
             double[] disk = concentricDiskMap(Math.random(), Math.random());
             double s = disk[0] * blurRadius;

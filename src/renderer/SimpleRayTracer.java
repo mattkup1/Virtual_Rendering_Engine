@@ -214,9 +214,9 @@ class SimpleRayTracer extends RayTracerBase {
         Ray idealTransparency = constructTransparencyRay(intersection);
         Ray idealReflection = constructReflectionRay(intersection);
 
-        boolean useBlur = level == MAX_CALC_COLOR_LEVEL;
+        boolean useBeam = level == MAX_CALC_COLOR_LEVEL;
 
-        Color transparencyColor = useBlur
+        Color transparencyColor = useBeam
                 ? calcGlobalBeam(
                 BeamSampler.sampleBeam(
                         intersection.point,
@@ -227,7 +227,7 @@ class SimpleRayTracer extends RayTracerBase {
                 level, k, intersection.material.kT)
                 : calcGlobalEffect(idealTransparency, level, k, intersection.material.kT);
 
-        Color reflectionColor = useBlur
+        Color reflectionColor = useBeam
                 ? calcGlobalBeam(
                 BeamSampler.sampleBeam(
                         intersection.point,
