@@ -122,6 +122,8 @@ class TeapotTest {
                 // .setMultithreading(3) // 10.7
                 // .setMultithreading(4) // 10.7
                 .setDebugPrint(1.0) //
+                .setAdaptiveSuperSampling(true)
+                .setAdaptiveSuperSamplingMaxLevel(3)
                 ;
     }
 

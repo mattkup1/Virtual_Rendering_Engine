@@ -73,6 +73,15 @@ public class Camera implements Cloneable {
      */
     private RayTracerBase _rayTracerBase;
     /**
+     * Whether adaptive super sampling is enabled.
+     */
+    private boolean _adaptiveSuperSampling = false;
+
+    /**
+     * Maximum adaptive super sampling recursion depth.
+     */
+    private int _adaptiveMaxLevel = 3;
+    /**
      * Number of rendering threads; zero means render sequentially.
      */
     private int _threadsCount = 0;
@@ -119,6 +128,39 @@ public class Camera implements Cloneable {
         else intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ)).add(this._vUp.scale(yI));
 
         return new Ray(this._p0, intersectionPoint.subtract(this._p0).normalize());
+    }
+
+    private Point getPixelCenter(int xIndex, int yIndex) {
+        final double xJ = (xIndex - (_nX - 1) / 2.0) * _pixelWidth;
+        final double yI = -(yIndex - (_nY - 1) / 2.0) * _pixelHeight;
+
+        Point pixelCenter = _vpCenter;
+
+        if (!isZero(xJ))
+            pixelCenter = pixelCenter.add(_vRight.scale(xJ));
+
+        if (!isZero(yI))
+            pixelCenter = pixelCenter.add(_vUp.scale(yI));
+
+        return pixelCenter;
+    }
+
+    private Color traceRayThroughPoint(Point point) {
+        return _rayTracerBase.traceRay(
+                new Ray(_p0, point.subtract(_p0).normalize())
+        );
+    }
+
+    private Point moveOnViewPlane(Point point, double x, double y) {
+        Point movedPoint = point;
+
+        if (!isZero(x))
+            movedPoint = movedPoint.add(_vRight.scale(x));
+
+        if (!isZero(y))
+            movedPoint = movedPoint.add(_vUp.scale(y));
+
+        return movedPoint;
     }
 
     /**
@@ -183,9 +225,74 @@ public class Camera implements Cloneable {
      * @param yIndex the pixel's row index
      */
     private void castRay(int xIndex, int yIndex) {
-        final Ray ray = constructRay(xIndex, yIndex);
-        final Color color = this._rayTracerBase.traceRay(ray);
-        this._imageWriter.writePixel(xIndex, yIndex, color);
+        final Color color = _adaptiveSuperSampling
+                ? adaptiveSuperSampling(xIndex, yIndex)
+                : _rayTracerBase.traceRay(constructRay(xIndex, yIndex));
+
+        _imageWriter.writePixel(xIndex, yIndex, color);
+    }
+
+    private Color adaptiveSuperSampling(int xIndex, int yIndex) {
+        Point pixelCenter = getPixelCenter(xIndex, yIndex);
+        return adaptiveSuperSampling(pixelCenter, _pixelWidth, _pixelHeight, _adaptiveMaxLevel);
+    }
+
+    private Color adaptiveSuperSampling(Point center, double width, double height, int level) {
+        Color centerColor = traceRayThroughPoint(center);
+
+        double halfWidth = width / 2.0;
+        double halfHeight = height / 2.0;
+
+        Point topLeft = moveOnViewPlane(center, -halfWidth, halfHeight);
+        Point topRight = moveOnViewPlane(center, halfWidth, halfHeight);
+        Point bottomLeft = moveOnViewPlane(center, -halfWidth, -halfHeight);
+        Point bottomRight = moveOnViewPlane(center, halfWidth, -halfHeight);
+
+        Color topLeftColor = traceRayThroughPoint(topLeft);
+        Color topRightColor = traceRayThroughPoint(topRight);
+        Color bottomLeftColor = traceRayThroughPoint(bottomLeft);
+        Color bottomRightColor = traceRayThroughPoint(bottomRight);
+
+        if (level == 0 || centerColor.equalColors(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)) {
+            return centerColor
+                    .add(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)
+                    .reduce(5);
+        }
+
+        double quarterWidth = width / 4.0;
+        double quarterHeight = height / 4.0;
+
+        Color topLeftSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, -quarterWidth, quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        Color topRightSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, quarterWidth, quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        Color bottomLeftSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, -quarterWidth, -quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        Color bottomRightSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, quarterWidth, -quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        return topLeftSubPixel
+                .add(topRightSubPixel, bottomLeftSubPixel, bottomRightSubPixel)
+                .reduce(4);
     }
 
     /**
@@ -335,6 +442,19 @@ public class Camera implements Cloneable {
             _camera._nX = nX;
             _camera._nY = nY;
 
+            return this;
+        }
+
+        public Builder setAdaptiveSuperSampling(boolean adaptiveSuperSampling) {
+            _camera._adaptiveSuperSampling = adaptiveSuperSampling;
+            return this;
+        }
+
+        public Builder setAdaptiveSuperSamplingMaxLevel(int maxLevel) {
+            if (maxLevel < 0)
+                throw new IllegalArgumentException("Adaptive super sampling max level must be non-negative");
+
+            _camera._adaptiveMaxLevel = maxLevel;
             return this;
         }
 
