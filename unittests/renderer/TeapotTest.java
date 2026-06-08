@@ -27,9 +27,9 @@ import static primitives.Util.random;
  */
 class TeapotTest {
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy Javadoc generator
      */
-    TeapotTest() { /* to satisfy JavaDoc generator */ }
+    TeapotTest() { /* to satisfy Javadoc generator */ }
 
     /**
      * Teapot without improvements
@@ -114,14 +114,14 @@ class TeapotTest {
                 .setLocation(new Point(0, 0, -1000)).setDirection(Point.ZERO, Vector.AXIS_Y) //
                 .setVpDistance(1000).setVpSize(200, 200) //
                 // .setMultithreading(-3) // fail - paging file size
-                // .setMultithreading(-2) // 9.3
-                // .setMultithreading(-1) // 9.6
+                //.setMultithreading(-2) // 9.3
+                .setMultithreading(-1) // 9.6
                 // .setMultithreading(0) // 25
                 // .setMultithreading(1) // 25.8
                 // .setMultithreading(2) // 13.6
                 // .setMultithreading(3) // 10.7
                 // .setMultithreading(4) // 10.7
-                // .setDebugPrint(1.0) //
+                .setDebugPrint(1.0) //
                 ;
     }
 

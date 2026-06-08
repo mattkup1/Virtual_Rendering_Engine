@@ -72,6 +72,14 @@ public class Camera implements Cloneable {
      * Ray tracer object
      */
     private RayTracerBase _rayTracerBase;
+    /**
+     * Number of rendering threads; zero means render sequentially.
+     */
+    private int _threadsCount = 0;
+    /**
+     * Progress print interval in percent; zero disables progress printing.
+     */
+    private double _printInterval = 0;
 
     /**
      * Empty camera constructor
@@ -120,11 +128,50 @@ public class Camera implements Cloneable {
      * @return the camera object itself for builder-like chaining
      */
     public Camera renderImage() {
+        if (_threadsCount > 0) {
+            return renderImageThreaded();
+        }
+
         for (int x = 0; x < _nX; ++x) {
             for (int y = 0; y < _nY; ++y) {
                 castRay(x, y);
             }
         }
+        return this;
+    }
+
+    /**
+     * Renders the image with multiple worker threads.
+     *
+     * @return the camera object itself for builder-like chaining
+     */
+    private Camera renderImageThreaded() {
+        final PixelManager pixelManager = new PixelManager(_nY, _nX, _printInterval);
+        final Thread[] threads = new Thread[_threadsCount];
+
+        for (int i = 0; i < _threadsCount; ++i) {
+            threads[i] = new Thread(() -> {
+                PixelManager.Pixel pixel;
+                while ((pixel = pixelManager.nextPixel()) != null) {
+                    castRay(pixel.col(), pixel.row());
+                    pixelManager.pixelDone();
+                }
+            });
+        }
+
+        for (Thread thread : threads) {
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Rendering was interrupted", e);
+            }
+        }
+
         return this;
     }
 
@@ -288,6 +335,44 @@ public class Camera implements Cloneable {
             _camera._nX = nX;
             _camera._nY = nY;
 
+            return this;
+        }
+
+        /**
+         * Sets the number of threads used by {@link Camera#renderImage()}.
+         * <p>
+         * Use 0 to render sequentially, a positive value for an exact thread
+         * count, or -1 to use all available processors except two.
+         * </p>
+         *
+         * @param threadsCount number of rendering threads
+         * @return the builder object
+         */
+        public Builder setMultithreading(int threadsCount) {
+            if (threadsCount < -1)
+                throw new IllegalArgumentException("Multithreading must be -1, 0, or a positive number");
+
+            if (threadsCount == -1) {
+                int availableThreads = Runtime.getRuntime().availableProcessors() - 2;
+                _camera._threadsCount = Math.max(1, availableThreads);
+            } else {
+                _camera._threadsCount = threadsCount;
+            }
+
+            return this;
+        }
+
+        /**
+         * Sets progress printing interval for rendering.
+         *
+         * @param interval print interval in percent; 0 disables progress printing
+         * @return the builder object
+         */
+        public Builder setDebugPrint(double interval) {
+            if (interval < 0)
+                throw new IllegalArgumentException("Debug print interval must be non-negative");
+
+            _camera._printInterval = interval;
             return this;
         }
 
