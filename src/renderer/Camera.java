@@ -73,6 +73,10 @@ public class Camera implements Cloneable {
      */
     private RayTracerBase _rayTracerBase;
     /**
+     * Adaptive super sampling helper.
+     */
+    private AdaptiveSuperSampling _adaptiveSampler;
+    /**
      * Whether adaptive super sampling is enabled.
      */
     private boolean _adaptiveSuperSampling = false;
@@ -145,24 +149,6 @@ public class Camera implements Cloneable {
         return pixelCenter;
     }
 
-    private Color traceRayThroughPoint(Point point) {
-        return _rayTracerBase.traceRay(
-                new Ray(_p0, point.subtract(_p0).normalize())
-        );
-    }
-
-    private Point moveOnViewPlane(Point point, double x, double y) {
-        Point movedPoint = point;
-
-        if (!isZero(x))
-            movedPoint = movedPoint.add(_vRight.scale(x));
-
-        if (!isZero(y))
-            movedPoint = movedPoint.add(_vUp.scale(y));
-
-        return movedPoint;
-    }
-
     /**
      * Renders the image by iterating over all pixels in the view plane.
      * For each pixel, a ray is constructed and cast into the scene to determine its color.
@@ -170,50 +156,11 @@ public class Camera implements Cloneable {
      * @return the camera object itself for builder-like chaining
      */
     public Camera renderImage() {
-        if (_threadsCount > 0) {
-            return renderImageThreaded();
+        if (_adaptiveSuperSampling) {
+            _adaptiveSampler = new AdaptiveSuperSampling(_p0, _vRight, _vUp, _rayTracerBase, _adaptiveMaxLevel);
         }
 
-        for (int x = 0; x < _nX; ++x) {
-            for (int y = 0; y < _nY; ++y) {
-                castRay(x, y);
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Renders the image with multiple worker threads.
-     *
-     * @return the camera object itself for builder-like chaining
-     */
-    private Camera renderImageThreaded() {
-        final PixelManager pixelManager = new PixelManager(_nY, _nX, _printInterval);
-        final Thread[] threads = new Thread[_threadsCount];
-
-        for (int i = 0; i < _threadsCount; ++i) {
-            threads[i] = new Thread(() -> {
-                PixelManager.Pixel pixel;
-                while ((pixel = pixelManager.nextPixel()) != null) {
-                    castRay(pixel.col(), pixel.row());
-                    pixelManager.pixelDone();
-                }
-            });
-        }
-
-        for (Thread thread : threads) {
-            thread.start();
-        }
-
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Rendering was interrupted", e);
-            }
-        }
-
+        new ImageRenderer(_nX, _nY, _threadsCount, _printInterval, this::castRay).render();
         return this;
     }
 
@@ -226,73 +173,10 @@ public class Camera implements Cloneable {
      */
     private void castRay(int xIndex, int yIndex) {
         final Color color = _adaptiveSuperSampling
-                ? adaptiveSuperSampling(xIndex, yIndex)
+                ? _adaptiveSampler.sample(getPixelCenter(xIndex, yIndex), _pixelWidth, _pixelHeight)
                 : _rayTracerBase.traceRay(constructRay(xIndex, yIndex));
 
         _imageWriter.writePixel(xIndex, yIndex, color);
-    }
-
-    private Color adaptiveSuperSampling(int xIndex, int yIndex) {
-        Point pixelCenter = getPixelCenter(xIndex, yIndex);
-        return adaptiveSuperSampling(pixelCenter, _pixelWidth, _pixelHeight, _adaptiveMaxLevel);
-    }
-
-    private Color adaptiveSuperSampling(Point center, double width, double height, int level) {
-        Color centerColor = traceRayThroughPoint(center);
-
-        double halfWidth = width / 2.0;
-        double halfHeight = height / 2.0;
-
-        Point topLeft = moveOnViewPlane(center, -halfWidth, halfHeight);
-        Point topRight = moveOnViewPlane(center, halfWidth, halfHeight);
-        Point bottomLeft = moveOnViewPlane(center, -halfWidth, -halfHeight);
-        Point bottomRight = moveOnViewPlane(center, halfWidth, -halfHeight);
-
-        Color topLeftColor = traceRayThroughPoint(topLeft);
-        Color topRightColor = traceRayThroughPoint(topRight);
-        Color bottomLeftColor = traceRayThroughPoint(bottomLeft);
-        Color bottomRightColor = traceRayThroughPoint(bottomRight);
-
-        if (level == 0 || centerColor.equalColors(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)) {
-            return centerColor
-                    .add(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)
-                    .reduce(5);
-        }
-
-        double quarterWidth = width / 4.0;
-        double quarterHeight = height / 4.0;
-
-        Color topLeftSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, -quarterWidth, quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        Color topRightSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, quarterWidth, quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        Color bottomLeftSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, -quarterWidth, -quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        Color bottomRightSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, quarterWidth, -quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        return topLeftSubPixel
-                .add(topRightSubPixel, bottomLeftSubPixel, bottomRightSubPixel)
-                .reduce(4);
     }
 
     /**
