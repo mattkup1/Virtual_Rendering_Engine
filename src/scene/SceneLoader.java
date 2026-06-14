@@ -189,6 +189,15 @@ public abstract class SceneLoader {
         return hasMaterial ? material : null;
     }
 
+    /**
+     * Applies a setter to a map value when the requested key is present.
+     *
+     * @param data   the attribute map to read from
+     * @param key    the key whose value should be applied
+     * @param setter the action that consumes the value
+     * @return {@code true} if the key was present and the setter was invoked,
+     *         otherwise {@code false}
+     */
     private static boolean apply(Map<String, String> data, String key, Consumer<String> setter) {
         String value = data.get(key);
         if (value == null) return false;

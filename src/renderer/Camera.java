@@ -134,6 +134,13 @@ public class Camera implements Cloneable {
         return new Ray(this._p0, intersectionPoint.subtract(this._p0).normalize());
     }
 
+    /**
+     * Calculates the center point of a pixel on the view plane.
+     *
+     * @param xIndex the pixel column number
+     * @param yIndex the pixel row number
+     * @return the pixel center point on the view plane
+     */
     private Point getPixelCenter(int xIndex, int yIndex) {
         final double xJ = (xIndex - (_nX - 1) / 2.0) * _pixelWidth;
         final double yI = -(yIndex - (_nY - 1) / 2.0) * _pixelHeight;
@@ -149,6 +156,41 @@ public class Camera implements Cloneable {
         return pixelCenter;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Traces a ray from the camera location through a point on the view plane.
+     *
+     * @param point the point on the view plane
+     * @return the color resolved by the ray tracer
+     */
+    private Color traceRayThroughPoint(Point point) {
+        return _rayTracerBase.traceRay(
+                new Ray(_p0, point.subtract(_p0).normalize())
+        );
+    }
+
+    /**
+     * Moves a point along the view-plane right and up axes.
+     *
+     * @param point the source point on the view plane
+     * @param x     offset along the right vector
+     * @param y     offset along the up vector
+     * @return the moved point on the view plane
+     */
+    private Point moveOnViewPlane(Point point, double x, double y) {
+        Point movedPoint = point;
+
+        if (!isZero(x))
+            movedPoint = movedPoint.add(_vRight.scale(x));
+
+        if (!isZero(y))
+            movedPoint = movedPoint.add(_vUp.scale(y));
+
+        return movedPoint;
+    }
+
+>>>>>>> aad575c (added javadoc)
     /**
      * Renders the image by iterating over all pixels in the view plane.
      * For each pixel, a ray is constructed and cast into the scene to determine its color.
@@ -179,6 +221,91 @@ public class Camera implements Cloneable {
         _imageWriter.writePixel(xIndex, yIndex, color);
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Calculates a pixel color using adaptive super sampling.
+     *
+     * @param xIndex the pixel column number
+     * @param yIndex the pixel row number
+     * @return the adaptively sampled pixel color
+     */
+    private Color adaptiveSuperSampling(int xIndex, int yIndex) {
+        Point pixelCenter = getPixelCenter(xIndex, yIndex);
+        return adaptiveSuperSampling(pixelCenter, _pixelWidth, _pixelHeight, _adaptiveMaxLevel);
+    }
+
+    /**
+     * Recursively samples a view-plane rectangle. If the center and corner
+     * colors are approximately equal, their average is returned. Otherwise the
+     * rectangle is split into four smaller rectangles until the maximum
+     * recursion depth is reached.
+     *
+     * @param center the center point of the sampled rectangle
+     * @param width  the sampled rectangle width
+     * @param height the sampled rectangle height
+     * @param level  remaining recursion depth
+     * @return the averaged color of the sampled rectangle
+     */
+    private Color adaptiveSuperSampling(Point center, double width, double height, int level) {
+        Color centerColor = traceRayThroughPoint(center);
+
+        double halfWidth = width / 2.0;
+        double halfHeight = height / 2.0;
+
+        Point topLeft = moveOnViewPlane(center, -halfWidth, halfHeight);
+        Point topRight = moveOnViewPlane(center, halfWidth, halfHeight);
+        Point bottomLeft = moveOnViewPlane(center, -halfWidth, -halfHeight);
+        Point bottomRight = moveOnViewPlane(center, halfWidth, -halfHeight);
+
+        Color topLeftColor = traceRayThroughPoint(topLeft);
+        Color topRightColor = traceRayThroughPoint(topRight);
+        Color bottomLeftColor = traceRayThroughPoint(bottomLeft);
+        Color bottomRightColor = traceRayThroughPoint(bottomRight);
+
+        if (level == 0 || centerColor.equalColors(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)) {
+            return centerColor
+                    .add(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)
+                    .reduce(5);
+        }
+
+        double quarterWidth = width / 4.0;
+        double quarterHeight = height / 4.0;
+
+        Color topLeftSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, -quarterWidth, quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        Color topRightSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, quarterWidth, quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        Color bottomLeftSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, -quarterWidth, -quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        Color bottomRightSubPixel = adaptiveSuperSampling(
+                moveOnViewPlane(center, quarterWidth, -quarterHeight),
+                halfWidth,
+                halfHeight,
+                level - 1
+        );
+
+        return topLeftSubPixel
+                .add(topRightSubPixel, bottomLeftSubPixel, bottomRightSubPixel)
+                .reduce(4);
+    }
+
+>>>>>>> aad575c (added javadoc)
     /**
      * Prints a grid of lines over the image at specified intervals.
      * This is primarily used for debugging and visualizing pixel alignment.
@@ -329,11 +456,36 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        /**
+         * Enables or disables adaptive super sampling for primary camera rays.
+         * <p>
+         * When enabled, each pixel is sampled recursively: uniform color areas
+         * use only a few rays, while high-contrast edges are subdivided for a
+         * smoother result.
+         * </p>
+         *
+         * @param adaptiveSuperSampling true to enable adaptive super sampling,
+         *                              false to render one primary ray per pixel
+         * @return the builder object
+         */
         public Builder setAdaptiveSuperSampling(boolean adaptiveSuperSampling) {
             _camera._adaptiveSuperSampling = adaptiveSuperSampling;
             return this;
         }
 
+        /**
+         * Sets the maximum recursive subdivision depth for adaptive super
+         * sampling.
+         * <p>
+         * Higher values can smooth difficult edges more accurately, but may
+         * require more rays per pixel.
+         * </p>
+         *
+         * @param maxLevel maximum recursion depth; zero samples only the current
+         *                 rectangle's center and corners
+         * @return the builder object
+         * @throws IllegalArgumentException if {@code maxLevel} is negative
+         */
         public Builder setAdaptiveSuperSamplingMaxLevel(int maxLevel) {
             if (maxLevel < 0)
                 throw new IllegalArgumentException("Adaptive super sampling max level must be non-negative");
