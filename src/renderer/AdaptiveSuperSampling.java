@@ -31,7 +31,10 @@ class AdaptiveSuperSampling {
      * Maximum recursive subdivision depth.
      */
     private final int maxLevel;
-
+    /**
+     * Delta value for color similarity
+     */
+    private static final double DELTA = 15;
     /**
      * Creates an adaptive super sampler for a camera view plane.
      *
@@ -113,23 +116,28 @@ class AdaptiveSuperSampling {
             Point br, Color brColor,
             int level
     ) {
-        if (level == 0 || centerColor.equalColors(tlColor, trColor, blColor, brColor)) {
+        if (level == 0 || centerColor.equalColors(DELTA,tlColor, trColor, blColor, brColor)) {
             return centerColor
                     .add(tlColor, trColor, blColor, brColor)
                     .reduce(5);
         }
 
         // Half-extents of this cell along each view-plane axis.
-        double halfW = vRight.dotProduct(tr.subtract(tl)) / 2.0;
-        double halfH = vUp.dotProduct(tl.subtract(bl))   / 2.0;
+        double halfW = tr.subtract(tl).length() / 2.0;
+        double halfH = tl.subtract(bl).length()   / 2.0;
         double qW    = halfW / 2.0;
         double qH    = halfH / 2.0;
 
         // Compute the four edge midpoints — each is shared by two sub-quadrants.
-        Point midTop    = moveOnViewPlane(center,  0,     halfH);
+        Point midTop    = moveOnViewPlane(center,  0,    halfH);
         Point midBottom = moveOnViewPlane(center,  0,    -halfH);
         Point midLeft   = moveOnViewPlane(center, -halfW,  0);
         Point midRight  = moveOnViewPlane(center,  halfW,  0);
+
+        Point centerTopL = moveOnViewPlane(center,  -qW, qH);
+        Point centerTopR = moveOnViewPlane(center,  qW, qH);
+        Point centerBottomL = moveOnViewPlane(center,  -qW, -qH);
+        Point centerBottomR = moveOnViewPlane(center,  qW, -qH);
 
         Color midTopColor    = traceRayThroughPoint(midTop);
         Color midBottomColor = traceRayThroughPoint(midBottom);
@@ -138,7 +146,7 @@ class AdaptiveSuperSampling {
 
         // Recurse into the four quadrants, reusing all shared corner/midpoint colors.
         Color topLeftResult = sample(
-                moveOnViewPlane(center, -qW,  qH), centerColor,
+                centerTopL, traceRayThroughPoint(centerTopL),
                 tl,      tlColor,
                 midTop,  midTopColor,
                 midLeft, midLeftColor,
@@ -147,7 +155,7 @@ class AdaptiveSuperSampling {
         );
 
         Color topRightResult = sample(
-                moveOnViewPlane(center,  qW,  qH), centerColor,
+                centerTopR, traceRayThroughPoint(centerTopR),
                 midTop,   midTopColor,
                 tr,       trColor,
                 center,   centerColor,
@@ -156,7 +164,7 @@ class AdaptiveSuperSampling {
         );
 
         Color bottomLeftResult = sample(
-                moveOnViewPlane(center, -qW, -qH), centerColor,
+                centerBottomL, traceRayThroughPoint(centerBottomL),
                 midLeft,   midLeftColor,
                 center,    centerColor,
                 bl,        blColor,
@@ -165,7 +173,7 @@ class AdaptiveSuperSampling {
         );
 
         Color bottomRightResult = sample(
-                moveOnViewPlane(center,  qW, -qH), centerColor,
+                centerBottomR, traceRayThroughPoint(centerBottomR),
                 center,    centerColor,
                 midRight,  midRightColor,
                 midBottom, midBottomColor,

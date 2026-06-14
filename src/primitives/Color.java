@@ -164,9 +164,14 @@ public final class Color {
     *                this color (vacuously {@code true} if no colors are provided);
     *                {@code false} otherwise
     */
-   public boolean equalColors(Color... colors) {
-      for (Color color : colors)
-         if (!this.equals(color)) return false;
+   public boolean equalColors(double delta, Color... colors) {
+      for (Color color : colors) {
+         if (Math.abs(_rgb._d1()) - color._rgb._d1() > delta ||
+                 Math.abs(_rgb._d2() - color._rgb._d2()) > delta ||
+                 Math.abs(_rgb._d3() - color._rgb._d3()) > delta) {
+            return false;
+         }
+      }
       return true;
    }
 
