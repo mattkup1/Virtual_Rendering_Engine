@@ -48,6 +48,11 @@ class SimpleRayTracer extends RayTracerBase {
     private static final Double3 INITIAL_K = Double3.ONE;
 
     /**
+     * Add adaptive super sampling in blur and gloss beams or not
+     */
+    private static final boolean adaptiveSuperSampling = true;
+
+    /**
      * Number of rays in each top-level glossy reflection or diffuse transparency
      * beam. Higher values reduce Monte Carlo noise (speckle / "black dots") at
      * the cost of proportionally more rays per affected pixel. Materials with
@@ -56,10 +61,26 @@ class SimpleRayTracer extends RayTracerBase {
      * blurry-transparent surfaces.
      */
     private static final int BLUR_SAMPLES = 65;
-
+    /**
+     * Maximum recursion depth used by adaptive beam sampling.
+     * <p>
+     * Each adaptive step subdivides the beam into smaller groups of rays
+     * when sampled colors differ significantly. Higher values increase
+     * sampling accuracy at the cost of additional ray tracing work.
+     * </p>
+     */
+    private static final int BEAM_ADAPTIVE_LEVEL = 4;
+    /**
+     * Color difference threshold used by adaptive beam sampling.
+     * <p>
+     * If the sampled colors within a beam segment differ by less than this
+     * amount, the segment is considered sufficiently uniform and no further
+     * subdivision is performed.
+     * </p>
+     */
+    private static final double BEAM_COLOR_DELTA = 5;
     /**
      * Constructs a SimpleRayTracer with a given scene.
-     *
      * @param scene the scene to be rendered
      */
     public SimpleRayTracer(Scene scene) {
@@ -217,7 +238,7 @@ class SimpleRayTracer extends RayTracerBase {
         boolean useBeam = level == MAX_CALC_COLOR_LEVEL;
 
         Color transparencyColor = useBeam
-                ? calcGlobalBeam(
+                ? calcBeam(
                 BeamSampler.sampleBeam(
                         intersection.point,
                         idealTransparency.getDirection(),
@@ -228,7 +249,7 @@ class SimpleRayTracer extends RayTracerBase {
                 : calcGlobalEffect(idealTransparency, level, k, intersection.material.kT);
 
         Color reflectionColor = useBeam
-                ? calcGlobalBeam(
+                ? calcBeam(
                 BeamSampler.sampleBeam(
                         intersection.point,
                         idealReflection.getDirection(),
@@ -306,28 +327,130 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Averages the recursive global contributions of every ray in a beam.
+     * Calculates the color contribution of a glossy-reflection or diffuse-transparency
+     * beam using adaptive beam sampling.
      * <p>
-     * Used by {@link #calcGlobalEffects(Intersection, int, Double3)} to combine
-     * the per-ray colors produced by {@link BeamSampler#sampleBeam}. Returns
-     * {@link Color#BLACK} as a safety net for an empty beam, though
-     * {@link BeamSampler#sampleBeam} is documented to never return one.
+     * Instead of tracing every ray in the beam uniformly, this method delegates
+     * to {@link #adaptiveBeam(List, int, Double3, Double3, int)}, which recursively
+     * evaluates only as much of the beam as needed based on color variation.
+     * This reduces the number of traced rays in regions where the beam produces
+     * nearly uniform colors while preserving detail in high-frequency regions.
      * </p>
      *
-     * @param rays  the beam of secondary rays to trace
-     * @param level remaining recursion budget for each ray
+     * @param rays  the beam of secondary rays
+     * @param level remaining recursion budget
      * @param k     cumulative attenuation coefficient prior to this bounce
      * @param kx    per-bounce attenuation triad ({@code kR} or {@code kT})
-     * @return the average color across the beam
+     * @return the beam's average color contribution
      */
-    private Color calcGlobalBeam(List<Ray> rays, int level, Double3 k, Double3 kx) {
-        if (rays.isEmpty())
+    private Color calcBeam(
+            List<Ray> rays,
+            int level,
+            Double3 k,
+            Double3 kx) {
+        if (adaptiveSuperSampling) {
+            return adaptiveBeam(
+                    rays,
+                    level,
+                    k,
+                    kx,
+                    BEAM_ADAPTIVE_LEVEL);
+        } else {
+            Color color = Color.BLACK;
+            for  (var ray : rays) {
+                color.add(calcGlobalEffect(ray, level, k, kx));
+            }
+            return color.reduce(rays.size());
+        }
+    }
+    /**
+     * Recursively evaluates a beam of rays using adaptive sampling.
+     * <p>
+     * The method traces representative rays from the beginning, middle, and end
+     * of the beam segment. If their resulting colors are sufficiently similar
+     * (according to {@link #BEAM_COLOR_DELTA}) or the adaptive recursion limit
+     * has been reached, their average is used as an approximation of the entire
+     * segment.
+     * </p>
+     * <p>
+     * Otherwise, the beam is split into two sub-beams which are evaluated
+     * recursively. The final color is the average of the two sub-beam colors.
+     * This approach concentrates ray tracing effort only in parts of the beam
+     * where color varies significantly, reducing rendering time while maintaining
+     * visual quality.
+     * </p>
+     *
+     * @param rays           the beam segment being evaluated
+     * @param level          remaining global recursion budget
+     * @param k              cumulative attenuation coefficient prior to this bounce
+     * @param kx             per-bounce attenuation triad ({@code kR} or {@code kT})
+     * @param adaptiveLevel  remaining adaptive subdivision depth
+     * @return the approximated average color of the beam segment
+     */
+    private Color adaptiveBeam(
+            List<Ray> rays,
+            int level,
+            Double3 k,
+            Double3 kx,
+            int adaptiveLevel) {
+
+        int size = rays.size();
+
+        if (size == 0)
             return Color.BLACK;
 
-        Color color = Color.BLACK;
-        for (Ray ray : rays) {
-            color = color.add(calcGlobalEffect(ray, level, k, kx));
+        if (size == 1)
+            return calcGlobalEffect(
+                    rays.getFirst(),
+                    level,
+                    k,
+                    kx);
+
+        int middleIndex = size / 2;
+
+        Color firstColor = calcGlobalEffect(
+                rays.getFirst(),
+                level,
+                k,
+                kx);
+
+        Color middleColor = calcGlobalEffect(
+                rays.get(middleIndex),
+                level,
+                k,
+                kx);
+
+        Color lastColor = calcGlobalEffect(
+                rays.get(size - 1),
+                level,
+                k,
+                kx);
+
+        if (adaptiveLevel == 0 ||
+                firstColor.equalColors(
+                        BEAM_COLOR_DELTA,
+                        middleColor,
+                        lastColor)) {
+
+            return firstColor
+                    .add(middleColor, lastColor)
+                    .reduce(3);
         }
-        return color.reduce(rays.size());
+
+        Color leftColor = adaptiveBeam(
+                rays.subList(0, middleIndex),
+                level,
+                k,
+                kx,
+                adaptiveLevel - 1);
+
+        Color rightColor = adaptiveBeam(
+                rays.subList(middleIndex, size),
+                level,
+                k,
+                kx,
+                adaptiveLevel - 1);
+
+        return leftColor.add(rightColor).reduce(2);
     }
 }

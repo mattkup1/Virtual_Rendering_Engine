@@ -73,19 +73,6 @@ public class Camera implements Cloneable {
      */
     private RayTracerBase _rayTracerBase;
     /**
-     * Adaptive super sampling helper.
-     */
-    private AdaptiveSuperSampling _adaptiveSampler;
-    /**
-     * Whether adaptive super sampling is enabled.
-     */
-    private boolean _adaptiveSuperSampling = false;
-
-    /**
-     * Maximum adaptive super sampling recursion depth.
-     */
-    private int _adaptiveMaxLevel = 3;
-    /**
      * Number of rendering threads; zero means render sequentially.
      */
     private int _threadsCount = 0;
@@ -144,18 +131,92 @@ public class Camera implements Cloneable {
     }
 
     /**
-     * Renders the image by iterating over all pixels in the view plane.
-     * For each pixel, a ray is constructed and cast into the scene to determine its color.
+     * Renders the image by tracing rays through all pixels in the view plane.
+     * <p>
+     * Rendering is performed either sequentially or using multiple worker
+     * threads depending on the value configured via
+     * {@link Builder#setMultithreading(int)}.
+     * </p>
      *
-     * @return the camera object itself for builder-like chaining
+     * @return this camera instance for method chaining
      */
     public Camera renderImage() {
-        if (_adaptiveSuperSampling) {
-            _adaptiveSampler = new AdaptiveSuperSampling(_p0, _vRight, _vUp, _rayTracerBase, _adaptiveMaxLevel);
+        if (_threadsCount > 0) {
+            renderWithThreads();
+        } else {
+            renderSequentially();
         }
 
-        new ImageRenderer(_nX, _nY, _threadsCount, _printInterval, this::castRay).render();
         return this;
+    }
+
+    /**
+     * Renders all pixels sequentially on the calling thread.
+     * <p>
+     * Each pixel is processed by invoking {@link #castRay(int, int)} in
+     * row-column order until the entire image is rendered.
+     * </p>
+     */
+    private void renderSequentially() {
+        for (int x = 0; x < _nX; ++x) {
+            for (int y = 0; y < _nY; ++y) {
+                castRay(x, y);
+            }
+        }
+    }
+
+    /**
+
+     * Renders all pixels using multiple worker threads.
+
+     * <p>
+     * Work distribution is coordinated through {@link PixelManager}, which
+     * assigns pixels dynamically to threads and optionally reports rendering
+     * progress. The method blocks until all worker threads complete.
+     * </p>
+     *
+     * @throws IllegalStateException if rendering is interrupted while waiting
+     *                               for worker threads to finish
+     */
+    private void renderWithThreads() {
+        final PixelManager pixelManager =
+                new PixelManager(_nY, _nX, _printInterval);
+
+        final Thread[] threads =
+                new Thread[_threadsCount];
+
+        for (int i = 0; i < _threadsCount; ++i) {
+
+            threads[i] = new Thread(() -> {
+
+                PixelManager.Pixel pixel;
+
+                while ((pixel = pixelManager.nextPixel()) != null) {
+
+                    castRay(
+                            pixel.col(),
+                            pixel.row());
+
+                    pixelManager.pixelDone();
+                }
+            });
+        }
+
+        for (Thread thread : threads) {
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+
+                throw new IllegalStateException(
+                        "Rendering was interrupted",
+                        e);
+            }
+        }
     }
 
     /**
@@ -166,9 +227,9 @@ public class Camera implements Cloneable {
      * @param yIndex the pixel's row index
      */
     private void castRay(int xIndex, int yIndex) {
-        final Color color = _adaptiveSuperSampling
-                ? _adaptiveSampler.sample(getPixelCenter(xIndex, yIndex), _pixelWidth, _pixelHeight)
-                : _rayTracerBase.traceRay(constructRay(xIndex, yIndex));
+        Color color =
+                _rayTracerBase.traceRay(
+                        constructRay(xIndex, yIndex));
 
         _imageWriter.writePixel(xIndex, yIndex, color);
     }
@@ -320,44 +381,6 @@ public class Camera implements Cloneable {
             _camera._nX = nX;
             _camera._nY = nY;
 
-            return this;
-        }
-
-        /**
-         * Enables or disables adaptive super sampling for primary camera rays.
-         * <p>
-         * When enabled, each pixel is sampled recursively: uniform color areas
-         * use only a few rays, while high-contrast edges are subdivided for a
-         * smoother result.
-         * </p>
-         *
-         * @param adaptiveSuperSampling true to enable adaptive super sampling,
-         *                              false to render one primary ray per pixel
-         * @return the builder object
-         */
-        public Builder setAdaptiveSuperSampling(boolean adaptiveSuperSampling) {
-            _camera._adaptiveSuperSampling = adaptiveSuperSampling;
-            return this;
-        }
-
-        /**
-         * Sets the maximum recursive subdivision depth for adaptive super
-         * sampling.
-         * <p>
-         * Higher values can smooth difficult edges more accurately, but may
-         * require more rays per pixel.
-         * </p>
-         *
-         * @param maxLevel maximum recursion depth; zero samples only the current
-         *                 rectangle's center and corners
-         * @return the builder object
-         * @throws IllegalArgumentException if {@code maxLevel} is negative
-         */
-        public Builder setAdaptiveSuperSamplingMaxLevel(int maxLevel) {
-            if (maxLevel < 0)
-                throw new IllegalArgumentException("Adaptive super sampling max level must be non-negative");
-
-            _camera._adaptiveMaxLevel = maxLevel;
             return this;
         }
 

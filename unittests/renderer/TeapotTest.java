@@ -114,10 +114,8 @@ class TeapotTest {
                 .setRayTracer(scene, RayTracerType.SIMPLE) //
                 .setLocation(new Point(0, 0, -1000)).setDirection(Point.ZERO, Vector.AXIS_Y) //
                 .setVpDistance(1000).setVpSize(200, 200) //
-                .setMultithreading(4) //
+                .setMultithreading(1) //
                 .setDebugPrint(1.0) //
-                .setAdaptiveSuperSampling(true) //
-                .setAdaptiveSuperSamplingMaxLevel(3) //
                 ;
     }
 
@@ -131,11 +129,7 @@ class TeapotTest {
     private static final Material material = new Material()
             .setKD(0.5)
             .setKS(0.5)
-            .setShininess(60)
-            //.setKT(0.5)
-            //.setKR(0.1)
-            //.setBlurT(0.5)
-            ;
+            .setShininess(60);
 
     /**
      * The vertices point list in the teapot's triangle mesh
