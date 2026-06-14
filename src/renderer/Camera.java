@@ -117,21 +117,8 @@ public class Camera implements Cloneable {
      * @return the ray
      */
     public Ray constructRay(int xIndex, int yIndex) {
-        final double xJ = (xIndex - (_nX - 1) / 2.0) * _pixelWidth;
-        final double yI = -(yIndex - (_nY - 1) / 2.0) * _pixelHeight;
-
-        if (isZero(xJ) && isZero(yI))
-            return new Ray(this._p0, this._vTo);
-
-        Point intersectionPoint;
-
-        if (isZero(xJ))
-            intersectionPoint = this._vpCenter.add(this._vUp.scale(yI));
-        else if (isZero(yI))
-            intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ));
-        else intersectionPoint = this._vpCenter.add(this._vRight.scale(xJ)).add(this._vUp.scale(yI));
-
-        return new Ray(this._p0, intersectionPoint.subtract(this._p0).normalize());
+        Point pixelCenter = getPixelCenter(xIndex, yIndex);
+        return new Ray(_p0, pixelCenter.subtract(_p0).normalize());
     }
 
     /**
@@ -156,41 +143,6 @@ public class Camera implements Cloneable {
         return pixelCenter;
     }
 
-<<<<<<< HEAD
-=======
-    /**
-     * Traces a ray from the camera location through a point on the view plane.
-     *
-     * @param point the point on the view plane
-     * @return the color resolved by the ray tracer
-     */
-    private Color traceRayThroughPoint(Point point) {
-        return _rayTracerBase.traceRay(
-                new Ray(_p0, point.subtract(_p0).normalize())
-        );
-    }
-
-    /**
-     * Moves a point along the view-plane right and up axes.
-     *
-     * @param point the source point on the view plane
-     * @param x     offset along the right vector
-     * @param y     offset along the up vector
-     * @return the moved point on the view plane
-     */
-    private Point moveOnViewPlane(Point point, double x, double y) {
-        Point movedPoint = point;
-
-        if (!isZero(x))
-            movedPoint = movedPoint.add(_vRight.scale(x));
-
-        if (!isZero(y))
-            movedPoint = movedPoint.add(_vUp.scale(y));
-
-        return movedPoint;
-    }
-
->>>>>>> aad575c (added javadoc)
     /**
      * Renders the image by iterating over all pixels in the view plane.
      * For each pixel, a ray is constructed and cast into the scene to determine its color.
@@ -221,91 +173,6 @@ public class Camera implements Cloneable {
         _imageWriter.writePixel(xIndex, yIndex, color);
     }
 
-<<<<<<< HEAD
-=======
-    /**
-     * Calculates a pixel color using adaptive super sampling.
-     *
-     * @param xIndex the pixel column number
-     * @param yIndex the pixel row number
-     * @return the adaptively sampled pixel color
-     */
-    private Color adaptiveSuperSampling(int xIndex, int yIndex) {
-        Point pixelCenter = getPixelCenter(xIndex, yIndex);
-        return adaptiveSuperSampling(pixelCenter, _pixelWidth, _pixelHeight, _adaptiveMaxLevel);
-    }
-
-    /**
-     * Recursively samples a view-plane rectangle. If the center and corner
-     * colors are approximately equal, their average is returned. Otherwise the
-     * rectangle is split into four smaller rectangles until the maximum
-     * recursion depth is reached.
-     *
-     * @param center the center point of the sampled rectangle
-     * @param width  the sampled rectangle width
-     * @param height the sampled rectangle height
-     * @param level  remaining recursion depth
-     * @return the averaged color of the sampled rectangle
-     */
-    private Color adaptiveSuperSampling(Point center, double width, double height, int level) {
-        Color centerColor = traceRayThroughPoint(center);
-
-        double halfWidth = width / 2.0;
-        double halfHeight = height / 2.0;
-
-        Point topLeft = moveOnViewPlane(center, -halfWidth, halfHeight);
-        Point topRight = moveOnViewPlane(center, halfWidth, halfHeight);
-        Point bottomLeft = moveOnViewPlane(center, -halfWidth, -halfHeight);
-        Point bottomRight = moveOnViewPlane(center, halfWidth, -halfHeight);
-
-        Color topLeftColor = traceRayThroughPoint(topLeft);
-        Color topRightColor = traceRayThroughPoint(topRight);
-        Color bottomLeftColor = traceRayThroughPoint(bottomLeft);
-        Color bottomRightColor = traceRayThroughPoint(bottomRight);
-
-        if (level == 0 || centerColor.equalColors(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)) {
-            return centerColor
-                    .add(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)
-                    .reduce(5);
-        }
-
-        double quarterWidth = width / 4.0;
-        double quarterHeight = height / 4.0;
-
-        Color topLeftSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, -quarterWidth, quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        Color topRightSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, quarterWidth, quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        Color bottomLeftSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, -quarterWidth, -quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        Color bottomRightSubPixel = adaptiveSuperSampling(
-                moveOnViewPlane(center, quarterWidth, -quarterHeight),
-                halfWidth,
-                halfHeight,
-                level - 1
-        );
-
-        return topLeftSubPixel
-                .add(topRightSubPixel, bottomLeftSubPixel, bottomRightSubPixel)
-                .reduce(4);
-    }
-
->>>>>>> aad575c (added javadoc)
     /**
      * Prints a grid of lines over the image at specified intervals.
      * This is primarily used for debugging and visualizing pixel alignment.

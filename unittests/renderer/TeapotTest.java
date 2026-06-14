@@ -39,8 +39,8 @@ class TeapotTest {
         prepareTeapot() //
                 .build() //
                 .renderImage() //
-                .printGrid(50, new Color(YELLOW)) //
-                .writeToImage("teapot1");
+                // .printGrid(50, new Color(50,50,50)) //
+                .writeToImage("teapot with adss and multi threading");
     }
 
     /**
@@ -105,7 +105,8 @@ class TeapotTest {
         }
         scene.geometries.add(bubbles);
 
-        scene.lights.add(new PointLight(new Color(500, 500, 500), new Point(100, 0, -100)).setKq(0.000001));
+        scene.lights.add(new PointLight(
+                new Color(500, 500, 500), new Point(100, 0, -100)).setKq(0.000001));
 
         return Camera.getBuilder() //
                 .setResolution(1000, 1000) //
@@ -113,17 +114,10 @@ class TeapotTest {
                 .setRayTracer(scene, RayTracerType.SIMPLE) //
                 .setLocation(new Point(0, 0, -1000)).setDirection(Point.ZERO, Vector.AXIS_Y) //
                 .setVpDistance(1000).setVpSize(200, 200) //
-                // .setMultithreading(-3) // fail - paging file size
-                //.setMultithreading(-2) // 9.3
-                .setMultithreading(-1) // 9.6
-                // .setMultithreading(0) // 25
-                // .setMultithreading(1) // 25.8
-                // .setMultithreading(2) // 13.6
-                // .setMultithreading(3) // 10.7
-                // .setMultithreading(4) // 10.7
+                .setMultithreading(4) //
                 .setDebugPrint(1.0) //
-                .setAdaptiveSuperSampling(true)
-                .setAdaptiveSuperSamplingMaxLevel(3)
+                .setAdaptiveSuperSampling(true) //
+                .setAdaptiveSuperSamplingMaxLevel(3) //
                 ;
     }
 
@@ -134,7 +128,14 @@ class TeapotTest {
     /**
      * The material of the teapot
      */
-    private static final Material material = new Material().setKD(0.5).setKS(0.5).setShininess(60);
+    private static final Material material = new Material()
+            .setKD(0.5)
+            .setKS(0.5)
+            .setShininess(60)
+            //.setKT(0.5)
+            //.setKR(0.1)
+            //.setBlurT(0.5)
+            ;
 
     /**
      * The vertices point list in the teapot's triangle mesh

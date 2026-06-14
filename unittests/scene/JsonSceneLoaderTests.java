@@ -189,8 +189,12 @@ class JsonSceneLoaderTests {
                 .setVpSize(250, 250)
                 .setResolution(800, 800)
                 .setRayTracer(scene, RayTracerType.SIMPLE)
+                //.setMultithreading(3)
+                .setDebugPrint(1.0)
+                .setAdaptiveSuperSampling(true)
+                .setAdaptiveSuperSamplingMaxLevel(1)
                 .build()
                 .renderImage()
-                .writeToImage("JSON glossy and blurry test");
+                .writeToImage("11-adss");
     }
 }

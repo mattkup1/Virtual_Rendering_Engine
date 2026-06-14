@@ -64,73 +64,117 @@ class AdaptiveSuperSampling {
      * @return averaged pixel color
      */
     Color sample(Point pixelCenter, double pixelWidth, double pixelHeight) {
-        return sample(pixelCenter, pixelWidth, pixelHeight, maxLevel);
+        double halfWidth = pixelWidth / 2.0;
+        double halfHeight = pixelHeight / 2.0;
+
+        Point tl = moveOnViewPlane(pixelCenter, -halfWidth,  halfHeight);
+        Point tr = moveOnViewPlane(pixelCenter,  halfWidth,  halfHeight);
+        Point bl = moveOnViewPlane(pixelCenter, -halfWidth, -halfHeight);
+        Point br = moveOnViewPlane(pixelCenter,  halfWidth, -halfHeight);
+
+        return sample(
+                pixelCenter, traceRayThroughPoint(pixelCenter),
+                tl, traceRayThroughPoint(tl),
+                tr, traceRayThroughPoint(tr),
+                bl, traceRayThroughPoint(bl),
+                br, traceRayThroughPoint(br),
+                maxLevel
+        );
     }
 
     /**
      * Recursively samples a rectangular area on the view plane.
+     * <p>
+     * All five corner/center colors are passed in so that each ray is traced
+     * exactly once: the parent computes a point, passes its color down to both
+     * sub-quadrants that share it, and the sub-quadrants never re-trace it.
+     * New midpoint rays are computed here and likewise forwarded to the two
+     * children that share each midpoint, eliminating the redundant re-tracing
+     * that caused the original implementation to miss edges between cells.
      *
-     * @param center center of the sampled area
-     * @param width  sampled area width
-     * @param height sampled area height
-     * @param level  remaining recursion depth
+     * @param center      center of the sampled area
+     * @param centerColor already-traced color at {@code center}
+     * @param tl          top-left corner
+     * @param tlColor     already-traced color at {@code tl}
+     * @param tr          top-right corner
+     * @param trColor     already-traced color at {@code tr}
+     * @param bl          bottom-left corner
+     * @param blColor     already-traced color at {@code bl}
+     * @param br          bottom-right corner
+     * @param brColor     already-traced color at {@code br}
+     * @param level       remaining recursion depth
      * @return averaged color for the sampled area
      */
-    private Color sample(Point center, double width, double height, int level) {
-        Color centerColor = traceRayThroughPoint(center);
-
-        double halfWidth = width / 2.0;
-        double halfHeight = height / 2.0;
-
-        Point topLeft = moveOnViewPlane(center, -halfWidth, halfHeight);
-        Point topRight = moveOnViewPlane(center, halfWidth, halfHeight);
-        Point bottomLeft = moveOnViewPlane(center, -halfWidth, -halfHeight);
-        Point bottomRight = moveOnViewPlane(center, halfWidth, -halfHeight);
-
-        Color topLeftColor = traceRayThroughPoint(topLeft);
-        Color topRightColor = traceRayThroughPoint(topRight);
-        Color bottomLeftColor = traceRayThroughPoint(bottomLeft);
-        Color bottomRightColor = traceRayThroughPoint(bottomRight);
-
-        if (level == 0 || centerColor.equalColors(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)) {
+    private Color sample(
+            Point center, Color centerColor,
+            Point tl, Color tlColor,
+            Point tr, Color trColor,
+            Point bl, Color blColor,
+            Point br, Color brColor,
+            int level
+    ) {
+        if (level == 0 || centerColor.equalColors(tlColor, trColor, blColor, brColor)) {
             return centerColor
-                    .add(topLeftColor, topRightColor, bottomLeftColor, bottomRightColor)
+                    .add(tlColor, trColor, blColor, brColor)
                     .reduce(5);
         }
 
-        double quarterWidth = width / 4.0;
-        double quarterHeight = height / 4.0;
+        // Half-extents of this cell along each view-plane axis.
+        double halfW = vRight.dotProduct(tr.subtract(tl)) / 2.0;
+        double halfH = vUp.dotProduct(tl.subtract(bl))   / 2.0;
+        double qW    = halfW / 2.0;
+        double qH    = halfH / 2.0;
 
-        Color topLeftSubPixel = sample(
-                moveOnViewPlane(center, -quarterWidth, quarterHeight),
-                halfWidth,
-                halfHeight,
+        // Compute the four edge midpoints — each is shared by two sub-quadrants.
+        Point midTop    = moveOnViewPlane(center,  0,     halfH);
+        Point midBottom = moveOnViewPlane(center,  0,    -halfH);
+        Point midLeft   = moveOnViewPlane(center, -halfW,  0);
+        Point midRight  = moveOnViewPlane(center,  halfW,  0);
+
+        Color midTopColor    = traceRayThroughPoint(midTop);
+        Color midBottomColor = traceRayThroughPoint(midBottom);
+        Color midLeftColor   = traceRayThroughPoint(midLeft);
+        Color midRightColor  = traceRayThroughPoint(midRight);
+
+        // Recurse into the four quadrants, reusing all shared corner/midpoint colors.
+        Color topLeftResult = sample(
+                moveOnViewPlane(center, -qW,  qH), centerColor,
+                tl,      tlColor,
+                midTop,  midTopColor,
+                midLeft, midLeftColor,
+                center,  centerColor,
                 level - 1
         );
 
-        Color topRightSubPixel = sample(
-                moveOnViewPlane(center, quarterWidth, quarterHeight),
-                halfWidth,
-                halfHeight,
+        Color topRightResult = sample(
+                moveOnViewPlane(center,  qW,  qH), centerColor,
+                midTop,   midTopColor,
+                tr,       trColor,
+                center,   centerColor,
+                midRight, midRightColor,
                 level - 1
         );
 
-        Color bottomLeftSubPixel = sample(
-                moveOnViewPlane(center, -quarterWidth, -quarterHeight),
-                halfWidth,
-                halfHeight,
+        Color bottomLeftResult = sample(
+                moveOnViewPlane(center, -qW, -qH), centerColor,
+                midLeft,   midLeftColor,
+                center,    centerColor,
+                bl,        blColor,
+                midBottom, midBottomColor,
                 level - 1
         );
 
-        Color bottomRightSubPixel = sample(
-                moveOnViewPlane(center, quarterWidth, -quarterHeight),
-                halfWidth,
-                halfHeight,
+        Color bottomRightResult = sample(
+                moveOnViewPlane(center,  qW, -qH), centerColor,
+                center,    centerColor,
+                midRight,  midRightColor,
+                midBottom, midBottomColor,
+                br,        brColor,
                 level - 1
         );
 
-        return topLeftSubPixel
-                .add(topRightSubPixel, bottomLeftSubPixel, bottomRightSubPixel)
+        return topLeftResult
+                .add(topRightResult, bottomLeftResult, bottomRightResult)
                 .reduce(4);
     }
 
