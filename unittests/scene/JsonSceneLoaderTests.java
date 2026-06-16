@@ -147,8 +147,17 @@ class JsonSceneLoaderTests {
      */
     @Test
     void miscTestsJSON() {
-        createImage("courseHome.json", "JSON course home pic");
         createImage("coolScene.json", "JSON cool scene");
+        createImage("courseHome.json", "JSON course home pic");
+        createImage("sunnyHouse.json", "JSON house pic");
+    }
+
+    /**
+     * Renders given json scene
+     */
+    @Test
+    void houseJSON() {
+        createImage("sunnyHouse.json", "JSON house test");
     }
 
     /**
