@@ -152,6 +152,34 @@ class JsonSceneLoaderTests {
     }
 
     /**
+     * Renders the LEGO street scene: two houses, a car, minifigures,
+     * a lamppost, trees, and a sunny sky with clouds.
+     * <p>
+     * Uses a custom elevated camera angled down to give a classic LEGO
+     * diorama perspective, with a narrower field of view so the objects
+     * fill the frame properly.
+     * </p>
+     */
+    @Test
+    void testLegoScene() {
+        Scene scene = new JsonSceneLoader("LEGO Scene", JSON_FILE_PATH + "legoScene.json").loadScene();
+        Camera.getBuilder()
+                // Elevated, tilted ~37° down — classic LEGO diorama angle
+                .setLocation(new primitives.Point(0, 80, 40))
+                .setDirection(new primitives.Point(0, -65, -155), new primitives.Vector(0, 1, 0))
+                // Telephoto: VP 160×160 at distance 200 → 21° half-angle zooms in
+                .setVpDistance(200)
+                .setVpSize(160, 160)
+                .setResolution(RESOLUTION, RESOLUTION)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .setMultithreading(-1)
+                .setDebugPrint(1.0)
+                .build()
+                .renderImage()
+                .writeToImage("LEGO Scene");
+    }
+
+    /**
      * Renders the JSON "glossy &amp; blurry" showroom that exercises the new
      * {@code blurR} and {@code blurT} material properties.
      * <p>
