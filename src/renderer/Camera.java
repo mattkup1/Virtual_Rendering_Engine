@@ -141,7 +141,7 @@ public class Camera implements Cloneable {
      * @return this camera instance for method chaining
      */
     public Camera renderImage() {
-        if (_threadsCount > 0) {
+        if (_threadsCount > 1) {
             renderWithThreads();
         } else {
             renderSequentially();

@@ -114,7 +114,7 @@ class TeapotTest {
                 .setRayTracer(scene, RayTracerType.SIMPLE) //
                 .setLocation(new Point(0, 0, -1000)).setDirection(Point.ZERO, Vector.AXIS_Y) //
                 .setVpDistance(1000).setVpSize(200, 200) //
-                .setMultithreading(1) //
+                .setMultithreading(-1) //
                 .setDebugPrint(1.0) //
                 ;
     }
