@@ -50,7 +50,7 @@ class SimpleRayTracer extends RayTracerBase {
     /**
      * Add adaptive super sampling in blur and gloss beams or not
      */
-    private static final boolean adaptiveSuperSampling = true;
+    private static final boolean adaptiveSuperSampling = false;
 
     /**
      * Number of rays in each top-level glossy reflection or diffuse transparency

@@ -1,6 +1,7 @@
 package renderer;
 
 import geometries.impl.Plane;
+import geometries.impl.Polygon;
 import geometries.impl.Sphere;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
@@ -53,6 +54,26 @@ class GlossBlurTests {
      * kernel is required to span those transitions clearly.
      */
     private static final double BLUR_T = 18;
+
+    /**
+     * Toggle the single-sphere demo's glossy reflection sampling.
+     */
+    private static final boolean SPHERE_GLOSS_ON = false;
+
+    /**
+     * Toggle the single-sphere demo's diffuse transparency sampling.
+     */
+    private static final boolean SPHERE_BLUR_ON = true;
+
+    /**
+     * Reflection blur radius used by {@link #testSphereGlossBlur()} when gloss is enabled.
+     */
+    private static final double SPHERE_BLUR_R = 35;
+
+    /**
+     * Transparency blur radius used by {@link #testSphereGlossBlur()} when blur is enabled.
+     */
+    private static final double SPHERE_BLUR_T = 16;
 
     /**
      * Default constructor to satisfy Javadoc generator.
@@ -221,5 +242,101 @@ class GlossBlurTests {
     void testGlossAndBlur() {
         render(buildScene("GlossBlur — gloss and blur", BLUR_R, BLUR_T),
                 "GlossBlur_03_both");
+    }
+
+    @Test
+    void testSphereGlossBlur() {
+        double blurR = SPHERE_GLOSS_ON ? SPHERE_BLUR_R : 0;
+        double blurT = SPHERE_BLUR_ON ? SPHERE_BLUR_T : 0;
+        double transparency = SPHERE_BLUR_ON ? 0.30 : 0;
+
+        Scene scene = new Scene("Single sphere gloss/blur")
+                .setBackground(new Color(10, 12, 24))
+                .setAmbientLight(new AmbientLight(new Color(18, 18, 24)));
+
+        // Colored transmission cards behind the sphere. When blurT is on,
+        // their sharp borders smear through the transparent sphere.
+        scene.geometries.add(
+                new Polygon(
+                        new Point(-130, -90, -430),
+                        new Point(-40, -90, -430),
+                        new Point(-40, 90, -430),
+                        new Point(-130, 90, -430))
+                        .setEmission(new Color(210, 55, 55))
+                        .setMaterial(new Material().setKD(0.05).setKS(0)),
+                new Polygon(
+                        new Point(-40, -90, -430),
+                        new Point(40, -90, -430),
+                        new Point(40, 90, -430),
+                        new Point(-40, 90, -430))
+                        .setEmission(new Color(65, 205, 95))
+                        .setMaterial(new Material().setKD(0.05).setKS(0)));
+//                new Polygon(
+//                        new Point(40, -90, -430),
+//                        new Point(130, -90, -430),
+//                        new Point(130, 90, -430),
+//                        new Point(40, 90, -430))
+//                        .setEmission(new Color(60, 95, 225))
+//                        .setMaterial(new Material().setKD(0.05).setKS(0)));
+
+        // Large high-contrast reflection stripes behind the camera. Primary
+        // rays never hit them, but the sphere reflects them. With gloss off,
+        // the stripes are crisp; with gloss on, they smear into a soft band.
+        scene.geometries.add(
+                new Polygon(
+                        new Point(-220, -130, 150),
+                        new Point(-110, -130, 150),
+                        new Point(-110, 130, 150),
+                        new Point(-220, 130, 150))
+                        .setEmission(new Color(255, 255, 255))
+                        .setMaterial(new Material().setKD(0.05).setKS(0)),
+                new Polygon(
+                        new Point(-110, -130, 150),
+                        new Point(0, -130, 150),
+                        new Point(0, 130, 150),
+                        new Point(-110, 130, 150))
+                        .setEmission(new Color(245, 35, 230))
+                        .setMaterial(new Material().setKD(0.05).setKS(0)),
+                new Polygon(
+                        new Point(0, -130, 150),
+                        new Point(110, -130, 150),
+                        new Point(110, 130, 150),
+                        new Point(0, 130, 150))
+                        .setEmission(new Color(40, 230, 255))
+                        .setMaterial(new Material().setKD(0.05).setKS(0)),
+                new Polygon(
+                        new Point(110, -130, 150),
+                        new Point(220, -130, 150),
+                        new Point(220, 130, 150),
+                        new Point(110, 130, 150))
+                        .setEmission(new Color(255, 220, 40))
+                        .setMaterial(new Material().setKD(0.05).setKS(0)));
+
+        // The single foreground sphere. Toggle SPHERE_GLOSS_ON and
+        // SPHERE_BLUR_ON above to switch the two sampling effects.
+        scene.geometries.add(
+                new Sphere(new Point(0, 0, -230), 72D)
+                        .setEmission(new Color(4, 4, 7))
+                        .setMaterial(new Material()
+                                .setKD(0.02).setKS(0.55).setShininess(300)
+                                .setKR(new Double3(0.95, 0.95, 1.00))
+                                .setKT(transparency)
+                                .setBlurR(blurR)
+                                .setBlurT(blurT)));
+
+        scene.lights.add(
+                new DirectionalLight(new Color(90, 100, 120),
+                        new Vector(-0.3, -0.5, -1)));
+        scene.lights.add(
+                new SpotLight(new Color(650, 580, 420),
+                        new Point(0, 170, -40),
+                        new Vector(0, -1, -1.4))
+                        .setKl(0.0004).setKq(0.0000015)
+                        .setNarrowBeam(2));
+
+        render(scene, "SphereGlossBlur_"
+                + (SPHERE_GLOSS_ON ? "gloss" : "sharp")
+                + "_"
+                + (SPHERE_BLUR_ON ? "blur" : "clear"));
     }
 }
