@@ -8,24 +8,13 @@ import primitives.Double3;
 import primitives.Ray;
 import primitives.Vector;
 import scene.Scene;
+import java.util.HashMap;
+import java.util.Map;
 
 import static primitives.Util.alignZero;
 
 /**
- * Recursive Phong ray tracer.
- * <p>
- * Combines emission, ambient, diffuse and specular shading with transparency-aware
- * shadows and recursive reflection / transparency rays. Recursion is bounded by
- * {@link #MAX_CALC_COLOR_LEVEL} and short-circuited once the cumulative attenuation
- * coefficient drops below {@link #MIN_CALC_COLOR_K}.
- * </p>
- * <p>
- * At the top of the recursion stack, glossy reflections and diffuse (blurry)
- * transparency are simulated by replacing each ideal secondary ray with a
- * {@link #BLUR_SAMPLES}-ray beam scattered around it (see {@link BeamSampler}).
- * Deeper recursion levels always trace the single ideal ray, keeping total ray
- * count tractable.
- * </p>
+ * Recursive Phong ray tracer with transparency, reflection and glossy / blurry beams.
  *
  * @author mattkuperwasser
  * @author moshehanau
@@ -47,40 +36,21 @@ class SimpleRayTracer extends RayTracerBase {
      */
     private static final Double3 INITIAL_K = Double3.ONE;
 
-    /**
-     * Add adaptive super sampling in blur and gloss beams or not
-     */
-    private static final boolean adaptiveSuperSampling = false;
+    /** Enables adaptive sampling for glossy and blurry beams. */
+    private static final boolean adaptiveSuperSampling = true;
+
+    /** Number of rays sampled for a top-level glossy reflection or blurry transparency beam. */
+    private static final int BLUR_SAMPLES = 65;
+
+    /** Maximum subdivision depth for adaptive beam sampling. */
+    private static final int BEAM_ADAPTIVE_LEVEL = 4;
+
+    /** Color threshold below which a beam segment is treated as uniform. */
+    private static final double BEAM_COLOR_DELTA = 5;
 
     /**
-     * Number of rays in each top-level glossy reflection or diffuse transparency
-     * beam. Higher values reduce Monte Carlo noise (speckle / "black dots") at
-     * the cost of proportionally more rays per affected pixel. Materials with
-     * zero blur ({@code blurR} / {@code blurT}) still trace a single ideal ray
-     * regardless of this value, so the cost is paid only on glossy or
-     * blurry-transparent surfaces.
-     */
-    private static final int BLUR_SAMPLES = 65;
-    /**
-     * Maximum recursion depth used by adaptive beam sampling.
-     * <p>
-     * Each adaptive step subdivides the beam into smaller groups of rays
-     * when sampled colors differ significantly. Higher values increase
-     * sampling accuracy at the cost of additional ray tracing work.
-     * </p>
-     */
-    private static final int BEAM_ADAPTIVE_LEVEL = 4;
-    /**
-     * Color difference threshold used by adaptive beam sampling.
-     * <p>
-     * If the sampled colors within a beam segment differ by less than this
-     * amount, the segment is considered sufficiently uniform and no further
-     * subdivision is performed.
-     * </p>
-     */
-    private static final double BEAM_COLOR_DELTA = 5;
-    /**
-     * Constructs a SimpleRayTracer with a given scene.
+     * Constructs a ray tracer for the given scene.
+     *
      * @param scene the scene to be rendered
      */
     public SimpleRayTracer(Scene scene) {
@@ -98,13 +68,11 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Entry-point color calculation for a primary-ray hit: applies the ambient term
-     * and seeds the recursive Phong evaluation.
+     * Calculates the color for a primary-ray hit, including ambient light.
      *
-     * @param intersection the closest intersection of a primary ray
-     * @param v            the direction vector of the incoming ray
-     * @return the resolved color, or {@link Color#BLACK} if the surface is
-     * orthogonal to the ray
+     * @param intersection the closest intersection found by the primary ray
+     * @param v            the primary ray direction
+     * @return the resolved color at the hit point, or black for invalid orientation
      */
     private Color calcColor(Intersection intersection, Vector v) {
         return preprocessIntersection(intersection, v)
@@ -114,16 +82,12 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Recursive Phong color calculation.
-     * <p>
-     * Combines local lighting (emission, diffuse, specular) with reflection and
-     * transparency contributions. Recursion stops once {@code level} reaches {@code 1}.
-     * </p>
+     * Combines local lighting with recursive reflection and transparency.
      *
-     * @param intersection the intersection point
-     * @param level        remaining recursion budget
-     * @param k            cumulative attenuation coefficient along this ray path
-     * @return the color contributed at this intersection
+     * @param intersection the current surface intersection
+     * @param level        remaining recursion depth
+     * @param k            cumulative attenuation along the current ray path
+     * @return the color contributed by this intersection
      */
     private Color calcColor(Intersection intersection, int level, Double3 k) {
         Color color = calcLocalEffects(intersection, k);
@@ -133,13 +97,11 @@ class SimpleRayTracer extends RayTracerBase {
     // ===================== Local effects =====================
 
     /**
-     * Sums the local Phong contributions (emission, diffuse, specular) from every
-     * contributing light source, each attenuated by transparent occluders between
-     * the surface point and the light.
+     * Calculates emission plus diffuse/specular lighting from all visible lights.
      *
-     * @param intersection the intersection point
-     * @param k            cumulative attenuation coefficient along this ray path
-     * @return the combined local color
+     * @param intersection the shaded intersection
+     * @param k            cumulative attenuation used for pruning weak light paths
+     * @return the local color contribution
      */
     private Color calcLocalEffects(Intersection intersection, Double3 k) {
         Color color = intersection.geometry.getEmission();
@@ -159,21 +121,20 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Diffuse component via Lambert's cosine law: {@code kD * |l &middot; n|}.
+     * Calculates the diffuse component via Lambert's cosine law.
      *
-     * @param intersection the intersection point (with light direction preset)
-     * @return the diffuse attenuation triad
+     * @param intersection the intersection with prepared light-normal data
+     * @return the diffuse attenuation coefficient
      */
     private Double3 calcDiffuse(Intersection intersection) {
         return intersection.material.kD.scale(Math.abs(intersection.lNormal));
     }
 
     /**
-     * Specular component using Phong's reflection vector {@code r = l - 2(l &middot; n)n}:
-     * {@code kS * max(0, -v &middot; r)^nShininess}.
+     * Calculates the specular component using Phong's reflection vector.
      *
-     * @param intersection the intersection point (with light direction preset)
-     * @return the specular attenuation triad
+     * @param intersection the intersection with prepared view/light-normal data
+     * @return the specular attenuation coefficient
      */
     private Double3 calcSpecular(Intersection intersection) {
         final Vector r =
@@ -185,15 +146,10 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Cumulative transparency between the intersection point and its active light source.
-     * <p>
-     * Traces a shadow ray from the point toward the light, multiplying the running
-     * coefficient by every transparent occluder's {@code kT}. Returns {@link Double3#ZERO}
-     * as soon as the product falls below {@link #MIN_CALC_COLOR_K}.
-     * </p>
+     * Calculates transparency between the intersection point and its active light.
      *
-     * @param intersection the intersection point (with an active light source preset)
-     * @return the transparency attenuation triad along the shadow ray
+     * @param intersection the intersection whose active light was prepared earlier
+     * @return accumulated transparency through all shadow-ray blockers
      */
     private Double3 transparency(Intersection intersection) {
         var shadowRay = new Ray(intersection.point, intersection.l.scale(-1), intersection.normal);
@@ -216,20 +172,13 @@ class SimpleRayTracer extends RayTracerBase {
     // ===================== Global effects =====================
 
     /**
-     * Sums the recursive transparency and reflection contributions at an intersection.
-     * <p>
-     * At the top recursion level ({@code level == }{@link #MAX_CALC_COLOR_LEVEL}),
-     * each branch expands its ideal secondary ray into a {@link #BLUR_SAMPLES}-ray
-     * beam via {@link BeamSampler}, producing glossy reflections (driven by
-     * {@code blurR}) and diffuse transparency (driven by {@code blurT}). At
-     * deeper levels each branch traces exactly the single ideal ray, so glossy
-     * and diffuse effects do not multiply the ray count exponentially.
-     * </p>
+     * Adds recursive reflection and transparency. At the top recursion level,
+     * blurred reflection/transparency materials are expanded into sampled beams.
      *
-     * @param intersection the intersection point
-     * @param level        remaining recursion budget
-     * @param k            cumulative attenuation coefficient along this ray path
-     * @return the combined global color
+     * @param intersection the current surface intersection
+     * @param level        remaining recursion depth
+     * @param k            cumulative attenuation along the current ray path
+     * @return the combined global color contribution
      */
     private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
         Ray idealTransparency = constructTransparencyRay(intersection);
@@ -263,15 +212,13 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Single recursive bounce: traces one secondary ray, multiplies its result by
-     * {@code kx} and short-circuits to {@link Color#BLACK} once the cumulative
-     * attenuation drops below {@link #MIN_CALC_COLOR_K}.
+     * Traces one reflected or transparent ray and applies its attenuation.
      *
-     * @param ray   the secondary ray (reflection or transparency)
-     * @param level remaining recursion budget
-     * @param k     cumulative attenuation coefficient prior to this bounce
-     * @param kx    per-bounce attenuation triad ({@code kR} or {@code kT})
-     * @return the color contributed by the secondary ray
+     * @param ray   the secondary ray to trace
+     * @param level remaining recursion depth before this bounce
+     * @param k     cumulative attenuation before this bounce
+     * @param kx    attenuation coefficient for this bounce
+     * @return the attenuated color contribution of the secondary ray
      */
     private Color calcGlobalEffect(Ray ray, int level, Double3 k, Double3 kx) {
         Double3 kkx = k.product(kx);
@@ -286,26 +233,20 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Builds the ideal transparency ray that continues through the surface in
-     * the same direction as the incoming ray, offset slightly past the surface
-     * to avoid self-intersection. This is the un-blurred direction that
-     * {@link BeamSampler} scatters around when {@code blurT > 0}.
+     * Builds the ideal transparency ray before optional beam scattering.
      *
-     * @param intersection the intersection point
-     * @return the ideal transparency ray
+     * @param intersection the surface intersection
+     * @return the offset transparency ray
      */
     private Ray constructTransparencyRay(Intersection intersection) {
         return new Ray(intersection.point, intersection.v, intersection.normal);
     }
 
     /**
-     * Builds the ideal reflection ray {@code r = v - 2(v &middot; n)n}, offset
-     * slightly along the surface normal to avoid self-intersection. This is the
-     * un-blurred direction that {@link BeamSampler} scatters around when
-     * {@code blurR > 0}.
+     * Builds the ideal reflection ray before optional beam scattering.
      *
-     * @param intersection the intersection point
-     * @return the ideal reflection ray
+     * @param intersection the surface intersection
+     * @return the offset reflection ray
      */
     private Ray constructReflectionRay(Intersection intersection) {
         return new Ray(
@@ -319,29 +260,22 @@ class SimpleRayTracer extends RayTracerBase {
     /**
      * Finds the closest scene intersection of the given ray.
      *
-     * @param ray the ray to test
-     * @return the closest intersection, or {@code null} if the ray hits nothing
+     * @param ray the ray to test against the scene
+     * @return the closest intersection, or {@code null} if there is no hit
      */
     private Intersection findClosestIntersection(Ray ray) {
         return ray.findClosestIntersection(_scene.geometries.calcIntersections(ray));
     }
 
     /**
-     * Calculates the color contribution of a glossy-reflection or diffuse-transparency
-     * beam using adaptive beam sampling.
-     * <p>
-     * Instead of tracing every ray in the beam uniformly, this method delegates
-     * to {@link #adaptiveBeam(List, int, Double3, Double3, int)}, which recursively
-     * evaluates only as much of the beam as needed based on color variation.
-     * This reduces the number of traced rays in regions where the beam produces
-     * nearly uniform colors while preserving detail in high-frequency regions.
-     * </p>
+     * Averages a glossy/refraction beam, optionally using adaptive sampling to avoid
+     * tracing every ray in visually uniform beam segments.
      *
-     * @param rays  the beam of secondary rays
-     * @param level remaining recursion budget
-     * @param k     cumulative attenuation coefficient prior to this bounce
-     * @param kx    per-bounce attenuation triad ({@code kR} or {@code kT})
-     * @return the beam's average color contribution
+     * @param rays  the sampled beam rays
+     * @param level remaining global recursion depth
+     * @param k     cumulative attenuation before this bounce
+     * @param kx    attenuation coefficient for this bounce
+     * @return the average beam color contribution
      */
     private Color calcBeam(
             List<Ray> rays,
@@ -354,37 +288,27 @@ class SimpleRayTracer extends RayTracerBase {
                     level,
                     k,
                     kx,
-                    BEAM_ADAPTIVE_LEVEL);
+                    BEAM_ADAPTIVE_LEVEL,
+                    new HashMap<>());
         } else {
             Color color = Color.BLACK;
             for  (var ray : rays) {
-                color.add(calcGlobalEffect(ray, level, k, kx));
+                color = color.add(calcGlobalEffect(ray, level, k, kx));
             }
             return color.reduce(rays.size());
         }
     }
+
     /**
-     * Recursively evaluates a beam of rays using adaptive sampling.
-     * <p>
-     * The method traces representative rays from the beginning, middle, and end
-     * of the beam segment. If their resulting colors are sufficiently similar
-     * (according to {@link #BEAM_COLOR_DELTA}) or the adaptive recursion limit
-     * has been reached, their average is used as an approximation of the entire
-     * segment.
-     * </p>
-     * <p>
-     * Otherwise, the beam is split into two sub-beams which are evaluated
-     * recursively. The final color is the average of the two sub-beam colors.
-     * This approach concentrates ray tracing effort only in parts of the beam
-     * where color varies significantly, reducing rendering time while maintaining
-     * visual quality.
-     * </p>
+     * Recursively samples first/middle/last beam rays and subdivides only when
+     * their colors differ enough to need more detail.
      *
-     * @param rays           the beam segment being evaluated
-     * @param level          remaining global recursion budget
-     * @param k              cumulative attenuation coefficient prior to this bounce
-     * @param kx             per-bounce attenuation triad ({@code kR} or {@code kT})
-     * @param adaptiveLevel  remaining adaptive subdivision depth
+     * @param rays          the beam segment to evaluate
+     * @param level         remaining global recursion depth
+     * @param k             cumulative attenuation before this bounce
+     * @param kx            attenuation coefficient for this bounce
+     * @param adaptiveLevel remaining adaptive subdivision depth
+     * @param cache         traced ray colors reused across overlapping subsegments
      * @return the approximated average color of the beam segment
      */
     private Color adaptiveBeam(
@@ -392,7 +316,8 @@ class SimpleRayTracer extends RayTracerBase {
             int level,
             Double3 k,
             Double3 kx,
-            int adaptiveLevel) {
+            int adaptiveLevel,
+            Map<Ray, Color> cache) {
 
         int size = rays.size();
 
@@ -408,23 +333,26 @@ class SimpleRayTracer extends RayTracerBase {
 
         int middleIndex = size / 2;
 
-        Color firstColor = calcGlobalEffect(
+        Color firstColor = calcGlobalEffectCached(
                 rays.getFirst(),
                 level,
                 k,
-                kx);
+                kx,
+                cache);
 
-        Color middleColor = calcGlobalEffect(
+        Color middleColor = calcGlobalEffectCached(
                 rays.get(middleIndex),
                 level,
                 k,
-                kx);
+                kx,
+                cache);
 
-        Color lastColor = calcGlobalEffect(
+        Color lastColor = calcGlobalEffectCached(
                 rays.get(size - 1),
                 level,
                 k,
-                kx);
+                kx,
+                cache);
 
         if (adaptiveLevel == 0 ||
                 firstColor.equalColors(
@@ -442,15 +370,43 @@ class SimpleRayTracer extends RayTracerBase {
                 level,
                 k,
                 kx,
-                adaptiveLevel - 1);
+                adaptiveLevel - 1,
+                cache);
 
         Color rightColor = adaptiveBeam(
                 rays.subList(middleIndex, size),
                 level,
                 k,
                 kx,
-                adaptiveLevel - 1);
+                adaptiveLevel - 1,
+                cache);
 
         return leftColor.add(rightColor).reduce(2);
+    }
+
+    /**
+     * Returns a cached global-effect color for adaptive beam sampling.
+     *
+     * @param ray   the ray whose contribution is requested
+     * @param level remaining global recursion depth
+     * @param k     cumulative attenuation before this bounce
+     * @param kx    attenuation coefficient for this bounce
+     * @param cache traced ray color cache
+     * @return the cached or newly calculated ray contribution
+     */
+    private Color calcGlobalEffectCached(
+            Ray ray,
+            int level,
+            Double3 k,
+            Double3 kx,
+            Map<Ray, Color> cache) {
+
+        Color color = cache.get(ray);
+
+        if (color == null) {
+            color = calcGlobalEffect(ray, level, k, kx);
+            cache.put(ray, color);
+        }
+        return color;
     }
 }

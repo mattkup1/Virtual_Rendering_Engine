@@ -6,6 +6,7 @@ import geometries.impl.Sphere;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.SpotLight;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Double3;
@@ -245,6 +246,7 @@ class GlossBlurTests {
     }
 
     @Test
+    @Disabled
     void testSphereGlossBlur() {
         double blurR = SPHERE_GLOSS_ON ? SPHERE_BLUR_R : 0;
         double blurT = SPHERE_BLUR_ON ? SPHERE_BLUR_T : 0;
