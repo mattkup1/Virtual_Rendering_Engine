@@ -37,7 +37,7 @@ class SimpleRayTracer extends RayTracerBase {
     private static final Double3 INITIAL_K = Double3.ONE;
 
     /** Enables adaptive sampling for glossy and blurry beams. */
-    private static final boolean adaptiveSuperSampling = true;
+    private static final boolean adaptiveSuperSampling = false;
 
     /** Number of rays sampled for a top-level glossy reflection or blurry transparency beam. */
     private static final int BLUR_SAMPLES = 65;

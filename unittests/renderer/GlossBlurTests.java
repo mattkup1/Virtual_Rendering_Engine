@@ -245,6 +245,7 @@ class GlossBlurTests {
                 "GlossBlur_03_both");
     }
 
+    /** Test Gloss and Blur on a glass sphere */
     @Test
     @Disabled
     void testSphereGlossBlur() {
