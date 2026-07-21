@@ -1,17 +1,14 @@
-import geometries.impl.Cylinder;
-import geometries.impl.Plane;
-import geometries.impl.Polygon;
-import geometries.impl.Sphere;
-import geometries.impl.Triangle;
-import geometries.impl.Tube;
+
+
+import geometries.impl.*;
 import primitives.Double3;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
 import static java.lang.System.out;
-
 import static primitives.Util.isZero;
+
 
 /**
  * Basic sanity tests for the primitives classes.
@@ -27,9 +24,9 @@ import static primitives.Util.isZero;
 @SuppressWarnings("java:S109")
 public final class Main {
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy Javadoc generator
      */
-    public Main() { /* to satisfy JavaDoc generator */ }
+    public Main() { /* to satisfy Javadoc generator */ }
 
     /**
      * A point for tests at (1,2,3)
@@ -82,7 +79,6 @@ public final class Main {
         vectorSingleOperationTests();
         rayTests();
         geometryConstructorTests();
-        out.println("If there were no any other outputs - all tests succeeded!");
     }
 
     /**
