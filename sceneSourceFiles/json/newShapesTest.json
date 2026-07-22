@@ -28,6 +28,12 @@
       "center": "50 0 0",
       "normal": "0 0 1",
       "radius": 2
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/testPyramid.obj",
+      "scale": 10,
+      "translate": "70 0 0"
     }
   ]
 }

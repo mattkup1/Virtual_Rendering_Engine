@@ -1,10 +1,12 @@
 package scene;
 
 import geometries.api.Geometry;
+import geometries.api.Intersectable;
 import geometries.impl.Box;
 import geometries.impl.Cone;
 import geometries.impl.Cylinder;
 import geometries.impl.Ellipse;
+import geometries.impl.Geometries;
 import geometries.impl.Plane;
 import geometries.impl.Polygon;
 import geometries.impl.Sphere;
@@ -19,11 +21,16 @@ import lighting.DirectionalLight;
 import lighting.LightSource;
 import lighting.PointLight;
 import lighting.SpotLight;
+import primitives.CheckerTexture;
 import primitives.Color;
 import primitives.Double3;
+import primitives.ImageTexture;
 import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
+import primitives.RingTexture;
+import primitives.StripeTexture;
+import primitives.Texture;
 import primitives.Vector;
 
 /**
@@ -109,15 +116,21 @@ public abstract class SceneLoader {
      * <p>
      * Supported geometry types: {@code sphere}, {@code triangle}, {@code plane},
      * {@code tube}, {@code cylinder}, {@code polygon}, {@code box}, {@code cone},
-     * {@code torus}, and {@code ellipse} (alias {@code disk}).
+     * {@code torus}, {@code ellipse} (alias {@code disk}), and {@code mesh} (an
+     * imported {@code .obj} triangle mesh).
      * </p>
      *
      * @param data a map containing the attributes for the geometry
-     * @return the constructed {@link Geometry} object
+     * @return the constructed {@link Geometry}, or a {@link Geometries} composite for
+     *         {@code mesh} (both are {@link Intersectable})
      * @throws IllegalArgumentException if the geometry type is unsupported
      */
-    private Geometry buildGeometries(Map<String, String> data) {
+    private Intersectable buildGeometries(Map<String, String> data) {
         String type = data.get("type");
+        if ("mesh".equals(type)) {
+            return buildMesh(data);
+        }
+
         Geometry geometry;
         switch (type) {
             case "sphere" -> {
@@ -208,10 +221,41 @@ public abstract class SceneLoader {
     }
 
     /**
+     * Builds a {@link Geometries} composite from an imported {@code .obj} triangle mesh.
+     * <p>
+     * Recognized keys: {@code file} (required, path to the {@code .obj} source), optional
+     * {@code scale} (uniform factor, relative to the origin) and {@code translate}
+     * (applied after scaling), plus the same {@code emission}/{@code material.*} keys as
+     * other geometry types - applied uniformly to every triangle in the mesh.
+     * </p>
+     *
+     * @param data the mesh attribute map
+     * @return a {@link Geometries} composite containing the mesh's triangles
+     */
+    private Geometries buildMesh(Map<String, String> data) {
+        double scale = data.containsKey("scale") ? Double.parseDouble(data.get("scale")) : 1;
+        Vector translate = data.containsKey("translate") ? parseVector(data.get("translate")) : null;
+
+        List<Triangle> triangles = ObjMeshLoader.loadTriangles(data.get("file"), scale, translate);
+
+        Color emission = data.containsKey("emission") ? parseColor(data.get("emission")) : null;
+        Material material = buildMaterial(data);
+
+        Geometries mesh = new Geometries();
+        for (Triangle triangle : triangles) {
+            if (emission != null) triangle.setEmission(emission);
+            if (material != null) triangle.setMaterial(material);
+            mesh.add(triangle);
+        }
+        return mesh;
+    }
+
+    /**
      * Builds a {@link Material} from namespaced material attributes in the geometry map.
      * <p>
      * Recognized keys: {@code material.kA}, {@code material.kD}, {@code material.kS},
-     * {@code material.kT}, {@code material.kR}, and {@code material.shininess}.
+     * {@code material.kT}, {@code material.kR}, {@code material.shininess}, and
+     * {@code material.texture.*} (see {@link #buildTexture}).
      * </p>
      *
      * @param data geometry attribute map
@@ -230,7 +274,54 @@ public abstract class SceneLoader {
         hasMaterial |= apply(data, "material.blurR", v -> material.setBlurR(Double.parseDouble(v)));
         hasMaterial |= apply(data, "material.blurT", v -> material.setBlurT(Double.parseDouble(v)));
 
+        Texture texture = buildTexture(data);
+        if (texture != null) {
+            material.setTexture(texture);
+            hasMaterial = true;
+        }
+
         return hasMaterial ? material : null;
+    }
+
+    /**
+     * Builds a {@link Texture} from namespaced {@code material.texture.*} attributes, if present.
+     * <p>
+     * Recognized {@code material.texture.type} values, with their own attributes:
+     * </p>
+     * <ul>
+     * <li>{@code checker} - {@code colorA}, {@code colorB}, {@code cellSize}</li>
+     * <li>{@code stripe} - {@code colorA}, {@code colorB}, {@code stripeWidth}</li>
+     * <li>{@code ring} - {@code colorA}, {@code colorB}, {@code ringWidth}</li>
+     * <li>{@code image} - {@code file}, {@code repeatU}, {@code repeatV}</li>
+     * </ul>
+     *
+     * @param data geometry attribute map
+     * @return the constructed texture, or {@code null} if no {@code material.texture.type} is present
+     * @throws IllegalArgumentException if the texture type is unsupported
+     */
+    private Texture buildTexture(Map<String, String> data) {
+        String type = data.get("material.texture.type");
+        if (type == null) return null;
+
+        return switch (type) {
+            case "checker" -> new CheckerTexture(
+                    parseColor(data.get("material.texture.colorA")),
+                    parseColor(data.get("material.texture.colorB")),
+                    Double.parseDouble(data.get("material.texture.cellSize")));
+            case "stripe" -> new StripeTexture(
+                    parseColor(data.get("material.texture.colorA")),
+                    parseColor(data.get("material.texture.colorB")),
+                    Double.parseDouble(data.get("material.texture.stripeWidth")));
+            case "ring" -> new RingTexture(
+                    parseColor(data.get("material.texture.colorA")),
+                    parseColor(data.get("material.texture.colorB")),
+                    Double.parseDouble(data.get("material.texture.ringWidth")));
+            case "image" -> new ImageTexture(
+                    data.get("material.texture.file"),
+                    Double.parseDouble(data.get("material.texture.repeatU")),
+                    Double.parseDouble(data.get("material.texture.repeatV")));
+            default -> throw new IllegalArgumentException("Unknown texture type: " + type);
+        };
     }
 
     /**

@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Verifies that {@link SceneLoader} correctly parses the {@code box}, {@code cone},
- * {@code torus}, and {@code disk}/{@code ellipse} geometry types from both the JSON and
- * XML {@code newShapesTest} source files, by firing a targeted ray at each shape and
- * checking the resulting intersection point - rather than re-rendering a full image like
- * the other {@link JsonSceneLoader}/{@link XmlSceneLoader} tests, since this only needs
- * to confirm each shape was constructed with the right parameters.
+ * {@code torus}, {@code disk}/{@code ellipse}, and {@code mesh} geometry types from both
+ * the JSON and XML {@code newShapesTest} source files, by firing a targeted ray at each
+ * shape and checking the resulting intersection point - rather than re-rendering a full
+ * image like the other {@link JsonSceneLoader}/{@link XmlSceneLoader} tests, since this
+ * only needs to confirm each shape was constructed with the right parameters.
  *
  * @author mattkuperwasser
  * @author moshehanau
@@ -69,6 +69,21 @@ class NewShapesSceneLoaderTests {
         // Disk: center (50,0,0), normal Z, radius 2 - ray along Z hits the center
         Ray diskRay = new Ray(new Point(50, 0, -5), Vector.AXIS_Z);
         assertEquals(new Point(50, 0, 0), scene.geometries.findIntersections(diskRay).getFirst(),
+                ERR_INCORRECT_INTERSECTION);
+
+        // Mesh: testPyramid.obj scaled by 10 and translated by (70,0,0) - the pyramid's apex
+        // moves from (0,1,0) to (70,10,0). A ray aimed at the centroid of the first side face
+        // (apex, v2, v3) - itself scaled/translated from (-1,0,-1) and (1,0,-1) - confirms the
+        // mesh's vertices were both parsed and transformed correctly.
+        Point apex = new Point(70, 10, 0);
+        Point v2 = new Point(60, 0, -10);
+        Point v3 = new Point(80, 0, -10);
+        Point centroid = new Point(
+                (apex.getX() + v2.getX() + v3.getX()) / 3,
+                (apex.getY() + v2.getY() + v3.getY()) / 3,
+                (apex.getZ() + v2.getZ() + v3.getZ()) / 3);
+        Ray meshRay = new Ray(new Point(centroid.getX(), centroid.getY(), -50), Vector.AXIS_Z);
+        assertEquals(centroid, scene.geometries.findIntersections(meshRay).getFirst(),
                 ERR_INCORRECT_INTERSECTION);
     }
 

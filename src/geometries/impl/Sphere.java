@@ -5,6 +5,7 @@ import java.util.Objects;
 import primitives.BoundingBox;
 import primitives.Point;
 import primitives.Ray;
+import primitives.UV;
 import primitives.Vector;
 
 import static primitives.Util.alignZero;
@@ -102,6 +103,23 @@ public final class Sphere extends RadialGeometry {
     @Override
     public Vector getNormal(Point point) {
         return point.subtract(_center);
+    }
+
+    /**
+     * Returns normalized equirectangular texture coordinates for the given surface point:
+     * {@code u} wraps once around the sphere's equator (longitude), {@code v} runs from
+     * the north pole ({@code 0}) to the south pole ({@code 1}) along the Y axis (latitude).
+     *
+     * @param point a point on the sphere's surface
+     * @return the texture coordinates, each in {@code [0,1)}/{@code [0,1]}
+     */
+    @Override
+    public UV getUV(Point point) {
+        Vector d = point.equals(_center) ? Vector.AXIS_Y : point.subtract(_center).normalize();
+        double u = 0.5 + Math.atan2(d.getZ(), d.getX()) / (2 * Math.PI);
+        double clampedY = Math.max(-1, Math.min(1, d.getY()));
+        double v = 0.5 - Math.asin(clampedY) / Math.PI;
+        return new UV(u, v);
     }
 
     @Override

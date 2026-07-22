@@ -3,6 +3,7 @@ package geometries.impl;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
+import primitives.UV;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -179,6 +180,34 @@ public class PlaneTests {
 
         // EP03: getNormal returns a unit vector
         assertEquals(1, PLANE_BY_VECTOR.getNormal(POINT).length(), DELTA, ERR_NOT_NORMALIZED_VECTOR);
+    }
+
+    /**
+     * Test method for {@link Plane#getUV(Point)}.
+     * <p>
+     * Since the plane's U/V axes are an internal implementation detail, correctness is
+     * checked via two implementation-independent properties instead of exact values:
+     * the plane's own reference point maps to the UV origin, and UV-space distances
+     * between on-plane points match their real (isometric) distances.
+     * </p>
+     */
+    @Test
+    void testGetUV() {
+        // ============ Equivalence Partitions Tests ==============
+
+        // EP01: The plane's own reference point maps to the UV origin
+        assertEquals(new UV(0, 0), PLANE_XY.getUV(POINT_X), "ERROR: reference point should map to UV (0,0)");
+
+        // EP02: UV-space distances between on-plane points match their real distances
+        UV uvA = PLANE_XY.getUV(POINT_X);
+        UV uvB = PLANE_XY.getUV(POINT_Y);
+        UV uvC = PLANE_XY.getUV(Point.ZERO);
+
+        double uvDistAB = Math.hypot(uvA.u() - uvB.u(), uvA.v() - uvB.v());
+        double uvDistAC = Math.hypot(uvA.u() - uvC.u(), uvA.v() - uvC.v());
+
+        assertEquals(POINT_X.distance(POINT_Y), uvDistAB, DELTA, "ERROR: UV mapping is not distance-preserving");
+        assertEquals(POINT_X.distance(Point.ZERO), uvDistAC, DELTA, "ERROR: UV mapping is not distance-preserving");
     }
 
     /**

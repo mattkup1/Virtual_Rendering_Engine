@@ -84,6 +84,13 @@ public class Material {
     public double blurT = 0;
 
     /**
+     * Texture sampled in place of the geometry's flat emission color, for geometries
+     * that support UV mapping (see {@link geometries.api.Geometry#getUV}).
+     * {@code null} by default, meaning the geometry's own emission is used unchanged.
+     */
+    public Texture texture;
+
+    /**
      * Default constructor for the {@link Material} class.
      */
     public Material() { /* To satisfy Javadoc generator */ }
@@ -163,6 +170,12 @@ public class Material {
     /** Sets the diffuse transparency blur radius; {@code 0} is perfectly clear glass. */
     public Material setBlurT(double blurT) {
         this.blurT = blurT;
+        return this;
+    }
+
+    /** Sets the texture sampled in place of the geometry's flat emission color. */
+    public Material setTexture(Texture texture) {
+        this.texture = texture;
         return this;
     }
 }

@@ -97,14 +97,17 @@ class SimpleRayTracer extends RayTracerBase {
     // ===================== Local effects =====================
 
     /**
-     * Calculates emission plus diffuse/specular lighting from all visible lights.
+     * Calculates emission (or, if the material has a texture, the sampled texture color
+     * in its place) plus diffuse/specular lighting from all visible lights.
      *
      * @param intersection the shaded intersection
      * @param k            cumulative attenuation used for pruning weak light paths
      * @return the local color contribution
      */
     private Color calcLocalEffects(Intersection intersection, Double3 k) {
-        Color color = intersection.geometry.getEmission();
+        Color color = intersection.material.texture != null
+                ? intersection.material.texture.sample(intersection.geometry.getUV(intersection.point))
+                : intersection.geometry.getEmission();
         for (LightSource lightSource : _scene.lights) {
             if (preprocessLightSource(intersection, lightSource)) {
                 Double3 ktr = transparency(intersection);

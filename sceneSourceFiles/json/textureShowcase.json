@@ -1,0 +1,86 @@
+{
+  "camera": {
+    "location": "90 75 120",
+    "direction": "0 -35 -350",
+    "vpDistance": 380,
+    "vpWidth": 430,
+    "vpHeight": 430,
+    "resolutionX": 1000,
+    "resolutionY": 1000
+  },
+  "background-color": "20 24 34",
+  "lights": {
+    "ambient-light": {
+      "color": "26 28 34"
+    },
+    "directional-light": {
+      "color": "110 110 130",
+      "direction": "-0.3 -0.7 -0.5"
+    },
+    "point-light": {
+      "color": "500 480 520",
+      "position": "0 220 -150",
+      "kL": 0.0004,
+      "kQ": 0.000002
+    }
+  },
+  "geometries": [
+    {
+      "type": "plane",
+      "p0": "0 -60 0",
+      "normal": "0 1 0",
+      "material": {
+        "kD": "0.35 0.35 0.35",
+        "kS": "0.2 0.2 0.2",
+        "shininess": 60,
+        "kR": "0.08 0.08 0.08",
+        "texture.type": "checker",
+        "texture.colorA": "225 225 232",
+        "texture.colorB": "18 18 24",
+        "texture.cellSize": 20
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-140 -15 -350",
+      "radius": 45,
+      "material": {
+        "kD": "0.35 0.35 0.35",
+        "kS": "0.35 0.35 0.35",
+        "shininess": 150,
+        "texture.type": "stripe",
+        "texture.colorA": "225 40 40",
+        "texture.colorB": "240 240 240",
+        "texture.stripeWidth": 0.0625
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "0 -15 -350",
+      "radius": 45,
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.4 0.4 0.4",
+        "shininess": 180,
+        "texture.type": "image",
+        "texture.file": "sceneSourceFiles/textures/sunburst.png",
+        "texture.repeatU": 1,
+        "texture.repeatV": 1
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "140 -15 -350",
+      "radius": 45,
+      "material": {
+        "kD": "0.35 0.35 0.35",
+        "kS": "0.35 0.35 0.35",
+        "shininess": 150,
+        "texture.type": "ring",
+        "texture.colorA": "255 200 60",
+        "texture.colorB": "40 60 160",
+        "texture.ringWidth": 0.09
+      }
+    }
+  ]
+}

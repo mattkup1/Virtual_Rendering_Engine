@@ -100,7 +100,7 @@ public final class Ellipse extends Geometry {
      * @param normal the unit vector to find a perpendicular direction to
      * @return an arbitrary unit vector perpendicular to {@code normal}
      */
-    private static Vector arbitraryPerpendicular(Vector normal) {
+    static Vector arbitraryPerpendicular(Vector normal) {
         final Vector reference = Math.abs(normal.getX()) < 0.9 ? Vector.AXIS_X : Vector.AXIS_Y;
         return normal.crossProduct(reference).normalize();
     }

@@ -4,6 +4,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
+import primitives.UV;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -122,6 +123,14 @@ public class SphereTests {
      * Error message for incorrect intersection result
      */
     private static final String ERR_INTERSECTIONS = "Wrong sphere intersection result";
+    /**
+     * Error message for incorrect UV result
+     */
+    private static final String ERR_UV = "Wrong sphere UV result";
+    /**
+     * Delta value for accuracy when comparing double values
+     */
+    private static final double DELTA = 1e-6;
 
     // ================== TESTS ==================
 
@@ -228,6 +237,31 @@ public class SphereTests {
         // BV42: Ray starts inside and is orthogonal to sphere's center line
         assertNull(SPHERE_P100.findIntersections(new Ray(new Point(1, 0.5, 1), Vector.AXIS_Z)),
                 ERR_INTERSECTIONS);
+    }
+
+    /**
+     * Test {@link Sphere#getUV(Point)}
+     */
+    @Test
+    void testGetUV() {
+        // ============ Equivalence Partitions Tests ==============
+
+        // EP01: Point on the equator along +Z relative to the center
+        UV uv1 = SPHERE_P111.getUV(P112);
+        assertEquals(0.75, uv1.u(), DELTA, ERR_UV);
+        assertEquals(0.5, uv1.v(), DELTA, ERR_UV);
+
+        // EP02: Point on the equator along +X relative to the center
+        UV uv2 = SPHERE_P111.getUV(P211);
+        assertEquals(0.5, uv2.u(), DELTA, ERR_UV);
+        assertEquals(0.5, uv2.v(), DELTA, ERR_UV);
+
+        // =============== Boundary Values Tests ==================
+
+        // BV01: North pole (+Y from center) -> v = 0
+        assertEquals(0, SPHERE_P111.getUV(new Point(1, 2, 1)).v(), DELTA, ERR_UV);
+        // BV02: South pole (-Y from center) -> v = 1
+        assertEquals(1, SPHERE_P111.getUV(new Point(1, 0, 1)).v(), DELTA, ERR_UV);
     }
 
     /**

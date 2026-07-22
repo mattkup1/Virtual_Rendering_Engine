@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import primitives.Point;
 import primitives.Ray;
+import primitives.UV;
 import primitives.Vector;
 
 import static primitives.Util.alignZero;
@@ -30,6 +31,17 @@ public class Plane extends Geometry {
     final private Vector _normal;
 
     /**
+     * Unit vector spanning the plane's local U texture axis, precomputed once for
+     * {@link #getUV(Point)}
+     */
+    private final Vector _uAxis;
+    /**
+     * Unit vector spanning the plane's local V texture axis, perpendicular to
+     * {@link #_uAxis}, precomputed once for {@link #getUV(Point)}
+     */
+    private final Vector _vAxis;
+
+    /**
      * Constructs a plane from three points on the plane.
      * The points must be unique and not collinear.
      *
@@ -48,7 +60,8 @@ public class Plane extends Geometry {
         this._point = p1;
         // create 2 vectors by using subtract method then we compute the normal to these vectors and finally normalizing them.
         this._normal = vec.normalize();
-
+        this._uAxis = Ellipse.arbitraryPerpendicular(this._normal);
+        this._vAxis = this._normal.crossProduct(this._uAxis).normalize();
     }
 
     /**
@@ -61,6 +74,8 @@ public class Plane extends Geometry {
         if (normal == null) throw new NullPointerException("the normal of the Plane cannot be null");
         this._normal = normal.normalize();
         this._point = point;
+        this._uAxis = Ellipse.arbitraryPerpendicular(this._normal);
+        this._vAxis = this._normal.crossProduct(this._uAxis).normalize();
     }
 
     @Override
@@ -102,6 +117,24 @@ public class Plane extends Geometry {
      */
     public Point getPoint() {
         return _point;
+    }
+
+    /**
+     * Returns unbounded local-plane texture coordinates for the given point, measured
+     * in world units along the plane's (arbitrary but fixed) in-plane axes.
+     * <p>
+     * Since the plane is infinite, these are not normalized to {@code [0,1)} - a
+     * {@link primitives.Texture} is responsible for tiling/wrapping them as needed.
+     * </p>
+     *
+     * @param point a point on the plane
+     * @return the local-plane texture coordinates
+     */
+    @Override
+    public UV getUV(Point point) {
+        if (point.equals(_point)) return new UV(0, 0);
+        Vector fromOrigin = point.subtract(_point);
+        return new UV(fromOrigin.dotProduct(_uAxis), fromOrigin.dotProduct(_vAxis));
     }
 
     @Override

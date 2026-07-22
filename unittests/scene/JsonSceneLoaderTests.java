@@ -186,13 +186,39 @@ class JsonSceneLoaderTests {
     }
 
     /**
-     * Renders a showcase scene featuring the four new geometries added in
-     * {@code geometries.impl} - {@link geometries.impl.Box}, {@link geometries.impl.Cone},
-     * {@link geometries.impl.Torus}, and {@link geometries.impl.Ellipse} (as a disk) -
-     * lined up on a reflective floor plane under ambient, directional, and point lighting.
+     * Renders a showcase scene featuring the new geometries added in {@code geometries.impl}
+     * - {@link geometries.impl.Box}, {@link geometries.impl.Cone}, {@link geometries.impl.Torus},
+     * {@link geometries.impl.Ellipse} (as a disk), and an imported {@code .obj} triangle mesh
+     * (loaded and scaled/translated via {@link ObjMeshLoader}) - lined up on a reflective floor
+     * plane under ambient, directional, and point lighting.
      */
     @Test
     void testNewShapesShowcase() {
         createImage("newShapesShowcase.json", "New shapes showcase");
+    }
+
+    /**
+     * Renders a crystal cluster: six instances of the same hand-authored gem {@code .obj}
+     * mesh ({@link ObjMeshLoader}), scaled/translated/colored differently per instance,
+     * jutting out of a dark reflective floor. Glassy (high {@code kT}) jewel-tone materials
+     * under a violet key light and a cyan spotlight, to show off the mesh system with
+     * multiple transformed instances of one imported shape rather than one mesh in
+     * isolation.
+     */
+    @Test
+    void testCrystalCluster() {
+        createImage("crystalCluster.json", "Crystal cluster");
+    }
+
+    /**
+     * Renders a texture showcase: an infinite checkerboard floor plane, and three
+     * spheres each demonstrating a different {@link primitives.Texture} - procedural
+     * stripes, an imported image ({@code sunburst.png}), and procedural rings - to show
+     * off both procedural and image-based texture mapping on the two UV-mapped shapes
+     * ({@link geometries.impl.Plane}, {@link geometries.impl.Sphere}).
+     */
+    @Test
+    void testTextureShowcase() {
+        createImage("textureShowcase.json", "Texture showcase");
     }
 }

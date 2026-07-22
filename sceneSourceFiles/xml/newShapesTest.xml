@@ -6,5 +6,6 @@
 		<cone origin="20 0 0" AxisDirection="0 0 1" radius="1" height="2" />
 		<torus center="40 0 0" axis="0 0 1" majorRadius="3" minorRadius="1" />
 		<disk center="50 0 0" normal="0 0 1" radius="2" />
+		<mesh file="sceneSourceFiles/obj/testPyramid.obj" scale="10" translate="70 0 0" />
 	</geometries>
 </scene>

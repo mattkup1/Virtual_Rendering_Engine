@@ -3,6 +3,7 @@ package geometries.api;
 import primitives.Color;
 import primitives.Material;
 import primitives.Point;
+import primitives.UV;
 import primitives.Vector;
 
 /**
@@ -79,4 +80,24 @@ public abstract class Geometry extends Intersectable {
      * @return the unit normal vector at the point
      */
     public abstract Vector getNormal(Point point);
+
+    /**
+     * Returns the texture coordinates at the given surface point, for geometries that
+     * support texture mapping.
+     * <p>
+     * The default implementation throws, since texture mapping is only meaningful for
+     * geometries with a natural 2D surface parameterization; only overriding subclasses
+     * (e.g. {@code Plane}, {@code Sphere}) support it. This is only ever called when a
+     * {@link Material} actually has a {@link primitives.Texture} attached, so untextured
+     * geometries of any shape never reach it.
+     * </p>
+     *
+     * @param point a point on the geometry's surface
+     * @return the texture coordinates at the point
+     * @throws UnsupportedOperationException if this geometry has no UV parameterization
+     */
+    public UV getUV(Point point) {
+        throw new UnsupportedOperationException(
+                getClass().getSimpleName() + " does not support texture mapping");
+    }
 }

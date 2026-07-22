@@ -1,0 +1,14 @@
+# Simple square pyramid test mesh: 5 vertices, 5 faces (4 triangles + 1 quad base).
+# Used by ObjMeshLoaderTests to exercise fan-triangulation and negative (relative)
+# vertex indices, and by SceneLoader mesh-loading tests.
+v 0 1 0
+v -1 0 -1
+v 1 0 -1
+v 1 0 1
+v -1 0 1
+
+f 1 2 3
+f 1 3 4
+f 1 4 5
+f 1 5 -4
+f 2 3 4 5

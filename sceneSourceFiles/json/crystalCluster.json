@@ -1,0 +1,145 @@
+{
+  "camera": {
+    "location": "125 85 115",
+    "direction": "0 -10 -385",
+    "vpDistance": 480,
+    "vpWidth": 430,
+    "vpHeight": 430,
+    "resolutionX": 1000,
+    "resolutionY": 1000
+  },
+  "background-color": "4 5 10",
+  "lights": {
+    "ambient-light": {
+      "color": "10 10 14"
+    },
+    "directional-light": {
+      "color": "40 40 55",
+      "direction": "-0.3 -0.7 -0.4"
+    },
+    "point-light": {
+      "color": "500 300 650",
+      "position": "-40 220 -350",
+      "kL": 0.0006,
+      "kQ": 0.000004
+    },
+    "spot-light": {
+      "color": "300 550 650",
+      "position": "220 160 -250",
+      "direction": "-0.7 -0.65 -0.6",
+      "kL": 0.0005,
+      "kQ": 0.000003,
+      "narrowBeam": 30
+    }
+  },
+  "geometries": [
+    {
+      "type": "plane",
+      "p0": "0 -50 0",
+      "normal": "0 1 0",
+      "emission": "4 5 10",
+      "material": {
+        "kD": "0.15 0.16 0.22",
+        "kS": "0.2 0.2 0.26",
+        "shininess": 100,
+        "kR": "0.35 0.35 0.4"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/gem.obj",
+      "scale": 55,
+      "translate": "0 5 -420",
+      "emission": "120 40 180",
+      "material": {
+        "kD": "0.22 0.2 0.28",
+        "kS": "0.5 0.4 0.6",
+        "shininess": 300,
+        "kT": "0.4 0.35 0.45",
+        "kR": "0.15 0.12 0.18"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/gem.obj",
+      "scale": 35,
+      "translate": "-140 -15 -380",
+      "emission": "30 180 190",
+      "material": {
+        "kD": "0.22 0.2 0.28",
+        "kS": "0.5 0.4 0.6",
+        "shininess": 300,
+        "kT": "0.4 0.35 0.45",
+        "kR": "0.15 0.12 0.18"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/gem.obj",
+      "scale": 38,
+      "translate": "150 -12 -390",
+      "emission": "220 50 120",
+      "material": {
+        "kD": "0.22 0.2 0.28",
+        "kS": "0.5 0.4 0.6",
+        "shininess": 300,
+        "kT": "0.4 0.35 0.45",
+        "kR": "0.15 0.12 0.18"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/gem.obj",
+      "scale": 22,
+      "translate": "-70 -28 -280",
+      "emission": "230 160 30",
+      "material": {
+        "kD": "0.22 0.2 0.28",
+        "kS": "0.5 0.4 0.6",
+        "shininess": 300,
+        "kT": "0.4 0.35 0.45",
+        "kR": "0.15 0.12 0.18"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/gem.obj",
+      "scale": 20,
+      "translate": "80 -30 -270",
+      "emission": "40 200 90",
+      "material": {
+        "kD": "0.22 0.2 0.28",
+        "kS": "0.5 0.4 0.6",
+        "shininess": 300,
+        "kT": "0.4 0.35 0.45",
+        "kR": "0.15 0.12 0.18"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/gem.obj",
+      "scale": 18,
+      "translate": "20 -32 -480",
+      "emission": "50 90 230",
+      "material": {
+        "kD": "0.22 0.2 0.28",
+        "kS": "0.5 0.4 0.6",
+        "shininess": 300,
+        "kT": "0.4 0.35 0.45",
+        "kR": "0.15 0.12 0.18"
+      }
+    },
+    { "type": "sphere", "center": "-320 340 -820", "radius": 3, "emission": "750 750 900" },
+    { "type": "sphere", "center": "-180 280 -900", "radius": 2.2, "emission": "650 700 950" },
+    { "type": "sphere", "center": "-60 380 -760", "radius": 2.8, "emission": "800 780 850" },
+    { "type": "sphere", "center": "90 310 -880", "radius": 2.4, "emission": "700 720 900" },
+    { "type": "sphere", "center": "250 250 -800", "radius": 3.2, "emission": "780 760 820" },
+    { "type": "sphere", "center": "340 360 -900", "radius": 2.6, "emission": "700 750 950" },
+    { "type": "sphere", "center": "-250 180 -750", "radius": 2.3, "emission": "650 680 900" },
+    { "type": "sphere", "center": "10 150 -850", "radius": 2.7, "emission": "800 800 850" },
+    { "type": "sphere", "center": "180 120 -780", "radius": 2.2, "emission": "700 700 900" },
+    { "type": "sphere", "center": "-100 200 -920", "radius": 3, "emission": "760 740 880" },
+    { "type": "sphere", "center": "300 150 -850", "radius": 2.4, "emission": "680 700 920" },
+    { "type": "sphere", "center": "-350 100 -800", "radius": 2.6, "emission": "750 760 830" }
+  ]
+}

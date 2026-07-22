@@ -1,0 +1,27 @@
+{
+  "background-color": "0 0 0",
+  "geometries": [
+    {
+      "type": "sphere",
+      "center": "0 0 0",
+      "radius": 10,
+      "material": {
+        "texture.type": "checker",
+        "texture.colorA": "255 0 0",
+        "texture.colorB": "0 0 255",
+        "texture.cellSize": 0.1
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "100 0 0",
+      "radius": 10,
+      "material": {
+        "texture.type": "image",
+        "texture.file": "sceneSourceFiles/textures/testSwatch.png",
+        "texture.repeatU": 1,
+        "texture.repeatV": 1
+      }
+    }
+  ]
+}
