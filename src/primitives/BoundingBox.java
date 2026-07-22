@@ -99,7 +99,7 @@ public final class BoundingBox {
             if (t0 > t1) { double tmp = t0; t0 = t1; t1 = tmp; }
             tMin = Math.max(tMin, t0);
             tMax = Math.min(tMax, t1);
-            if (tMax <= tMin) return false;
+            if (tMax < tMin) return false;
         }
 
         // Y slab
@@ -111,7 +111,7 @@ public final class BoundingBox {
             if (t0 > t1) { double tmp = t0; t0 = t1; t1 = tmp; }
             tMin = Math.max(tMin, t0);
             tMax = Math.min(tMax, t1);
-            if (tMax <= tMin) return false;
+            if (tMax < tMin) return false;
         }
 
         // Z slab
@@ -123,7 +123,7 @@ public final class BoundingBox {
             if (t0 > t1) { double tmp = t0; t0 = t1; t1 = tmp; }
             tMin = Math.max(tMin, t0);
             tMax = Math.min(tMax, t1);
-            if (tMax <= tMin) return false;
+            if (tMax < tMin) return false;
         }
 
         return true;

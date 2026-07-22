@@ -1,10 +1,14 @@
 package scene;
 
 import geometries.api.Geometry;
+import geometries.impl.Box;
+import geometries.impl.Cone;
 import geometries.impl.Cylinder;
+import geometries.impl.Ellipse;
 import geometries.impl.Plane;
 import geometries.impl.Polygon;
 import geometries.impl.Sphere;
+import geometries.impl.Torus;
 import geometries.impl.Triangle;
 import geometries.impl.Tube;
 import java.util.List;
@@ -97,7 +101,8 @@ public abstract class SceneLoader {
      * </p>
      * <p>
      * Supported geometry types: {@code sphere}, {@code triangle}, {@code plane},
-     * {@code tube}, {@code cylinder}, and {@code polygon}.
+     * {@code tube}, {@code cylinder}, {@code polygon}, {@code box}, {@code cone},
+     * {@code torus}, and {@code ellipse} (alias {@code disk}).
      * </p>
      *
      * @param data a map containing the attributes for the geometry
@@ -148,6 +153,38 @@ public abstract class SceneLoader {
                 for (int k = 0; k < numVertices; ++k)
                     vertices[k] = parsePoint(data.get("p" + k));
                 geometry = new Polygon(vertices);
+            }
+            case "box" -> {
+                Point min = parsePoint(data.get("min"));
+                Point max = parsePoint(data.get("max"));
+                geometry = new Box(min, max);
+            }
+            case "cone" -> {
+                double radius = Double.parseDouble(data.get("radius"));
+                Ray axis = new Ray(parsePoint(data.get("origin")), parseVector(data.get("AxisDirection")));
+                double height = Double.parseDouble(data.get("height"));
+                geometry = new Cone(radius, axis, height);
+            }
+            case "torus" -> {
+                Point center = parsePoint(data.get("center"));
+                Vector axis = parseVector(data.get("axis"));
+                double majorRadius = Double.parseDouble(data.get("majorRadius"));
+                double minorRadius = Double.parseDouble(data.get("minorRadius"));
+                geometry = new Torus(center, axis, majorRadius, minorRadius);
+            }
+            case "ellipse", "disk" -> {
+                Point center = parsePoint(data.get("center"));
+                Vector normal = parseVector(data.get("normal"));
+                // Supports a circular disk ("radius") or an elliptical patch
+                // ("axisDirection", "radiusX", "radiusY")
+                if (data.containsKey("radius")) {
+                    geometry = new Ellipse(center, normal, Double.parseDouble(data.get("radius")));
+                } else {
+                    Vector axisDirection = parseVector(data.get("axisDirection"));
+                    double radiusX = Double.parseDouble(data.get("radiusX"));
+                    double radiusY = Double.parseDouble(data.get("radiusY"));
+                    geometry = new Ellipse(center, normal, axisDirection, radiusX, radiusY);
+                }
             }
             default -> throw new IllegalArgumentException("Unknown geometry type: " + type);
         }
