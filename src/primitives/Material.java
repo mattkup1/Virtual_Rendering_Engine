@@ -88,146 +88,79 @@ public class Material {
      */
     public Material() { /* To satisfy Javadoc generator */ }
 
-    /**
-     * Sets the ambient reflection coefficient using a {@link Double3} triad.
-     *
-     * @param kA the ambient reflection coefficient triad
-     * @return this material for builder-style chaining
-     */
+    /** Sets the ambient reflection coefficient using a {@link Double3} triad. */
     public Material setKA(Double3 kA) {
         this.kA = kA;
         return this;
     }
 
-    /**
-     * Sets the ambient reflection coefficient to a uniform value across all components.
-     *
-     * @param kA the scalar ambient reflection coefficient
-     * @return this material for builder-style chaining
-     */
+    /** Sets the ambient reflection coefficient to a uniform value across all components. */
     public Material setKA(Double kA) {
         this.kA = new Double3(kA);
         return this;
     }
 
-    /**
-     * Sets the specular reflection coefficient using a {@link Double3} triad.
-     *
-     * @param kS the specular reflection coefficient triad
-     * @return this material for builder-style chaining
-     */
+    /** Sets the specular reflection coefficient using a {@link Double3} triad. */
     public Material setKS(Double3 kS) {
         this.kS = kS;
         return this;
     }
 
-    /**
-     * Sets the specular reflection coefficient to a uniform value across all components.
-     *
-     * @param kS the scalar specular reflection coefficient
-     * @return this material for builder-style chaining
-     */
+    /** Sets the specular reflection coefficient to a uniform value across all components. */
     public Material setKS(double kS) {
         this.kS = new Double3(kS);
         return this;
     }
 
-    /**
-     * Sets the diffuse reflection coefficient using a {@link Double3} triad.
-     *
-     * @param kD the diffuse reflection coefficient triad
-     * @return this material for builder-style chaining
-     */
+    /** Sets the diffuse reflection coefficient using a {@link Double3} triad. */
     public Material setKD(Double3 kD) {
         this.kD = kD;
         return this;
     }
 
-    /**
-     * Sets the diffuse reflection coefficient to a uniform value across all components.
-     *
-     * @param kD the scalar diffuse reflection coefficient
-     * @return this material for builder-style chaining
-     */
+    /** Sets the diffuse reflection coefficient to a uniform value across all components. */
     public Material setKD(double kD) {
         this.kD = new Double3(kD);
         return this;
     }
 
-    /**
-     * Sets the shininess exponent used in specular highlight calculations.
-     *
-     * @param nShininess the shininess exponent
-     * @return this material for builder-style chaining
-     */
+    /** Sets the shininess exponent used in specular highlight calculations. */
     public Material setShininess(int nShininess) {
         this.nShininess = nShininess;
         return this;
     }
 
-    /**
-     * Sets the transparency coefficient using a {@link Double3} triad.
-     *
-     * @param kT the transparency coefficient triad
-     * @return this material for builder-style chaining
-     */
+    /** Sets the transparency coefficient using a {@link Double3} triad. */
     public Material setKT(Double3 kT) {
         this.kT = kT;
         return this;
     }
 
-    /**
-     * Sets the transparency coefficient to a uniform value across all components.
-     *
-     * @param kT the scalar transparency coefficient
-     * @return this material for builder-style chaining
-     */
+    /** Sets the transparency coefficient to a uniform value across all components. */
     public Material setKT(double kT) {
         this.kT = new Double3(kT);
         return this;
     }
 
-    /**
-     * Sets the reflection coefficient using a {@link Double3} triad.
-     *
-     * @param kR the reflection coefficient triad
-     * @return this material for builder-style chaining
-     */
+    /** Sets the reflection coefficient using a {@link Double3} triad. */
     public Material setKR(Double3 kR) {
         this.kR = kR;
         return this;
     }
 
-    /**
-     * Sets the reflection coefficient to a uniform value across all components.
-     *
-     * @param kR the scalar reflection coefficient
-     * @return this material for builder-style chaining
-     */
+    /** Sets the reflection coefficient to a uniform value across all components. */
     public Material setKR(double kR) {
         this.kR = new Double3(kR);
         return this;
     }
 
-    /**
-     * Sets the glossy reflection blur radius.
-     *
-     * @param blurR the disk-sampling radius for reflection rays; {@code 0}
-     *              for a perfectly sharp mirror
-     * @return this material for builder-style chaining
-     */
+    /** Sets the glossy reflection blur radius; {@code 0} is a perfectly sharp mirror. */
     public Material setBlurR(double blurR) {
         this.blurR = blurR;
         return this;
     }
 
-    /**
-     * Sets the diffuse transparency blur radius.
-     *
-     * @param blurT the disk-sampling radius for transparency rays; {@code 0}
-     *              for perfectly clear glass
-     * @return this material for builder-style chaining
-     */
+    /** Sets the diffuse transparency blur radius; {@code 0} is perfectly clear glass. */
     public Material setBlurT(double blurT) {
         this.blurT = blurT;
         return this;

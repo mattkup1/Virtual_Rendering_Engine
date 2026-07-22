@@ -21,12 +21,12 @@ import scene.Scene;
  * @author mattkuperwasser
  * @author moshehanau
  */
-public class cameraRenderIntegration {
+public class CameraRenderIntegration {
 
     /**
      * Default constructor to satisfy Javadoc generator
      */
-    cameraRenderIntegration() { /* To satisfy Javadoc generator */ }
+    CameraRenderIntegration() { /* To satisfy Javadoc generator */ }
 
     /**
      * Physical size of the View Plane (it is a square: SIZE x SIZE)

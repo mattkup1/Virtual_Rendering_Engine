@@ -3,6 +3,7 @@ package geometries.impl;
 import geometries.api.Geometry;
 import java.util.List;
 import java.util.Objects;
+import primitives.BoundingBox;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -141,6 +142,11 @@ public class Polygon extends Geometry {
     @Override
     public Vector getNormal(Point point) {
         return _plane.getNormal(point);
+    }
+
+    @Override
+    public BoundingBox getBoundingBox() {
+        return BoundingBox.of(_vertices.toArray(new Point[0]));
     }
 
     @Override

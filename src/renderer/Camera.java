@@ -166,9 +166,7 @@ public class Camera implements Cloneable {
     }
 
     /**
-
      * Renders all pixels using multiple worker threads.
-
      * <p>
      * Work distribution is coordinated through {@link PixelManager}, which
      * assigns pixels dynamically to threads and optionally reports rendering
@@ -581,8 +579,8 @@ public class Camera implements Cloneable {
 
             try {
                 return (Camera) _camera.clone();
-            } catch (CloneNotSupportedException _) {
-                return null;
+            } catch (CloneNotSupportedException e) {
+                throw new IllegalStateException("Camera clone should always succeed", e);
             }
         }
     }

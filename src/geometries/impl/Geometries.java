@@ -4,6 +4,7 @@ import geometries.api.Intersectable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import primitives.BoundingBox;
 import primitives.Ray;
 
 import static primitives.Util.alignZero;
@@ -52,6 +53,11 @@ public class Geometries extends Intersectable {
     protected List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         List<Intersection> intersections = null;
         for (Intersectable geometry : geometries) {
+            final BoundingBox box = geometry.getBoundingBox();
+            if (box != null && !box.intersectsRay(ray, maxDistance)) {
+                continue; // Ray misses this geometry's bounding box - skip the exact math
+            }
+
             final var geometry_intersection = geometry.calcIntersections(ray);
             if (geometry_intersection != null) {
                 for (var intersection : geometry_intersection) {
@@ -65,5 +71,16 @@ public class Geometries extends Intersectable {
             }
         }
         return intersections; // Null if no intersection points
+    }
+
+    @Override
+    public BoundingBox getBoundingBox() {
+        BoundingBox union = null;
+        for (Intersectable geometry : geometries) {
+            final BoundingBox box = geometry.getBoundingBox();
+            if (box == null) return null; // An unbounded child makes the whole group unbounded
+            union = union == null ? box : union.union(box);
+        }
+        return union; // Null if this collection is empty
     }
 }

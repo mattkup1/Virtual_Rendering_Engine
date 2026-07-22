@@ -2,6 +2,7 @@ package geometries.api;
 
 import java.util.List;
 import lighting.LightSource;
+import primitives.BoundingBox;
 import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
@@ -74,6 +75,23 @@ public abstract class Intersectable {
      *         or {@code null} if no intersections exist
      */
     protected abstract List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance);
+
+    /**
+     * Returns a conservative axis-aligned bounding box for this intersectable, used to
+     * cheaply reject rays before exact intersection math.
+     * <p>
+     * The default implementation returns {@code null}, meaning "unbounded" (e.g. an
+     * infinite plane or tube) - callers must always fall back to exact intersection
+     * testing in that case. Overrides must return a box that fully contains the
+     * geometry; a loose over-approximation is fine, but the box may never be smaller
+     * than the geometry's true extent.
+     * </p>
+     *
+     * @return the bounding box, or {@code null} if this geometry is unbounded
+     */
+    public BoundingBox getBoundingBox() {
+        return null;
+    }
 
     /**
      * Passive Data Structure (PDS) representing an intersection point between a ray and a geometry

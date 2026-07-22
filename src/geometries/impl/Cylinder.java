@@ -3,6 +3,7 @@ package geometries.impl;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import primitives.BoundingBox;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -139,6 +140,22 @@ public final class Cylinder extends Tube {
             }
         }
         return null;
+    }
+
+    @Override
+    public BoundingBox getBoundingBox() {
+        // Conservative box: expand each cap center by the radius on every axis, as if it
+        // were a bounding sphere. Looser than the tight box for a tilted cylinder, but
+        // always fully contains it.
+        Point bottomCenter = _axis.getOrigin();
+        Point topCenter = _axis.getPoint(_height);
+        return new BoundingBox(
+                Math.min(bottomCenter.getX(), topCenter.getX()) - _radius,
+                Math.min(bottomCenter.getY(), topCenter.getY()) - _radius,
+                Math.min(bottomCenter.getZ(), topCenter.getZ()) - _radius,
+                Math.max(bottomCenter.getX(), topCenter.getX()) + _radius,
+                Math.max(bottomCenter.getY(), topCenter.getY()) + _radius,
+                Math.max(bottomCenter.getZ(), topCenter.getZ()) + _radius);
     }
 
     @Override

@@ -43,6 +43,33 @@ public class Point {
     }
 
     /**
+     * Returns the x coordinate of this point.
+     *
+     * @return the x coordinate
+     */
+    public double getX() {
+        return _xyz._d1();
+    }
+
+    /**
+     * Returns the y coordinate of this point.
+     *
+     * @return the y coordinate
+     */
+    public double getY() {
+        return _xyz._d2();
+    }
+
+    /**
+     * Returns the z coordinate of this point.
+     *
+     * @return the z coordinate
+     */
+    public double getZ() {
+        return _xyz._d3();
+    }
+
+    /**
      * Computes the vector from the given point to this point.
      *
      * @param other the starting point (tail of the resulting vector)
