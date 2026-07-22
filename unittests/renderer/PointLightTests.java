@@ -104,4 +104,26 @@ public class PointLightTests {
         // BV01: Same point as light point
         assertEquals(INTENSITY_1, POINT_LIGHT_1.getIntensity(SOURCE), ERR_INTENSITY);
     }
+
+    /**
+     * Tests {@link PointLight#getRadius()}/{@link PointLight#setRadius(double)}: defaults
+     * to a hard-shadow light (radius 0), settable to enable soft shadows, rejects negative
+     * values.
+     */
+    @Test
+    public void testRadius() {
+
+        // ============ Equivalence Partitions Tests ==============
+        // EP01: Default radius is 0 (hard shadow)
+        assertEquals(0, new PointLight(INTENSITY_1, SOURCE).getRadius(), "ERROR: default radius should be 0");
+
+        // EP02: Radius is settable
+        PointLight soft = new PointLight(INTENSITY_1, SOURCE).setRadius(5);
+        assertEquals(5, soft.getRadius(), "ERROR: getRadius should return the value set by setRadius");
+
+        // =============== Boundary Values Tests ==================
+        // BV01: Negative radius is invalid
+        assertThrows(IllegalArgumentException.class, () -> new PointLight(INTENSITY_1, SOURCE).setRadius(-1),
+                "ERROR: negative radius should be rejected");
+    }
 }

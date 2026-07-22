@@ -87,6 +87,21 @@ public final class Color {
    }
 
    /**
+    * Returns the average of this color's raw (unclamped, full double precision) RGB
+    * components.
+    * <p>
+    * Unlike {@link #getColor()}, this does not round to an integer {@code 0-255} pixel
+    * value, so it's suitable for measuring small differences between two similar colors
+    * (e.g. a bump map's finite-difference height gradient), where {@code getColor()}'s
+    * integer truncation would round a sub-1.0 difference away to zero.
+    * </p>
+    * @return the mean of the red, green, and blue components
+    */
+   public double luminance() {
+      return (_rgb._d1() + _rgb._d2() + _rgb._d3()) / 3.0;
+   }
+
+   /**
     * Adds one or more colors to this color component-wise.
     * @param  colors the colors to add
     * @return        a new color equal to the component-wise sum

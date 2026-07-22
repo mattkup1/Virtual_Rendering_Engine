@@ -4,10 +4,13 @@ import geometries.api.Intersectable;
 import lighting.LightSource;
 import primitives.Color;
 import primitives.Ray;
+import primitives.Texture;
+import primitives.UV;
 import primitives.Vector;
 import scene.Scene;
 
 import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 /**
  * Abstract base class for all ray tracing engines.
@@ -60,8 +63,61 @@ abstract class RayTracerBase {
     protected boolean preprocessIntersection(Intersectable.Intersection intersection, Vector v) {
         intersection.v = v;
         intersection.normal = intersection.geometry.getNormal(intersection.point).normalize();
+        applyNormalMap(intersection);
         intersection.vNormal = alignZero(intersection.v.dotProduct(intersection.normal));
         return intersection.vNormal != 0;
+    }
+
+    /**
+     * Perturbs {@code intersection.normal} using the material's {@code normalTexture}
+     * (bump mapping), if one is set.
+     * <p>
+     * The texture is sampled as a grayscale height field at the intersection's UV
+     * coordinates and at two small finite-difference steps along U and V, to estimate the
+     * height gradient. The gradient is then applied to the normal along the surface's
+     * local tangent/bitangent directions, scaled by {@code bumpStrength}, and renormalized.
+     * Must run before {@code vNormal} is computed, since that depends on the (possibly
+     * now-perturbed) normal.
+     * </p>
+     *
+     * @param intersection the intersection being preprocessed; its {@code normal} must
+     *                      already be set
+     */
+    private void applyNormalMap(Intersectable.Intersection intersection) {
+        Texture normalTexture = intersection.material.normalTexture;
+        if (normalTexture == null) return;
+
+        final double epsilon = 0.001;
+        UV uv = intersection.geometry.getUV(intersection.point);
+        double height = normalTexture.sample(uv).luminance();
+        double heightDu = normalTexture.sample(new UV(uv.u() + epsilon, uv.v())).luminance();
+        double heightDv = normalTexture.sample(new UV(uv.u(), uv.v() + epsilon)).luminance();
+
+        double du = (heightDu - height) / epsilon * intersection.material.bumpStrength;
+        double dv = (heightDv - height) / epsilon * intersection.material.bumpStrength;
+        if (isZero(du) && isZero(dv)) return;
+
+        Vector normal = intersection.normal;
+        Vector tangent = arbitraryPerpendicular(normal);
+        Vector bitangent = normal.crossProduct(tangent);
+
+        Vector perturbed = normal;
+        if (!isZero(du)) perturbed = perturbed.subtract(tangent.scale(du));
+        if (!isZero(dv)) perturbed = perturbed.subtract(bitangent.scale(dv));
+
+        intersection.normal = perturbed.normalize();
+    }
+
+    /**
+     * Returns an arbitrary unit vector perpendicular to the given unit vector, used as the
+     * tangent direction for bump-map normal perturbation.
+     *
+     * @param normal the unit vector to find a perpendicular direction to
+     * @return an arbitrary unit vector perpendicular to {@code normal}
+     */
+    private static Vector arbitraryPerpendicular(Vector normal) {
+        Vector reference = Math.abs(normal.getX()) < 0.9 ? Vector.AXIS_X : Vector.AXIS_Y;
+        return normal.crossProduct(reference).normalize();
     }
 
     /**

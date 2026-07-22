@@ -1,5 +1,11 @@
 {
   "background-color": "0 0 0",
+  "environment-map": {
+    "type": "checker",
+    "colorA": "255 0 0",
+    "colorB": "0 0 255",
+    "cellSize": 0.1
+  },
   "geometries": [
     {
       "type": "sphere",

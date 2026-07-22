@@ -75,6 +75,40 @@ public final class BeamSampler {
             double blurRadius,
             int sampleCount
     ) {
+        return sampleBeam(surfacePoint, idealDirection, surfaceNormal, blurRadius, sampleCount, TARGET_DISTANCE);
+    }
+
+    /**
+     * Same as {@link #sampleBeam(Point, Vector, Vector, double, int)}, but with an
+     * explicit target distance instead of the fixed {@link #TARGET_DISTANCE}.
+     * <p>
+     * Used for soft-shadow sampling toward a {@link lighting.PointLight}, where the
+     * sampling disk must sit at the light's own (often very different) distance rather
+     * than the fixed distance tuned for glossy-reflection/blurry-transparency beams -
+     * otherwise the disk's radius would represent the wrong angular size as seen from
+     * the surface point, making the penumbra's apparent softness inconsistent with the
+     * light's actual distance.
+     * </p>
+     *
+     * @param surfacePoint   the un-offset surface intersection point
+     * @param idealDirection the ideal direction; does not need to be unit length
+     * @param surfaceNormal  the surface normal at {@code surfacePoint}
+     * @param blurRadius     radius of the sampling disk at {@code targetDistance};
+     *                       {@code 0} collapses the beam to the single ideal ray
+     * @param sampleCount    desired number of rays; values {@code <= 1} collapse the
+     *                       beam to the single ideal ray
+     * @param targetDistance distance from {@code surfacePoint} at which the sampling
+     *                       disk is centered
+     * @return a non-empty list of rays scattered around the ideal direction
+     */
+    public static List<Ray> sampleBeam(
+            Point surfacePoint,
+            Vector idealDirection,
+            Vector surfaceNormal,
+            double blurRadius,
+            int sampleCount,
+            double targetDistance
+    ) {
         // Normalize once; every step below assumes a unit-length direction
         Vector direction = idealDirection.normalize();
 
@@ -83,7 +117,7 @@ public final class BeamSampler {
             return List.of(new Ray(surfacePoint, direction, surfaceNormal));
         }
 
-        Point targetCenter = surfacePoint.add(direction.scale(TARGET_DISTANCE));
+        Point targetCenter = surfacePoint.add(direction.scale(targetDistance));
         Vector[] basis = orthonormalBasis(direction);
         Vector uAxis = basis[0];
         Vector vAxis = basis[1];

@@ -137,6 +137,20 @@ public class XmlSceneLoader extends SceneLoader {
     }
 
     @Override
+    protected Map<String, String> getEnvironmentMap() {
+        Node environmentMapNode = doc.getElementsByTagName("environment-map").item(0);
+        if (environmentMapNode == null) return null;
+
+        Map<String, String> map = new HashMap<>();
+        var attributes = environmentMapNode.getAttributes();
+        for (int j = 0; j < attributes.getLength(); j++) {
+            Node attr = attributes.item(j);
+            map.put(attr.getNodeName(), attr.getNodeValue());
+        }
+        return map;
+    }
+
+    @Override
     protected List<Map<String, String>> getGeometries() {
         List<Map<String, String>> list = new ArrayList<>();
         Node geometriesNode = doc.getElementsByTagName("geometries").item(0);

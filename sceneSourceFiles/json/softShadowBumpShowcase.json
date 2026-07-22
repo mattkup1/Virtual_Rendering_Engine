@@ -1,0 +1,68 @@
+{
+  "camera": {
+    "location": "60 90 50",
+    "direction": "0 -30 -300",
+    "vpDistance": 380,
+    "vpWidth": 430,
+    "vpHeight": 430,
+    "resolutionX": 1000,
+    "resolutionY": 1000
+  },
+  "background-color": "18 20 26",
+  "lights": {
+    "ambient-light": {
+      "color": "24 26 32"
+    },
+    "directional-light": {
+      "color": "50 50 60",
+      "direction": "-0.2 -0.7 -0.5"
+    },
+    "point-light": {
+      "color": "700 650 550",
+      "position": "0 60 -260",
+      "kL": 0.0006,
+      "kQ": 0.000003,
+      "radius": 150
+    }
+  },
+  "geometries": [
+    {
+      "type": "plane",
+      "p0": "0 -60 0",
+      "normal": "0 1 0",
+      "emission": "10 11 14",
+      "material": {
+        "kD": "0.4 0.4 0.42",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 50
+      }
+    },
+    {
+      "type": "ellipsoid",
+      "center": "-80 -30 -300",
+      "radii": "50 30 30",
+      "emission": "50 160 200",
+      "material": {
+        "kD": "0.35 0.35 0.35",
+        "kS": "0.4 0.4 0.4",
+        "shininess": 150
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "80 -15 -300",
+      "radius": 45,
+      "emission": "210 130 30",
+      "material": {
+        "kD": "0.4 0.4 0.4",
+        "kS": "0.5 0.5 0.5",
+        "shininess": 200,
+        "normalTexture.type": "checker",
+        "normalTexture.colorA": "255 255 255",
+        "normalTexture.colorB": "0 0 0",
+        "normalTexture.cellSize": 0.06,
+        "bumpStrength": 0.6
+      }
+    }
+  ]
+}

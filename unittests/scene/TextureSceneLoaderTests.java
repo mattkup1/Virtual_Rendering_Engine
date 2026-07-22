@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
+import primitives.UV;
 import primitives.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,5 +72,18 @@ class TextureSceneLoaderTests {
         var intersection = intersections.getFirst();
         var uv = intersection.geometry.getUV(intersection.point);
         assertEquals(new Color(255, 255, 255), intersection.material.texture.sample(uv), ERR_TEXTURE);
+    }
+
+    /**
+     * Test method verifying the scene-level {@code environment-map} (a 0.1-unit checker):
+     * a ray pointing along -Z maps to direction-UV (0.25, 0.5) via {@link UV#fromDirection},
+     * which resolves to {@code colorB} (blue).
+     */
+    @Test
+    void testEnvironmentMapParsed() {
+        assertNotNull(SCENE.environmentMap, "ERROR: environment map was not parsed");
+
+        UV uv = UV.fromDirection(new Vector(0, 0, -1));
+        assertEquals(new Color(0, 0, 255), SCENE.environmentMap.sample(uv), ERR_TEXTURE);
     }
 }

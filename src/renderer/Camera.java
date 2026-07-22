@@ -81,6 +81,11 @@ public class Camera implements Cloneable {
      * Progress print interval in percent; zero disables progress printing.
      */
     private double _printInterval = 0;
+    /**
+     * Anti-aliasing samples per pixel axis; {@code 1} (the default) casts a single ray
+     * through the pixel center, {@code n > 1} averages an {@code n x n} sub-pixel grid.
+     */
+    private int _antiAliasing = 1;
 
     /**
      * Empty camera constructor
@@ -105,20 +110,38 @@ public class Camera implements Cloneable {
      * @return the ray
      */
     public Ray constructRay(int xIndex, int yIndex) {
-        Point pixelCenter = getPixelCenter(xIndex, yIndex);
+        return constructRay(xIndex, yIndex, 0, 0);
+    }
+
+    /**
+     * Construct a {@link Ray} from the camera to a jittered sub-pixel sample point within
+     * a given pixel, for anti-aliasing.
+     *
+     * @param xIndex  the pixel column number (zero indexed)
+     * @param yIndex  the pixel row number (zero indexed)
+     * @param offsetX horizontal offset from the pixel center, as a fraction of the pixel
+     *                width (typically in {@code [-0.5,0.5]}); {@code 0} is the center
+     * @param offsetY vertical offset from the pixel center, as a fraction of the pixel
+     *                height (typically in {@code [-0.5,0.5]}); {@code 0} is the center
+     * @return the ray
+     */
+    private Ray constructRay(int xIndex, int yIndex, double offsetX, double offsetY) {
+        Point pixelCenter = getPixelCenter(xIndex, yIndex, offsetX, offsetY);
         return new Ray(_p0, pixelCenter.subtract(_p0).normalize());
     }
 
     /**
-     * Calculates the center point of a pixel on the view plane.
+     * Calculates a (possibly sub-pixel-jittered) point on the view plane within a pixel.
      *
-     * @param xIndex the pixel column number
-     * @param yIndex the pixel row number
-     * @return the pixel center point on the view plane
+     * @param xIndex  the pixel column number
+     * @param yIndex  the pixel row number
+     * @param offsetX horizontal offset from the pixel center, as a fraction of the pixel width
+     * @param offsetY vertical offset from the pixel center, as a fraction of the pixel height
+     * @return the sample point on the view plane
      */
-    private Point getPixelCenter(int xIndex, int yIndex) {
-        final double xJ = (xIndex - (_nX - 1) / 2.0) * _pixelWidth;
-        final double yI = -(yIndex - (_nY - 1) / 2.0) * _pixelHeight;
+    private Point getPixelCenter(int xIndex, int yIndex, double offsetX, double offsetY) {
+        final double xJ = (xIndex - (_nX - 1) / 2.0 + offsetX) * _pixelWidth;
+        final double yI = -(yIndex - (_nY - 1) / 2.0 + offsetY) * _pixelHeight;
 
         Point pixelCenter = _vpCenter;
 
@@ -219,18 +242,43 @@ public class Camera implements Cloneable {
     }
 
     /**
-     * Helper function to cast a single ray through a specific pixel,
-     * calculate the resulting color, and write it to the image.
+     * Helper function to cast a ray (or, with anti-aliasing enabled, an averaged grid of
+     * sub-pixel rays) through a specific pixel, calculate the resulting color, and write
+     * it to the image.
      *
      * @param xIndex the pixel's column index
      * @param yIndex the pixel's row index
      */
     private void castRay(int xIndex, int yIndex) {
-        Color color =
-                _rayTracerBase.traceRay(
-                        constructRay(xIndex, yIndex));
+        Color color = _antiAliasing <= 1
+                ? _rayTracerBase.traceRay(constructRay(xIndex, yIndex))
+                : castAntiAliasedRay(xIndex, yIndex);
 
         _imageWriter.writePixel(xIndex, yIndex, color);
+    }
+
+    /**
+     * Averages an {@code n x n} grid of jittered sub-pixel samples (n = {@link #_antiAliasing})
+     * within a pixel, to smooth out aliasing on high-contrast edges (e.g. procedural texture
+     * boundaries, geometry silhouettes) that a single ray through the pixel center would miss.
+     *
+     * @param xIndex the pixel's column index
+     * @param yIndex the pixel's row index
+     * @return the averaged color across the sample grid
+     */
+    private Color castAntiAliasedRay(int xIndex, int yIndex) {
+        final double step = 1.0 / _antiAliasing;
+        Color color = Color.BLACK;
+
+        for (int i = 0; i < _antiAliasing; ++i) {
+            for (int j = 0; j < _antiAliasing; ++j) {
+                final double offsetX = (i + 0.5) * step - 0.5;
+                final double offsetY = (j + 0.5) * step - 0.5;
+                color = color.add(_rayTracerBase.traceRay(constructRay(xIndex, yIndex, offsetX, offsetY)));
+            }
+        }
+
+        return color.reduce(_antiAliasing * _antiAliasing);
     }
 
     /**
@@ -425,6 +473,29 @@ public class Camera implements Cloneable {
                 _camera._threadsCount = threadsCount;
             }
 
+            return this;
+        }
+
+        /**
+         * Sets the anti-aliasing quality: the number of jittered sample rays per pixel
+         * axis, averaged into a single pixel color.
+         * <p>
+         * {@code 1} (the default) disables anti-aliasing, casting a single ray through
+         * each pixel's center. Higher values trade render time (which grows with the
+         * square of this value) for smoother edges - {@code 3} (9 samples/pixel) is a
+         * reasonable default quality level; {@code 4}-{@code 5} for a final/high-quality
+         * render.
+         * </p>
+         *
+         * @param samplesPerAxis number of samples per pixel axis
+         * @return the builder object
+         * @throws IllegalArgumentException if {@code samplesPerAxis} is not positive
+         */
+        public Builder setAntiAliasing(int samplesPerAxis) {
+            if (samplesPerAxis <= 0)
+                throw new IllegalArgumentException("Anti-aliasing samples per axis must be positive");
+
+            _camera._antiAliasing = samplesPerAxis;
             return this;
         }
 

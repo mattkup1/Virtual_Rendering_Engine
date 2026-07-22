@@ -6,6 +6,7 @@ import java.util.List;
 import lighting.AmbientLight;
 import lighting.LightSource;
 import primitives.Color;
+import primitives.Texture;
 
 /**
  * Represents a complete 3D scene containing geometries, lighting, and background properties.
@@ -26,6 +27,12 @@ public class Scene {
      * The background color of the scene, defaults to Black.
      */
     public Color background = Color.BLACK;
+    /**
+     * The environment map (skybox) sampled - by ray direction, via {@link primitives.UV#fromDirection} -
+     * in place of {@link #background} for rays that hit nothing. {@code null} by default,
+     * meaning the flat {@link #background} color is used.
+     */
+    public Texture environmentMap;
     /**
      * The ambient lighting of the scene, defaults to None.
      */

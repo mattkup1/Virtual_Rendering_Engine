@@ -34,6 +34,11 @@
       "file": "sceneSourceFiles/obj/testPyramid.obj",
       "scale": 10,
       "translate": "70 0 0"
+    },
+    {
+      "type": "ellipsoid",
+      "center": "90 0 0",
+      "radii": "2 1 1"
     }
   ]
 }

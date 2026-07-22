@@ -9,6 +9,12 @@
     "resolutionY": 1000
   },
   "background-color": "20 24 34",
+  "environment-map": {
+    "type": "image",
+    "file": "sceneSourceFiles/textures/sky.png",
+    "repeatU": 1,
+    "repeatV": 1
+  },
   "lights": {
     "ambient-light": {
       "color": "26 28 34"

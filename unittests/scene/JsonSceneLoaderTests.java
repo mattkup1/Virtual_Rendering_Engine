@@ -216,9 +216,48 @@ class JsonSceneLoaderTests {
      * stripes, an imported image ({@code sunburst.png}), and procedural rings - to show
      * off both procedural and image-based texture mapping on the two UV-mapped shapes
      * ({@link geometries.impl.Plane}, {@link geometries.impl.Sphere}).
+     * <p>
+     * Also demonstrates the {@code environment-map} (skybox) replacing the flat background
+     * in the dead-sky area, and renders with 4x4 anti-aliasing enabled. This visibly
+     * smooths sphere silhouettes and the near-camera checker cells, but - honestly - the
+     * far-horizon checker cells (shrunk to sub-pixel size by perspective) still alias:
+     * simple supersampling only resolves aliasing down to roughly 1/n a pixel; fixing
+     * cells smaller than that needs prefiltering/mipmapping, a different technique this
+     * doesn't implement.
+     * </p>
      */
     @Test
     void testTextureShowcase() {
-        createImage("textureShowcase.json", "Texture showcase");
+        Scene scene = new JsonSceneLoader("Texture showcase", JSON_FILE_PATH + "textureShowcase.json").loadScene();
+        Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .setAntiAliasing(4)
+                .setMultithreading(-1)
+                .build()
+                .renderImage()
+                .writeToImage("Texture showcase");
+    }
+
+    /**
+     * Renders a showcase combining three more additions: a {@link geometries.impl.Ellipsoid}
+     * (a stretched "rugby ball" sphere), a {@code checker}-based {@code normalTexture} bump
+     * map on the orange sphere (visible as an embossed grid pattern in its specular
+     * highlight, not its flat color), and a soft-shadow {@link lighting.PointLight} (via
+     * {@code radius}) - its penumbra should read as a visibly graduated, not hard-edged,
+     * shadow on the floor.
+     */
+    @Test
+    void testSoftShadowBumpShowcase() {
+        Scene scene = new JsonSceneLoader(
+                "Soft shadow & bump showcase", JSON_FILE_PATH + "softShadowBumpShowcase.json").loadScene();
+        Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .setAntiAliasing(3)
+                .setMultithreading(-1)
+                .build()
+                .renderImage()
+                .writeToImage("Soft shadow and bump showcase");
     }
 }

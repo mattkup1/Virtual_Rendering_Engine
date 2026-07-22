@@ -44,4 +44,21 @@ public interface LightSource {
      * or {@code Double.POSITIVE_INFINITY} for directional light sources (like the sun)
      */
     public double getDistance(Point p);
+
+    /**
+     * Returns this light's physical radius, used to produce soft (penumbra) shadows by
+     * sampling multiple shadow rays across the light's surface instead of a single ray
+     * toward its center.
+     * <p>
+     * Defaults to {@code 0} (a hard-shadow point/delta light). Only {@link PointLight}
+     * (and its {@link SpotLight} subclass) support a non-zero radius; a light with no
+     * fixed position (like {@link DirectionalLight}) has no well-defined "surface" to
+     * sample across.
+     * </p>
+     *
+     * @return the light's radius; {@code 0} for a hard-shadow light
+     */
+    default double getRadius() {
+        return 0;
+    }
 }

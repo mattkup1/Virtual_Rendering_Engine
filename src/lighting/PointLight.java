@@ -37,6 +37,12 @@ public class PointLight extends Light implements LightSource {
     private double _kQ = 0;
 
     /**
+     * The light's physical radius, used for soft (penumbra) shadows; {@code 0} (the
+     * default) is a hard-shadow point light.
+     */
+    private double _radius = 0;
+
+    /**
      * Constructs a point light with the given intensity, position, and attenuation coefficients.
      *
      * @param intensity the color/intensity of the light
@@ -105,6 +111,27 @@ public class PointLight extends Light implements LightSource {
      */
     public double getDistance(Point p) {
         return _position.distance(p);
+    }
+
+    @Override
+    public double getRadius() {
+        return _radius;
+    }
+
+    /**
+     * Sets the light's physical radius, enabling soft (penumbra) shadows: shadow rays
+     * are sampled across a disk of this radius (at the light's actual distance) instead
+     * of a single ray toward its exact position. {@code 0} (the default) is a hard-shadow
+     * point light.
+     *
+     * @param radius the light's radius
+     * @return this point light for builder-style chaining
+     * @throws IllegalArgumentException if {@code radius} is negative
+     */
+    public PointLight setRadius(double radius) {
+        if (radius < 0) throw new IllegalArgumentException("Light radius must not be negative");
+        _radius = radius;
+        return this;
     }
 
     /**

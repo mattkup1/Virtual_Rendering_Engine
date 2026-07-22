@@ -91,6 +91,21 @@ public class Material {
     public Texture texture;
 
     /**
+     * Texture sampled as a grayscale height field to perturb the surface normal (bump
+     * mapping), for geometries that support UV mapping. {@code null} by default, meaning
+     * the geometry's own normal is used unperturbed. Independent of {@link #texture} -
+     * a material can have a color texture, a normal texture, both, or neither.
+     */
+    public Texture normalTexture;
+
+    /**
+     * Strength of the {@link #normalTexture} perturbation: a multiplier on the raw
+     * UV-space height gradient before it's applied to the normal. Has no effect when
+     * {@link #normalTexture} is {@code null}.
+     */
+    public double bumpStrength = 0.1;
+
+    /**
      * Default constructor for the {@link Material} class.
      */
     public Material() { /* To satisfy Javadoc generator */ }
@@ -176,6 +191,18 @@ public class Material {
     /** Sets the texture sampled in place of the geometry's flat emission color. */
     public Material setTexture(Texture texture) {
         this.texture = texture;
+        return this;
+    }
+
+    /** Sets the texture sampled as a grayscale height field to perturb the surface normal. */
+    public Material setNormalTexture(Texture normalTexture) {
+        this.normalTexture = normalTexture;
+        return this;
+    }
+
+    /** Sets the bump-mapping perturbation strength. */
+    public Material setBumpStrength(double bumpStrength) {
+        this.bumpStrength = bumpStrength;
         return this;
     }
 }

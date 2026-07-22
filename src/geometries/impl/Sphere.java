@@ -116,10 +116,7 @@ public final class Sphere extends RadialGeometry {
     @Override
     public UV getUV(Point point) {
         Vector d = point.equals(_center) ? Vector.AXIS_Y : point.subtract(_center).normalize();
-        double u = 0.5 + Math.atan2(d.getZ(), d.getX()) / (2 * Math.PI);
-        double clampedY = Math.max(-1, Math.min(1, d.getY()));
-        double v = 0.5 - Math.asin(clampedY) / Math.PI;
-        return new UV(u, v);
+        return UV.fromDirection(d);
     }
 
     @Override

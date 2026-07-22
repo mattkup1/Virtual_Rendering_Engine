@@ -6,6 +6,7 @@ import lighting.LightSource;
 import primitives.Color;
 import primitives.Double3;
 import primitives.Ray;
+import primitives.UV;
 import primitives.Vector;
 import scene.Scene;
 import java.util.HashMap;
@@ -48,6 +49,9 @@ class SimpleRayTracer extends RayTracerBase {
     /** Color threshold below which a beam segment is treated as uniform. */
     private static final double BEAM_COLOR_DELTA = 5;
 
+    /** Number of shadow rays sampled across a soft-shadow light's radius. */
+    private static final int SHADOW_SAMPLES = 25;
+
     /**
      * Constructs a ray tracer for the given scene.
      *
@@ -63,8 +67,22 @@ class SimpleRayTracer extends RayTracerBase {
     public Color traceRay(Ray ray) {
         var intersection = findClosestIntersection(ray);
         return intersection == null
-                ? _scene.background
+                ? backgroundColor(ray)
                 : calcColor(intersection, ray.getDirection());
+    }
+
+    /**
+     * Returns the color seen along a ray that hit nothing: the scene's environment map
+     * (skybox), sampled by the ray's own direction, if one is set; otherwise the flat
+     * background color.
+     *
+     * @param ray the ray that missed all scene geometry
+     * @return the background color for this ray
+     */
+    private Color backgroundColor(Ray ray) {
+        return _scene.environmentMap != null
+                ? _scene.environmentMap.sample(UV.fromDirection(ray.getDirection()))
+                : _scene.background;
     }
 
     /**
@@ -150,12 +168,46 @@ class SimpleRayTracer extends RayTracerBase {
 
     /**
      * Calculates transparency between the intersection point and its active light.
+     * <p>
+     * For a hard-shadow light ({@link LightSource#getRadius()} {@code == 0}, the default),
+     * this is a single shadow ray toward the light. For a light with a non-zero radius,
+     * {@link #SHADOW_SAMPLES} shadow rays are jittered across a disk of that radius at the
+     * light's actual distance (via {@link BeamSampler}) and their transparency averaged,
+     * producing a soft penumbra instead of a hard shadow edge.
+     * </p>
      *
      * @param intersection the intersection whose active light was prepared earlier
-     * @return accumulated transparency through all shadow-ray blockers
+     * @return accumulated (and, for soft-shadow lights, averaged) transparency through all
+     *         shadow-ray blockers
      */
     private Double3 transparency(Intersection intersection) {
-        var shadowRay = new Ray(intersection.point, intersection.l.scale(-1), intersection.normal);
+        Vector toLight = intersection.l.scale(-1);
+        double lightRadius = intersection.light.getRadius();
+
+        if (lightRadius == 0) {
+            return transparencyAlongRay(new Ray(intersection.point, toLight, intersection.normal), intersection);
+        }
+
+        double lightDistance = intersection.light.getDistance(intersection.point);
+        List<Ray> shadowRays = BeamSampler.sampleBeam(
+                intersection.point, toLight, intersection.normal, lightRadius, SHADOW_SAMPLES, lightDistance);
+
+        Double3 sum = Double3.ZERO;
+        for (Ray shadowRay : shadowRays) {
+            sum = sum.add(transparencyAlongRay(shadowRay, intersection));
+        }
+        return sum.divide(shadowRays.size());
+    }
+
+    /**
+     * Calculates transparency along a single shadow ray toward a light, up to the light's
+     * distance.
+     *
+     * @param shadowRay    the shadow ray to trace
+     * @param intersection the intersection whose active light was prepared earlier
+     * @return accumulated transparency through all blockers along this ray
+     */
+    private Double3 transparencyAlongRay(Ray shadowRay, Intersection intersection) {
         double lightDistance = intersection.light.getDistance(intersection.point);
         var shadowIntersections = _scene.geometries.calcIntersections(shadowRay, lightDistance);
         Double3 ktr = Double3.ONE;
@@ -229,7 +281,7 @@ class SimpleRayTracer extends RayTracerBase {
             return Color.BLACK;
 
         Intersection intersection = findClosestIntersection(ray);
-        if (intersection == null) return _scene.background.scale(kx);
+        if (intersection == null) return backgroundColor(ray).scale(kx);
         return preprocessIntersection(intersection, ray.getDirection())
                 ? calcColor(intersection, level - 1, kkx).scale(kx)
                 : Color.BLACK;

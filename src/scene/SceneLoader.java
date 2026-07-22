@@ -6,6 +6,7 @@ import geometries.impl.Box;
 import geometries.impl.Cone;
 import geometries.impl.Cylinder;
 import geometries.impl.Ellipse;
+import geometries.impl.Ellipsoid;
 import geometries.impl.Geometries;
 import geometries.impl.Plane;
 import geometries.impl.Polygon;
@@ -13,6 +14,7 @@ import geometries.impl.Sphere;
 import geometries.impl.Torus;
 import geometries.impl.Triangle;
 import geometries.impl.Tube;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -86,6 +88,12 @@ public abstract class SceneLoader {
             scene.ambientLight = new AmbientLight(parseColor(ambientColor));
         }
 
+        // Process Environment Map
+        Map<String, String> environmentMapData = getEnvironmentMap();
+        if (environmentMapData != null) {
+            scene.environmentMap = buildTexture(environmentMapData, "");
+        }
+
         // Process Light Sources
         for (var lightData : getLights()) {
             scene.lights.add(buildLight(lightData));
@@ -100,9 +108,11 @@ public abstract class SceneLoader {
         // Process Geometries
         // Subclasses provide raw string data in maps, this class builds the objects.
         List<Map<String, String>> geometryData = getGeometries();
+        List<Intersectable> topLevelGeometries = new ArrayList<>(geometryData.size());
         for (var data : geometryData) {
-            scene.geometries.add(buildGeometries(data));
+            topLevelGeometries.add(buildGeometries(data));
         }
+        scene.geometries = Geometries.buildBVH(topLevelGeometries);
 
         return scene;
     }
@@ -116,8 +126,8 @@ public abstract class SceneLoader {
      * <p>
      * Supported geometry types: {@code sphere}, {@code triangle}, {@code plane},
      * {@code tube}, {@code cylinder}, {@code polygon}, {@code box}, {@code cone},
-     * {@code torus}, {@code ellipse} (alias {@code disk}), and {@code mesh} (an
-     * imported {@code .obj} triangle mesh).
+     * {@code torus}, {@code ellipse} (alias {@code disk}), {@code ellipsoid}, and
+     * {@code mesh} (an imported {@code .obj} triangle mesh).
      * </p>
      *
      * @param data a map containing the attributes for the geometry
@@ -206,6 +216,11 @@ public abstract class SceneLoader {
                     geometry = new Ellipse(center, normal, axisDirection, radiusX, radiusY);
                 }
             }
+            case "ellipsoid" -> {
+                Point center = parsePoint(data.get("center"));
+                Vector radii = parseVector(data.get("radii"));
+                geometry = new Ellipsoid(center, radii.getX(), radii.getY(), radii.getZ());
+            }
             default -> throw new IllegalArgumentException("Unknown geometry type: " + type);
         }
         // Add emission light
@@ -241,21 +256,25 @@ public abstract class SceneLoader {
         Color emission = data.containsKey("emission") ? parseColor(data.get("emission")) : null;
         Material material = buildMaterial(data);
 
-        Geometries mesh = new Geometries();
+        List<Intersectable> texturedTriangles = new ArrayList<>(triangles.size());
         for (Triangle triangle : triangles) {
             if (emission != null) triangle.setEmission(emission);
             if (material != null) triangle.setMaterial(material);
-            mesh.add(triangle);
+            texturedTriangles.add(triangle);
         }
-        return mesh;
+        // BVH-organized: meshes commonly carry hundreds of triangles, where a flat scan
+        // (even with a per-triangle bounding-box check) is far more ray-intersection work
+        // than a spatial tree.
+        return Geometries.buildBVH(texturedTriangles);
     }
 
     /**
      * Builds a {@link Material} from namespaced material attributes in the geometry map.
      * <p>
      * Recognized keys: {@code material.kA}, {@code material.kD}, {@code material.kS},
-     * {@code material.kT}, {@code material.kR}, {@code material.shininess}, and
-     * {@code material.texture.*} (see {@link #buildTexture}).
+     * {@code material.kT}, {@code material.kR}, {@code material.shininess},
+     * {@code material.texture.*} and {@code material.normalTexture.*} (see
+     * {@link #buildTexture}), and {@code material.bumpStrength}.
      * </p>
      *
      * @param data geometry attribute map
@@ -273,10 +292,17 @@ public abstract class SceneLoader {
         hasMaterial |= apply(data, "material.shininess", v -> material.setShininess(Integer.parseInt(v)));
         hasMaterial |= apply(data, "material.blurR", v -> material.setBlurR(Double.parseDouble(v)));
         hasMaterial |= apply(data, "material.blurT", v -> material.setBlurT(Double.parseDouble(v)));
+        hasMaterial |= apply(data, "material.bumpStrength", v -> material.setBumpStrength(Double.parseDouble(v)));
 
-        Texture texture = buildTexture(data);
+        Texture texture = buildTexture(data, "material.texture.");
         if (texture != null) {
             material.setTexture(texture);
+            hasMaterial = true;
+        }
+
+        Texture normalTexture = buildTexture(data, "material.normalTexture.");
+        if (normalTexture != null) {
+            material.setNormalTexture(normalTexture);
             hasMaterial = true;
         }
 
@@ -284,9 +310,12 @@ public abstract class SceneLoader {
     }
 
     /**
-     * Builds a {@link Texture} from namespaced {@code material.texture.*} attributes, if present.
+     * Builds a {@link Texture} from attributes namespaced under the given prefix, if present.
+     * Used both for a geometry's {@code material.texture.*} and for the scene-level
+     * {@code environment-map} (with an empty prefix, since its attributes aren't nested
+     * under anything else).
      * <p>
-     * Recognized {@code material.texture.type} values, with their own attributes:
+     * Recognized {@code <prefix>type} values, with their own {@code <prefix>*} attributes:
      * </p>
      * <ul>
      * <li>{@code checker} - {@code colorA}, {@code colorB}, {@code cellSize}</li>
@@ -295,31 +324,32 @@ public abstract class SceneLoader {
      * <li>{@code image} - {@code file}, {@code repeatU}, {@code repeatV}</li>
      * </ul>
      *
-     * @param data geometry attribute map
-     * @return the constructed texture, or {@code null} if no {@code material.texture.type} is present
+     * @param data   the attribute map to read from
+     * @param prefix the key prefix (e.g. {@code "material.texture."}, or {@code ""})
+     * @return the constructed texture, or {@code null} if no {@code <prefix>type} is present
      * @throws IllegalArgumentException if the texture type is unsupported
      */
-    private Texture buildTexture(Map<String, String> data) {
-        String type = data.get("material.texture.type");
+    private Texture buildTexture(Map<String, String> data, String prefix) {
+        String type = data.get(prefix + "type");
         if (type == null) return null;
 
         return switch (type) {
             case "checker" -> new CheckerTexture(
-                    parseColor(data.get("material.texture.colorA")),
-                    parseColor(data.get("material.texture.colorB")),
-                    Double.parseDouble(data.get("material.texture.cellSize")));
+                    parseColor(data.get(prefix + "colorA")),
+                    parseColor(data.get(prefix + "colorB")),
+                    Double.parseDouble(data.get(prefix + "cellSize")));
             case "stripe" -> new StripeTexture(
-                    parseColor(data.get("material.texture.colorA")),
-                    parseColor(data.get("material.texture.colorB")),
-                    Double.parseDouble(data.get("material.texture.stripeWidth")));
+                    parseColor(data.get(prefix + "colorA")),
+                    parseColor(data.get(prefix + "colorB")),
+                    Double.parseDouble(data.get(prefix + "stripeWidth")));
             case "ring" -> new RingTexture(
-                    parseColor(data.get("material.texture.colorA")),
-                    parseColor(data.get("material.texture.colorB")),
-                    Double.parseDouble(data.get("material.texture.ringWidth")));
+                    parseColor(data.get(prefix + "colorA")),
+                    parseColor(data.get(prefix + "colorB")),
+                    Double.parseDouble(data.get(prefix + "ringWidth")));
             case "image" -> new ImageTexture(
-                    data.get("material.texture.file"),
-                    Double.parseDouble(data.get("material.texture.repeatU")),
-                    Double.parseDouble(data.get("material.texture.repeatV")));
+                    data.get(prefix + "file"),
+                    Double.parseDouble(data.get(prefix + "repeatU")),
+                    Double.parseDouble(data.get(prefix + "repeatV")));
             default -> throw new IllegalArgumentException("Unknown texture type: " + type);
         };
     }
@@ -490,6 +520,15 @@ public abstract class SceneLoader {
      * @return the camera attribute map, or {@code null} if the source file defines no camera
      */
     protected abstract Map<String, String> getCamera();
+
+    /**
+     * Returns a map representing the string-based attributes of the scene's environment
+     * map (skybox), in the same unprefixed form {@link #buildTexture} expects (e.g.
+     * {@code type}, {@code file}, {@code repeatU}, {@code repeatV} for an image texture).
+     *
+     * @return the environment-map attribute map, or {@code null} if the source file defines none
+     */
+    protected abstract Map<String, String> getEnvironmentMap();
 
     // --- Shared internal helpers ---
 

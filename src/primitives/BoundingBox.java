@@ -75,6 +75,42 @@ public final class BoundingBox {
     }
 
     /**
+     * Returns the geometric center of this box, used for BVH split-axis selection.
+     *
+     * @return the center point
+     */
+    public Point center() {
+        return new Point((_minX + _maxX) / 2, (_minY + _maxY) / 2, (_minZ + _maxZ) / 2);
+    }
+
+    /**
+     * Returns the box's size along the X axis, used for BVH split-axis selection.
+     *
+     * @return the X extent
+     */
+    public double extentX() {
+        return _maxX - _minX;
+    }
+
+    /**
+     * Returns the box's size along the Y axis, used for BVH split-axis selection.
+     *
+     * @return the Y extent
+     */
+    public double extentY() {
+        return _maxY - _minY;
+    }
+
+    /**
+     * Returns the box's size along the Z axis, used for BVH split-axis selection.
+     *
+     * @return the Z extent
+     */
+    public double extentZ() {
+        return _maxZ - _minZ;
+    }
+
+    /**
      * Tests whether a ray intersects this bounding box within a given distance, using the
      * slab method.
      *

@@ -9,11 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Verifies that {@link SceneLoader} correctly parses the {@code box}, {@code cone},
- * {@code torus}, {@code disk}/{@code ellipse}, and {@code mesh} geometry types from both
- * the JSON and XML {@code newShapesTest} source files, by firing a targeted ray at each
- * shape and checking the resulting intersection point - rather than re-rendering a full
- * image like the other {@link JsonSceneLoader}/{@link XmlSceneLoader} tests, since this
- * only needs to confirm each shape was constructed with the right parameters.
+ * {@code torus}, {@code disk}/{@code ellipse}, {@code mesh}, and {@code ellipsoid}
+ * geometry types from both the JSON and XML {@code newShapesTest} source files, by
+ * firing a targeted ray at each shape and checking the resulting intersection point -
+ * rather than re-rendering a full image like the other
+ * {@link JsonSceneLoader}/{@link XmlSceneLoader} tests, since this only needs to confirm
+ * each shape was constructed with the right parameters.
  *
  * @author mattkuperwasser
  * @author moshehanau
@@ -84,6 +85,12 @@ class NewShapesSceneLoaderTests {
                 (apex.getZ() + v2.getZ() + v3.getZ()) / 3);
         Ray meshRay = new Ray(new Point(centroid.getX(), centroid.getY(), -50), Vector.AXIS_Z);
         assertEquals(centroid, scene.geometries.findIntersections(meshRay).getFirst(),
+                ERR_INCORRECT_INTERSECTION);
+
+        // Ellipsoid: center (90,0,0), radii (2,1,1) - ray along Z hits the near (-Z) face
+        // at z = -1 (the unstretched radius)
+        Ray ellipsoidRay = new Ray(new Point(90, 0, -5), Vector.AXIS_Z);
+        assertEquals(new Point(90, 0, -1), scene.geometries.findIntersections(ellipsoidRay).getFirst(),
                 ERR_INCORRECT_INTERSECTION);
     }
 
