@@ -123,6 +123,20 @@ public class XmlSceneLoader extends SceneLoader {
     }
 
     @Override
+    protected Map<String, String> getCamera() {
+        Node cameraNode = doc.getElementsByTagName("camera").item(0);
+        if (cameraNode == null) return null;
+
+        Map<String, String> map = new HashMap<>();
+        var attributes = cameraNode.getAttributes();
+        for (int j = 0; j < attributes.getLength(); j++) {
+            Node attr = attributes.item(j);
+            map.put(attr.getNodeName(), attr.getNodeValue());
+        }
+        return map;
+    }
+
+    @Override
     protected List<Map<String, String>> getGeometries() {
         List<Map<String, String>> list = new ArrayList<>();
         Node geometriesNode = doc.getElementsByTagName("geometries").item(0);

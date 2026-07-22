@@ -38,6 +38,11 @@ public class Scene {
      * The collection of light sources in the scene
      */
     public List<LightSource> lights = new ArrayList<>();
+    /**
+     * The camera settings loaded from the scene source file, or {@code null} if the
+     * source file defines no camera and the caller must configure one directly.
+     */
+    public CameraSettings cameraSettings;
 
     /**
      * Constructs a scene with a given name and an empty collection of geometries.

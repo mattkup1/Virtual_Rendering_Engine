@@ -9,13 +9,14 @@ import scene.Scene;
  * Integration tests covering how camera location and rotation affect the
  * rendered output of a fixed scene.
  * <p>
- * Each test loads {@code coolScene.json} from {@link #JSON_FILE_PATH} and
- * renders it through a freshly built camera whose location and roll angle
- * vary per test case. The shared view-plane geometry ({@link #VP_SIZE},
- * {@link #VP_DISTANCE}, {@link #RESOLUTION}) and look-at target
- * ({@link #LOOK_AT}) are held constant so that any visual differences
- * across rendered images can be attributed to the location/rotation
- * parameters under test.
+ * Each test loads {@code coolScene.json} from {@link #JSON_FILE_PATH} - including its
+ * {@link scene.CameraSettings camera settings} (view-plane geometry, resolution, and
+ * default look-at target) - and renders it through a camera whose location and roll
+ * angle are then overridden per test case. Since location and rotation are exactly
+ * what these tests vary, they stay as explicit per-test-case parameters in code rather
+ * than moving into the scene file; every other camera setting comes from
+ * {@code coolScene.json} so visual differences across rendered images can be
+ * attributed solely to the location/rotation parameters under test.
  * </p>
  *
  * @author mattkuperwasser
@@ -29,69 +30,33 @@ public class CameraRenderIntegration {
     CameraRenderIntegration() { /* To satisfy Javadoc generator */ }
 
     /**
-     * Physical size of the View Plane (it is a square: SIZE x SIZE)
-     */
-    private static final double VP_SIZE = 500;
-    /**
-     * Distance from the Camera to the View Plane
-     */
-    private static final double VP_DISTANCE = 100;
-    /**
      * Default camera location point. Used by tests that only vary rotation,
      * and overridden by per-test locations in {@link #testLocation()} and
      * {@link #testLocationRotation()}.
      */
     private static final Point LOCATION = Point.ZERO;
     /**
-     * Camera direction target point
-     */
-    private static final Point LOOK_AT = new Point(0, 0, -1);
-    /**
-     * Image resolution (it is a square: N x N)
-     */
-    private static final int RESOLUTION = 1000;
-    /**
      * Directory containing the JSON scene source files
      */
     private static final String JSON_FILE_PATH = "sceneSourceFiles/json/";
 
     /**
-     * Builds a fresh, pre-configured camera builder positioned at the given location.
-     * <p>
-     * The returned builder is seeded with the shared test settings — view-plane
-     * distance ({@link #VP_DISTANCE}), view-plane size ({@link #VP_SIZE}),
-     * look-at target ({@link #LOOK_AT}) and image resolution
-     * ({@link #RESOLUTION}). Callers still need to attach a ray tracer (and
-     * optionally apply rotation) before invoking {@link Camera.Builder#build()}.
-     * A new builder instance is returned on every call, so tests do not share
-     * builder state.
-     * </p>
-     *
-     * @param location world-space point at which to place the camera
-     * @return a pre-configured {@link Camera.Builder} ready for further customization
-     */
-    private static Camera.Builder baseCameraBuilder(Point location) {
-        return Camera.getBuilder()
-                .setLocation(location)
-                .setDirection(LOOK_AT)
-                .setVpDistance(VP_DISTANCE)
-                .setVpSize(VP_SIZE, VP_SIZE)
-                .setResolution(RESOLUTION, RESOLUTION);
-    }
-
-    /**
-     * Loads the named JSON scene, renders it through a camera positioned and
-     * rotated as specified, and writes the resulting image to disk.
+     * Loads the named JSON scene, renders it through a camera built from that scene's
+     * {@link scene.CameraSettings}, positioned and rotated as specified, and writes the
+     * resulting image to disk.
      *
      * @param sceneFileName name of the JSON scene file inside {@link #JSON_FILE_PATH}
      * @param imageName     name to use for the produced image (without extension)
-     * @param location      world-space point at which to place the camera
+     * @param location      world-space point at which to place the camera, overriding
+     *                      the location loaded from the scene file
      * @param rotation      camera roll angle in degrees, applied around the
      *                      view direction via {@link Camera.Builder#rotate(double)}
      */
     private static void createImage(String sceneFileName, String imageName, Point location, double rotation) {
         Scene scene = new JsonSceneLoader("Loaded scene", JSON_FILE_PATH + sceneFileName).loadScene();
-        baseCameraBuilder(location)
+        Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
+                .setLocation(location)
                 .setRayTracer(scene, RayTracerType.SIMPLE)
                 .rotate(rotation)
                 .build()

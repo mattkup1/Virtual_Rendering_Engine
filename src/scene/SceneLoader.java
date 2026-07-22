@@ -61,6 +61,7 @@ public abstract class SceneLoader {
      * 2. Initializing ambient lighting.
      * 3. Constructing all light sources.
      * 4. Constructing all geometric shapes.
+     * 5. Constructing the camera settings, if the source file defines any.
      * </p>
      *
      * @return the fully populated {@link Scene}
@@ -81,6 +82,12 @@ public abstract class SceneLoader {
         // Process Light Sources
         for (var lightData : getLights()) {
             scene.lights.add(buildLight(lightData));
+        }
+
+        // Process Camera
+        Map<String, String> cameraData = getCamera();
+        if (cameraData != null) {
+            scene.cameraSettings = buildCameraSettings(cameraData);
         }
 
         // Process Geometries
@@ -254,6 +261,31 @@ public abstract class SceneLoader {
     }
 
     /**
+     * Builds {@link CameraSettings} from a raw camera attribute map.
+     * <p>
+     * Recognized keys: {@code location}, {@code direction} (the point the camera is
+     * aimed at), optional {@code up} (defaults to the Y axis), {@code vpDistance},
+     * {@code vpWidth}, {@code vpHeight}, {@code resolutionX}, and {@code resolutionY}.
+     * </p>
+     *
+     * @param data the camera attribute map
+     * @return the constructed {@link CameraSettings}
+     */
+    private CameraSettings buildCameraSettings(Map<String, String> data) {
+        CameraSettings settings = new CameraSettings();
+        settings.location = parsePoint(data.get("location"));
+        settings.direction = parsePoint(data.get("direction"));
+        if (data.containsKey("up"))
+            settings.up = parseVector(data.get("up"));
+        settings.vpDistance = Double.parseDouble(data.get("vpDistance"));
+        settings.vpWidth = Double.parseDouble(data.get("vpWidth"));
+        settings.vpHeight = Double.parseDouble(data.get("vpHeight"));
+        settings.resolutionX = Integer.parseInt(data.get("resolutionX"));
+        settings.resolutionY = Integer.parseInt(data.get("resolutionY"));
+        return settings;
+    }
+
+    /**
      * Factory method for creating light sources from raw attribute maps.
      * <p>
      * Supported light types: {@code directional-light}, {@code point-light}, and {@code spot-light}.
@@ -360,6 +392,13 @@ public abstract class SceneLoader {
      * @return geometry attribute maps; empty if the scene defines no geometries
      */
     protected abstract List<Map<String, String>> getGeometries();
+
+    /**
+     * Returns a map representing the string-based attributes of the scene's camera.
+     *
+     * @return the camera attribute map, or {@code null} if the source file defines no camera
+     */
+    protected abstract Map<String, String> getCamera();
 
     // --- Shared internal helpers ---
 

@@ -4,6 +4,9 @@
   Lights are placed with clear roles — overhead key, warm fill, and a focused accent.
 -->
 <scene background-color="6 8 18">
+	<camera location="0 0 0" direction="0 0 -1" vpDistance="100" vpWidth="500" vpHeight="500"
+	        resolutionX="1000" resolutionY="1000" />
+
 	<lights>
 		<ambient-light color="22 26 38" />
 		<directional-light color="200 215 255" direction="0.15 -1 -0.25" />

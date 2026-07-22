@@ -2,7 +2,6 @@ package scene;
 
 import org.junit.jupiter.api.Test;
 import primitives.Color;
-import primitives.Point;
 import renderer.Camera;
 import renderer.RayTracerType;
 
@@ -12,8 +11,8 @@ import static java.awt.Color.YELLOW;
  * End-to-end rendering tests driven by JSON scene source files.
  * <p>
  * Each test loads a scene from a {@code .json} file under
- * {@link #JSON_FILE_PATH}, renders it with a shared base camera,
- * and writes the result to disk. The actual parsing logic lives in
+ * {@link #JSON_FILE_PATH}, renders it with the camera settings loaded from that same
+ * file, and writes the result to disk. The actual parsing logic lives in
  * {@link JsonSceneLoader} and is intentionally not duplicated here.
  * </p>
  *
@@ -28,56 +27,21 @@ class JsonSceneLoaderTests {
     JsonSceneLoaderTests() { /* to satisfy Javadoc generator */ }
 
     /**
-     * Physical size of the View Plane (it is a square: SIZE x SIZE)
-     */
-    private static final double VP_SIZE = 500;
-    /**
-     * Distance from the Camera to the View Plane
-     */
-    private static final double VP_DISTANCE = 100;
-    /**
-     * Camera location point
-     */
-    private static final Point LOCATION = Point.ZERO;
-    /**
-     * Camera direction target point
-     */
-    private static final Point LOOK_AT = new Point(0, 0, -1);
-    /**
-     * Image resolution (it is a square: N x N)
-     */
-    private static final int RESOLUTION = 1000;
-    /**
      * Directory containing the JSON scene source files
      */
     private static final String JSON_FILE_PATH = "sceneSourceFiles/json/";
 
     /**
-     * Shared camera builder pre-configured with the common test settings.
-     * <p>
-     * Each test calls {@link Camera.Builder#setRayTracer(Scene, RayTracerType)} on this
-     * builder before {@link Camera.Builder#build()} produces a fresh {@link Camera}
-     * clone. This relies on sequential test execution; enabling JUnit parallel
-     * execution would race on the builder's internal state.
-     * </p>
-     */
-    private static final Camera.Builder cameraBuilder = Camera.getBuilder()
-            .setLocation(LOCATION)
-            .setDirection(LOOK_AT)
-            .setVpDistance(VP_DISTANCE)
-            .setVpSize(VP_SIZE, VP_SIZE)
-            .setResolution(RESOLUTION, RESOLUTION);
-
-    /**
-     * Loads the given JSON scene file, attaches a simple ray tracer and renders
-     * the image.
+     * Loads the given JSON scene file, builds a camera from its {@link CameraSettings},
+     * attaches a simple ray tracer, and renders the image.
      *
      * @param sceneFileName name of the JSON scene file inside {@link #JSON_FILE_PATH}
      * @return the camera after rendering
      */
     private static Camera renderScene(String sceneFileName) {
         Scene scene = new JsonSceneLoader("Loaded scene", JSON_FILE_PATH + sceneFileName).loadScene();
-        return cameraBuilder
+        return Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
                 .setRayTracer(scene, RayTracerType.SIMPLE)
                 .build()
                 .renderImage();
@@ -164,22 +128,15 @@ class JsonSceneLoaderTests {
      * Renders the LEGO street scene: two houses, a car, minifigures,
      * a lamppost, trees, and a sunny sky with clouds.
      * <p>
-     * Uses a custom elevated camera angled down to give a classic LEGO
-     * diorama perspective, with a narrower field of view so the objects
-     * fill the frame properly.
+     * Uses the elevated, tilted camera angle and narrow field of view defined in
+     * {@code legoScene.json} for a classic LEGO diorama perspective.
      * </p>
      */
     @Test
     void testLegoScene() {
         Scene scene = new JsonSceneLoader("LEGO Scene", JSON_FILE_PATH + "legoScene.json").loadScene();
         Camera.getBuilder()
-                // Elevated, tilted ~37° down — classic LEGO diorama angle
-                .setLocation(new primitives.Point(0, 80, 40))
-                .setDirection(new primitives.Point(0, -65, -155), new primitives.Vector(0, 1, 0))
-                // Telephoto: VP 160×160 at distance 200 → 21° half-angle zooms in
-                .setVpDistance(200)
-                .setVpSize(160, 160)
-                .setResolution(RESOLUTION, RESOLUTION)
+                .loadFrom(scene.cameraSettings)
                 .setRayTracer(scene, RayTracerType.SIMPLE)
                 .setMultithreading(-1)
                 .setDebugPrint(1.0)
@@ -207,9 +164,8 @@ class JsonSceneLoaderTests {
      *       a sharp-to-smeared reflection.</li>
      * </ul>
      * <p>
-     * Uses a fresh camera builder with a tighter field of view than the
-     * shared {@link #cameraBuilder} so the off-axis spheres are not
-     * fisheye-distorted.
+     * Uses the tighter field of view defined in {@code glossyAndBlurryScene.json}
+     * so the off-axis spheres are not fisheye-distorted.
      * </p>
      */
     @Test
@@ -220,16 +176,23 @@ class JsonSceneLoaderTests {
                 .loadScene();
 
         Camera.getBuilder()
-                .setLocation(LOCATION)
-                .setDirection(LOOK_AT)
-                .setVpDistance(200)
-                .setVpSize(250, 250)
-                .setResolution(800, 800)
+                .loadFrom(scene.cameraSettings)
                 .setRayTracer(scene, RayTracerType.SIMPLE)
                 .setMultithreading(1)
                 .setDebugPrint(1.0)
                 .build()
                 .renderImage()
                 .writeToImage("11-adss");
+    }
+
+    /**
+     * Renders a showcase scene featuring the four new geometries added in
+     * {@code geometries.impl} - {@link geometries.impl.Box}, {@link geometries.impl.Cone},
+     * {@link geometries.impl.Torus}, and {@link geometries.impl.Ellipse} (as a disk) -
+     * lined up on a reflective floor plane under ambient, directional, and point lighting.
+     */
+    @Test
+    void testNewShapesShowcase() {
+        createImage("newShapesShowcase.json", "New shapes showcase");
     }
 }

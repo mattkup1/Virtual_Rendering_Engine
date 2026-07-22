@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scene background-color="75 127 190">
+	<camera location="0 0 0" direction="0 0 -1" vpDistance="100" vpWidth="500" vpHeight="500"
+	        resolutionX="1000" resolutionY="1000" />
 	<ambient-light color="255 191 191" />
 	<geometries>
 		<sphere center="0 0 -100" radius="50" />

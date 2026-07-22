@@ -5,6 +5,7 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import scene.CameraSettings;
 import scene.Scene;
 
 import static primitives.Util.isZero;
@@ -378,6 +379,27 @@ public class Camera implements Cloneable {
         public Builder setResolution(int nX, int nY) {
             _camera._nX = nX;
             _camera._nY = nY;
+
+            return this;
+        }
+
+        /**
+         * Configures location, direction, view-plane geometry, and resolution from
+         * {@link CameraSettings} loaded from a scene source file.
+         * <p>
+         * Execution/session settings such as multithreading or debug-print interval are
+         * not part of {@link CameraSettings} and must still be set separately.
+         * </p>
+         *
+         * @param settings the camera settings to apply
+         * @return the builder object
+         */
+        public Builder loadFrom(CameraSettings settings) {
+            setLocation(settings.location);
+            setDirection(settings.direction, settings.up);
+            setVpDistance(settings.vpDistance);
+            setVpSize(settings.vpWidth, settings.vpHeight);
+            setResolution(settings.resolutionX, settings.resolutionY);
 
             return this;
         }

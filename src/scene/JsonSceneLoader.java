@@ -92,6 +92,18 @@ public class JsonSceneLoader extends SceneLoader {
     }
 
     @Override
+    protected Map<String, String> getCamera() {
+        JSONObject camera = root.optJSONObject("camera");
+        if (camera == null) return null;
+
+        Map<String, String> map = new HashMap<>();
+        for (String key : camera.keySet()) {
+            map.put(key, String.valueOf(camera.get(key)));
+        }
+        return map;
+    }
+
+    @Override
     protected List<Map<String, String>> getGeometries() {
         List<Map<String, String>> list = new ArrayList<>();
         JSONArray geometries = root.optJSONArray("geometries");

@@ -1,0 +1,91 @@
+{
+  "camera": {
+    "location": "120 140 200",
+    "direction": "10 -60 -500",
+    "vpDistance": 350,
+    "vpWidth": 420,
+    "vpHeight": 420,
+    "resolutionX": 1000,
+    "resolutionY": 1000
+  },
+  "background-color": "10 12 18",
+  "lights": {
+    "ambient-light": {
+      "color": "22 24 30"
+    },
+    "directional-light": {
+      "color": "90 95 110",
+      "direction": "-0.3 -0.7 -0.5"
+    },
+    "point-light": {
+      "color": "600 560 480",
+      "position": "50 250 -200",
+      "kL": 0.0005,
+      "kQ": 0.000002
+    }
+  },
+  "geometries": [
+    {
+      "type": "plane",
+      "p0": "0 -110 0",
+      "normal": "0 1 0",
+      "emission": "8 10 16",
+      "material": {
+        "kD": "0.22 0.24 0.30",
+        "kS": "0.18 0.18 0.22",
+        "shininess": 80,
+        "kR": "0.15 0.15 0.18"
+      }
+    },
+    {
+      "type": "box",
+      "min": "-225 -110 -545",
+      "max": "-135 -20 -455",
+      "emission": "200 60 40",
+      "material": {
+        "kD": "0.08 0.08 0.08",
+        "kS": "0.35 0.35 0.35",
+        "shininess": 150
+      }
+    },
+    {
+      "type": "cone",
+      "origin": "-60 0 -500",
+      "AxisDirection": "0 -1 0",
+      "radius": 55,
+      "height": 110,
+      "emission": "50 190 90",
+      "material": {
+        "kD": "0.08 0.08 0.08",
+        "kS": "0.3 0.3 0.3",
+        "shininess": 120
+      }
+    },
+    {
+      "type": "torus",
+      "center": "60 -47 -500",
+      "axis": "0 0 1",
+      "majorRadius": 45,
+      "minorRadius": 18,
+      "emission": "230 180 40",
+      "material": {
+        "kD": "0.05 0.05 0.05",
+        "kS": "0.6 0.55 0.35",
+        "shininess": 280,
+        "kR": "0.35 0.30 0.15"
+      }
+    },
+    {
+      "type": "disk",
+      "center": "180 -60 -500",
+      "normal": "0.35 0.1 0.93",
+      "radius": 50,
+      "emission": "60 110 230",
+      "material": {
+        "kD": "0.08 0.08 0.08",
+        "kS": "0.4 0.4 0.45",
+        "shininess": 180
+      }
+    }
+  ]
+}

@@ -1,4 +1,13 @@
 {
+  "camera": {
+    "location": "0 0 0",
+    "direction": "0 0 -1",
+    "vpDistance": 100,
+    "vpWidth": 500,
+    "vpHeight": 500,
+    "resolutionX": 1000,
+    "resolutionY": 1000
+  },
   "background-color": "155 50 155",
   "ambient-light": {
     "color": "255 255 255"
