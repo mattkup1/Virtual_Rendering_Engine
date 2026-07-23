@@ -1,0 +1,326 @@
+{
+  "camera": {
+    "location": "110 110 400",
+    "direction": "0 -90 -300",
+    "vpDistance": 350,
+    "vpWidth": 420,
+    "vpHeight": 420,
+    "resolutionX": 1000,
+    "resolutionY": 1000
+  },
+  "background-color": "8 10 16",
+  "environment-map": {
+    "type": "image",
+    "file": "sceneSourceFiles/textures/sky.png",
+    "repeatU": 1,
+    "repeatV": 1
+  },
+  "lights": {
+    "ambient-light": {
+      "color": "20 22 30"
+    },
+    "directional-light": {
+      "color": "55 60 78",
+      "direction": "-0.3 -0.8 -0.35"
+    },
+    "point-light": {
+      "color": "420 400 340",
+      "position": "0 380 -280",
+      "kL": 0.0006,
+      "kQ": 0.000004,
+      "radius": 45
+    },
+    "spot-light": {
+      "color": "150 75 25",
+      "position": "65 -50 -290",
+      "direction": "0 -1 0",
+      "kL": 0.002,
+      "kQ": 0.0002,
+      "narrowBeam": 1
+    }
+  },
+  "geometries": [
+    {
+      "type": "plane",
+      "p0": "0 -260 0",
+      "normal": "0 1 0",
+      "material": {
+        "kD": "0.22 0.22 0.24",
+        "kS": "0.15 0.15 0.18",
+        "shininess": 50,
+        "kR": "0.05 0.05 0.06",
+        "texture.type": "checker",
+        "texture.colorA": "70 66 60",
+        "texture.colorB": "40 38 34",
+        "texture.cellSize": 40,
+        "normalTexture.type": "checker",
+        "normalTexture.colorA": "255 255 255",
+        "normalTexture.colorB": "0 0 0",
+        "normalTexture.cellSize": 40,
+        "bumpStrength": 0.35
+      }
+    },
+    {
+      "type": "box",
+      "min": "-260 -140 -380",
+      "max": "260 -100 -220",
+      "emission": "150 145 135",
+      "material": {
+        "kD": "0.22 0.22 0.22",
+        "kS": "0.25 0.25 0.25",
+        "shininess": 70
+      }
+    },
+    {
+      "type": "box",
+      "min": "-240 -260 -360",
+      "max": "-200 -140 -320",
+      "emission": "95 92 88",
+      "material": {
+        "kD": "0.22 0.22 0.22",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 40
+      }
+    },
+    {
+      "type": "box",
+      "min": "200 -260 -360",
+      "max": "240 -140 -320",
+      "emission": "95 92 88",
+      "material": {
+        "kD": "0.22 0.22 0.22",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 40
+      }
+    },
+    {
+      "type": "box",
+      "min": "-240 -260 -280",
+      "max": "-200 -140 -240",
+      "emission": "95 92 88",
+      "material": {
+        "kD": "0.22 0.22 0.22",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 40
+      }
+    },
+    {
+      "type": "box",
+      "min": "200 -260 -280",
+      "max": "240 -140 -240",
+      "emission": "95 92 88",
+      "material": {
+        "kD": "0.22 0.22 0.22",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 40
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/cow.obj",
+      "scale": 10,
+      "translate": "-137.762 -63.63 -300",
+      "emission": "120 90 60",
+      "material": {
+        "kD": "0.12 0.12 0.1",
+        "kS": "0.35 0.3 0.22",
+        "shininess": 90,
+        "kR": "0.08 0.07 0.05"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/bunny.obj",
+      "scale": 300,
+      "translate": "5.055 -109.9 -299.535",
+      "emission": "228 224 216",
+      "material": {
+        "kD": "0.18 0.18 0.18",
+        "kS": "0.3 0.3 0.3",
+        "shininess": 110,
+        "kR": "0.04 0.04 0.04"
+      }
+    },
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/obj/suzanne.obj",
+      "scale": 20,
+      "translate": "179.882 -105.346 -382.078",
+      "emission": "58 56 53",
+      "material": {
+        "kD": "0.22 0.22 0.22",
+        "kS": "0.2 0.2 0.2",
+        "shininess": 55
+      }
+    },
+    {
+      "type": "torus",
+      "center": "-65 -93 -290",
+      "axis": "0 1 0",
+      "majorRadius": 28,
+      "minorRadius": 7,
+      "emission": "70 140 150",
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.3 0.3 0.3",
+        "shininess": 90,
+        "kR": "0.05 0.05 0.05"
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-72 -91 -286",
+      "radius": 9,
+      "emission": "200 40 40",
+      "material": {
+        "kD": "0.35 0.35 0.35",
+        "kS": "0.3 0.3 0.3",
+        "shininess": 80
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-58 -92 -286",
+      "radius": 8,
+      "emission": "230 140 30",
+      "material": {
+        "kD": "0.35 0.35 0.35",
+        "kS": "0.3 0.3 0.3",
+        "shininess": 80
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-65 -93 -296",
+      "radius": 7,
+      "emission": "140 200 60",
+      "material": {
+        "kD": "0.35 0.35 0.35",
+        "kS": "0.3 0.3 0.3",
+        "shininess": 80
+      }
+    },
+    {
+      "type": "cylinder",
+      "origin": "65 -100 -290",
+      "AxisDirection": "0 1 0",
+      "radius": 6,
+      "height": 40,
+      "emission": "235 225 200",
+      "material": {
+        "kD": "0.25 0.25 0.25",
+        "kS": "0.2 0.2 0.2",
+        "shininess": 60
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "65 -56 -290",
+      "radius": 4,
+      "emission": "255 170 60",
+      "material": {
+        "kD": "0.1 0.1 0.1",
+        "kS": "0.1 0.1 0.1",
+        "shininess": 20
+      }
+    },
+    {
+      "type": "cylinder",
+      "origin": "-190 -100 -300",
+      "AxisDirection": "0 1 0",
+      "radius": 10,
+      "height": 35,
+      "emission": "60 90 150",
+      "material": {
+        "kD": "0.28 0.28 0.28",
+        "kS": "0.35 0.35 0.35",
+        "shininess": 100,
+        "kR": "0.05 0.05 0.05"
+      }
+    },
+    {
+      "type": "cylinder",
+      "origin": "-196 -65 -300",
+      "AxisDirection": "0.1 1 0",
+      "radius": 1.5,
+      "height": 30,
+      "emission": "50 130 60",
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 40
+      }
+    },
+    {
+      "type": "cylinder",
+      "origin": "-190 -65 -296",
+      "AxisDirection": "-0.05 1 0.05",
+      "radius": 1.5,
+      "height": 34,
+      "emission": "50 130 60",
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 40
+      }
+    },
+    {
+      "type": "cylinder",
+      "origin": "-184 -65 -304",
+      "AxisDirection": "0.08 1 -0.05",
+      "radius": 1.5,
+      "height": 28,
+      "emission": "50 130 60",
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.15 0.15 0.15",
+        "shininess": 40
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-193 -34 -297",
+      "radius": 6,
+      "emission": "230 120 160",
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.25 0.25 0.25",
+        "shininess": 70
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-191.5 -30 -292",
+      "radius": 6,
+      "emission": "235 210 60",
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.25 0.25 0.25",
+        "shininess": 70
+      }
+    },
+    {
+      "type": "sphere",
+      "center": "-181 -37 -306",
+      "radius": 6,
+      "emission": "170 110 200",
+      "material": {
+        "kD": "0.3 0.3 0.3",
+        "kS": "0.25 0.25 0.25",
+        "shininess": 70
+      }
+    },
+    {
+      "type": "ellipsoid",
+      "center": "185 -87 -260",
+      "radii": "9 13 9",
+      "emission": "100 110 130",
+      "material": {
+        "kD": "0.15 0.15 0.15",
+        "kS": "0.45 0.45 0.45",
+        "shininess": 160,
+        "kR": "0.2 0.2 0.2"
+      }
+    }
+  ]
+}

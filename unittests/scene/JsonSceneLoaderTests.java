@@ -260,4 +260,30 @@ class JsonSceneLoaderTests {
                 .renderImage()
                 .writeToImage("Soft shadow and bump showcase");
     }
+
+    /**
+     * Renders a "moonlit garden patio" showcase: a stone table on four legs, standing on
+     * a bump-mapped tile floor, under a night-sky {@code environment-map}. Three imported
+     * {@code .obj} meshes ({@link ObjMeshLoader}) - a cow, the Stanford bunny, and Blender's
+     * Suzanne - sit on the table as statues, alongside a fruit bowl ({@link geometries.impl.Torus}
+     * plus three spheres), a candle ({@link geometries.impl.Cylinder} plus a flame sphere and
+     * a wide-beam {@code spot-light} glow), a flower vase (cylinder body, three angled stem
+     * cylinders, three flower-head spheres), and a polished {@link geometries.impl.Ellipsoid}
+     * ornament. Lit by a cool ambient/directional "moonlight" pair plus a warm overhead
+     * {@code point-light} with a soft-shadow {@code radius}, to combine most of this project's
+     * rendering features in one "real life" still-life scene.
+     */
+    @Test
+    void testGardenPatioShowcase() {
+        Scene scene = new JsonSceneLoader(
+                "Garden patio showcase", JSON_FILE_PATH + "gardenPatioShowcase.json").loadScene();
+        Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .setAntiAliasing(3)
+                .setMultithreading(-1)
+                .build()
+                .renderImage()
+                .writeToImage("Garden patio showcase");
+    }
 }

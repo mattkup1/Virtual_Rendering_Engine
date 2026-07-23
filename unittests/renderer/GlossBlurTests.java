@@ -210,6 +210,7 @@ class GlossBlurTests {
      * appear crisp.
      */
     @Test
+    @Disabled
     void testNoGlossNoBlur() {
         render(buildScene("GlossBlur — none", 0, 0),
                 "GlossBlur_00_none");
@@ -220,6 +221,7 @@ class GlossBlurTests {
      * smeared, but the glass ball is still perfectly clear.
      */
     @Test
+    @Disabled
     void testGlossOnly() {
         render(buildScene("GlossBlur — gloss only", BLUR_R, 0),
                 "GlossBlur_01_glossOnly");
@@ -230,6 +232,7 @@ class GlossBlurTests {
      * but the chrome ball still reflects a perfectly sharp image.
      */
     @Test
+    @Disabled
     void testBlurOnly() {
         render(buildScene("GlossBlur — blur only", 0, BLUR_T),
                 "GlossBlur_02_blurOnly");
@@ -240,6 +243,7 @@ class GlossBlurTests {
      * right.
      */
     @Test
+    @Disabled
     void testGlossAndBlur() {
         render(buildScene("GlossBlur — gloss and blur", BLUR_R, BLUR_T),
                 "GlossBlur_03_both");

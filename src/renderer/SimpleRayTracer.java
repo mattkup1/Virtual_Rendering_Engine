@@ -73,7 +73,7 @@ class SimpleRayTracer extends RayTracerBase {
 
     /**
      * Returns the color seen along a ray that hit nothing: the scene's environment map
-     * (skybox), sampled by the ray's own direction, if one is set; otherwise the flat
+     * (Skybox), sampled by the ray's own direction, if one is set; otherwise the flat
      * background color.
      *
      * @param ray the ray that missed all scene geometry

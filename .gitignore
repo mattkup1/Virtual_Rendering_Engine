@@ -3,13 +3,29 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
+
+### Maven ###
+target/
+
+### JavaDoc ###
 doc
+
+### Project ###
 images
 
 .idea/libraries/json.xml
 lib/json.jar
 
 images/*.png
+
+### Claude ###
+.claude
+
+### MCP ###
+.mcp.json
+
+### Obsidian ###
+notes
 
 ### Eclipse ###
 .apt_generated

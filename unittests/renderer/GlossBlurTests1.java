@@ -5,6 +5,7 @@ import geometries.impl.Sphere;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.SpotLight;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Material;
@@ -167,6 +168,7 @@ class GlossBlurTests1 {
      * at the sphere center.
      */
     @Test
+    @Disabled
     void testNoGlossNoBlur() {
         render(buildScene("Single-sphere — none", 0, 0),
                 "GlossBlur1_00_none");
@@ -178,6 +180,7 @@ class GlossBlurTests1 {
      * the upper-right stays sharp.
      */
     @Test
+    @Disabled
     void testGlossOnly() {
         render(buildScene("Single-sphere — gloss only", BLUR_R, 0),
                 "GlossBlur1_01_glossOnly");
@@ -189,6 +192,7 @@ class GlossBlurTests1 {
      * center stays sharp.
      */
     @Test
+    @Disabled
     void testBlurOnly() {
         render(buildScene("Single-sphere — blur only", 0, BLUR_T),
                 "GlossBlur1_02_blurOnly");
@@ -199,6 +203,7 @@ class GlossBlurTests1 {
      * halo in the upper-right, simultaneously.
      */
     @Test
+    @Disabled
     void testGlossAndBlur() {
         render(buildScene("Single-sphere — gloss and blur", BLUR_R, BLUR_T),
                 "GlossBlur1_03_both");

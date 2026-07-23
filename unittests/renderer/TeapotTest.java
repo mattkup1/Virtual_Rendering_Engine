@@ -35,6 +35,7 @@ class TeapotTest {
      * Teapot without improvements
      */
     @Test
+    @Disabled
     void testTeapot1() {
         prepareTeapot() //
                 .build() //

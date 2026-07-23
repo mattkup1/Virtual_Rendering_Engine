@@ -449,10 +449,12 @@ public abstract class SceneLoader {
     }
 
     /**
-     * Applies optional distance-attenuation coefficients to a point-based light source.
+     * Applies optional distance-attenuation coefficients and soft-shadow radius to a
+     * point-based light source.
      * <p>
-     * Recognized keys: {@code kC}, {@code kL}, and {@code kQ}. Attributes that are absent
-     * are left unchanged.
+     * Recognized keys: {@code kC}, {@code kL}, {@code kQ}, and {@code radius} (the
+     * area-light radius used for soft shadows - see {@link PointLight#setRadius}).
+     * Attributes that are absent are left unchanged.
      * </p>
      *
      * @param <T>   a {@link PointLight} or subclass such as {@link SpotLight}
@@ -472,6 +474,10 @@ public abstract class SceneLoader {
         String kQ = data.get("kQ");
         if (kQ != null)
             light.setKq(Double.parseDouble(kQ));
+
+        String radius = data.get("radius");
+        if (radius != null)
+            light.setRadius(Double.parseDouble(radius));
 
         return light;
     }

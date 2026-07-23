@@ -6,6 +6,15 @@
     "colorB": "0 0 255",
     "cellSize": 0.1
   },
+  "lights": {
+    "point-light": {
+      "color": "500 500 500",
+      "position": "0 50 0",
+      "kL": 0.001,
+      "kQ": 0.0001,
+      "radius": 12.5
+    }
+  },
   "geometries": [
     {
       "type": "sphere",

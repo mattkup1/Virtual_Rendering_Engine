@@ -86,4 +86,15 @@ class TextureSceneLoaderTests {
         UV uv = UV.fromDirection(new Vector(0, 0, -1));
         assertEquals(new Color(0, 0, 255), SCENE.environmentMap.sample(uv), ERR_TEXTURE);
     }
+
+    /**
+     * Test method verifying that the {@code point-light}'s {@code radius} attribute
+     * (used for soft shadows) is actually wired to {@link lighting.PointLight#setRadius}
+     * by {@link SceneLoader#applyAttenuation}, not silently dropped.
+     */
+    @Test
+    void testPointLightRadiusParsed() {
+        assertEquals(1, SCENE.lights.size(), "ERROR: expected exactly one light source");
+        assertEquals(12.5, SCENE.lights.getFirst().getRadius(), "ERROR: point-light radius was not parsed");
+    }
 }
