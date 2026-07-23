@@ -26,7 +26,7 @@ class NewShapesSceneLoaderTests {
     NewShapesSceneLoaderTests() { /* to satisfy Javadoc generator */ }
 
     /**
-     * The JSON-loaded scene, shared across the assertions in {@link #testNewShapesLoadCorrectly()}
+     * The JSON-loaded scene, shared across the assertions
      */
     private static final Scene JSON_SCENE =
             new JsonSceneLoader("New shapes (JSON)", "sceneSourceFiles/json/newShapesTest.json").loadScene();

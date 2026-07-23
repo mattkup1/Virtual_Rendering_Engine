@@ -110,97 +110,177 @@ public class Material {
      */
     public Material() { /* To satisfy Javadoc generator */ }
 
-    /** Sets the ambient reflection coefficient using a {@link Double3} triad. */
+    /**
+     * Sets the ambient reflection coefficient using a {@link Double3} triad.
+     *
+     * @param kA the per-channel ambient reflection coefficient
+     * @return this material, for chaining
+     */
     public Material setKA(Double3 kA) {
         this.kA = kA;
         return this;
     }
 
-    /** Sets the ambient reflection coefficient to a uniform value across all components. */
+    /**
+     * Sets the ambient reflection coefficient to a uniform value across all components.
+     *
+     * @param kA the ambient reflection coefficient to apply to all channels
+     * @return this material, for chaining
+     */
     public Material setKA(Double kA) {
         this.kA = new Double3(kA);
         return this;
     }
 
-    /** Sets the specular reflection coefficient using a {@link Double3} triad. */
+    /**
+     * Sets the specular reflection coefficient using a {@link Double3} triad.
+     *
+     * @param kS the per-channel specular reflection coefficient
+     * @return this material, for chaining
+     */
     public Material setKS(Double3 kS) {
         this.kS = kS;
         return this;
     }
 
-    /** Sets the specular reflection coefficient to a uniform value across all components. */
+    /**
+     * Sets the specular reflection coefficient to a uniform value across all components.
+     *
+     * @param kS the specular reflection coefficient to apply to all channels
+     * @return this material, for chaining
+     */
     public Material setKS(double kS) {
         this.kS = new Double3(kS);
         return this;
     }
 
-    /** Sets the diffuse reflection coefficient using a {@link Double3} triad. */
+    /**
+     * Sets the diffuse reflection coefficient using a {@link Double3} triad.
+     *
+     * @param kD the per-channel diffuse reflection coefficient
+     * @return this material, for chaining
+     */
     public Material setKD(Double3 kD) {
         this.kD = kD;
         return this;
     }
 
-    /** Sets the diffuse reflection coefficient to a uniform value across all components. */
+    /**
+     * Sets the diffuse reflection coefficient to a uniform value across all components.
+     *
+     * @param kD the diffuse reflection coefficient to apply to all channels
+     * @return this material, for chaining
+     */
     public Material setKD(double kD) {
         this.kD = new Double3(kD);
         return this;
     }
 
-    /** Sets the shininess exponent used in specular highlight calculations. */
+    /**
+     * Sets the shininess exponent used in specular highlight calculations.
+     *
+     * @param nShininess the shininess exponent; higher values produce smaller, sharper highlights
+     * @return this material, for chaining
+     */
     public Material setShininess(int nShininess) {
         this.nShininess = nShininess;
         return this;
     }
 
-    /** Sets the transparency coefficient using a {@link Double3} triad. */
+    /**
+     * Sets the transparency coefficient using a {@link Double3} triad.
+     *
+     * @param kT the per-channel transparency coefficient
+     * @return this material, for chaining
+     */
     public Material setKT(Double3 kT) {
         this.kT = kT;
         return this;
     }
 
-    /** Sets the transparency coefficient to a uniform value across all components. */
+    /**
+     * Sets the transparency coefficient to a uniform value across all components.
+     *
+     * @param kT the transparency coefficient to apply to all channels
+     * @return this material, for chaining
+     */
     public Material setKT(double kT) {
         this.kT = new Double3(kT);
         return this;
     }
 
-    /** Sets the reflection coefficient using a {@link Double3} triad. */
+    /**
+     * Sets the reflection coefficient using a {@link Double3} triad.
+     *
+     * @param kR the per-channel reflection coefficient
+     * @return this material, for chaining
+     */
     public Material setKR(Double3 kR) {
         this.kR = kR;
         return this;
     }
 
-    /** Sets the reflection coefficient to a uniform value across all components. */
+    /**
+     * Sets the reflection coefficient to a uniform value across all components.
+     *
+     * @param kR the reflection coefficient to apply to all channels
+     * @return this material, for chaining
+     */
     public Material setKR(double kR) {
         this.kR = new Double3(kR);
         return this;
     }
 
-    /** Sets the glossy reflection blur radius; {@code 0} is a perfectly sharp mirror. */
+    /**
+     * Sets the glossy reflection blur radius; {@code 0} is a perfectly sharp mirror.
+     *
+     * @param blurR the glossy reflection sampling-disk radius
+     * @return this material, for chaining
+     */
     public Material setBlurR(double blurR) {
         this.blurR = blurR;
         return this;
     }
 
-    /** Sets the diffuse transparency blur radius; {@code 0} is perfectly clear glass. */
+    /**
+     * Sets the diffuse transparency blur radius; {@code 0} is perfectly clear glass.
+     *
+     * @param blurT the diffuse transparency sampling-disk radius
+     * @return this material, for chaining
+     */
     public Material setBlurT(double blurT) {
         this.blurT = blurT;
         return this;
     }
 
-    /** Sets the texture sampled in place of the geometry's flat emission color. */
+    /**
+     * Sets the texture sampled in place of the geometry's flat emission color.
+     *
+     * @param texture the color texture, or {@code null} to use the geometry's flat emission
+     * @return this material, for chaining
+     */
     public Material setTexture(Texture texture) {
         this.texture = texture;
         return this;
     }
 
-    /** Sets the texture sampled as a grayscale height field to perturb the surface normal. */
+    /**
+     * Sets the texture sampled as a grayscale height field to perturb the surface normal.
+     *
+     * @param normalTexture the bump/normal texture, or {@code null} to leave the normal unperturbed
+     * @return this material, for chaining
+     */
     public Material setNormalTexture(Texture normalTexture) {
         this.normalTexture = normalTexture;
         return this;
     }
 
-    /** Sets the bump-mapping perturbation strength. */
+    /**
+     * Sets the bump-mapping perturbation strength.
+     *
+     * @param bumpStrength the multiplier applied to the {@link #normalTexture} height gradient
+     * @return this material, for chaining
+     */
     public Material setBumpStrength(double bumpStrength) {
         this.bumpStrength = bumpStrength;
         return this;

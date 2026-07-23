@@ -35,12 +35,13 @@ class ObjMeshLoaderTests {
      * The pyramid's apex vertex
      */
     private static final Point APEX = new Point(0, 1, 0);
-    /**
-     * The pyramid's base vertices, in file order
-     */
+    /** The pyramid's base vertices, in file order. */
     private static final Point V2 = new Point(-1, 0, -1);
+    /** The pyramid's base vertices, in file order. */
     private static final Point V3 = new Point(1, 0, -1);
+    /** The pyramid's base vertices, in file order. */
     private static final Point V4 = new Point(1, 0, 1);
+    /** The pyramid's base vertices, in file order. */
     private static final Point V5 = new Point(-1, 0, 1);
 
     /**

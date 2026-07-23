@@ -25,6 +25,9 @@ import primitives.Vector;
  */
 public final class ObjMeshLoader {
 
+    /**
+     * Private constructor - this is a static utility class, not meant to be instantiated.
+     */
     private ObjMeshLoader() { /* Utility class, no instances */ }
 
     /**
