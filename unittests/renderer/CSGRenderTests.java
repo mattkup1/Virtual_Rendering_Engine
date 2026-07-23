@@ -7,6 +7,7 @@ import geometries.impl.Sphere;
 import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.PointLight;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Material;
@@ -16,7 +17,7 @@ import scene.Scene;
 
 /**
  * Renders a showcase of all three {@link CSG} boolean operations, built directly in Java
- * (like {@link TeapotTest}) since CSG has no {@code SceneLoader}/JSON wiring - a CSG
+ * since CSG has no {@code SceneLoader}/JSON wiring - a CSG
  * operand is itself a full sub-geometry tree, which the loader's flat
  * {@code Map<String, String>} attribute model has no way to nest.
  * <p>
@@ -30,6 +31,7 @@ import scene.Scene;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("render")
 class CSGRenderTests {
     /**
      * Default constructor to satisfy Javadoc generator

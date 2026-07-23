@@ -1,6 +1,7 @@
 package primitives;
 
 import java.util.List;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 class RayTests {
 
     /**

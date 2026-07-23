@@ -1,6 +1,7 @@
 package geometries.impl;
 
 import java.util.List;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * radius at any x in [0,1] equals x.
  * </p>
  */
+@Tag("unit")
 public class ConeTests {
 
     /**

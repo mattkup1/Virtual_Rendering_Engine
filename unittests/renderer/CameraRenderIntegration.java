@@ -1,5 +1,6 @@
 package renderer;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import scene.JsonSceneLoader;
@@ -22,6 +23,7 @@ import scene.Scene;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("render")
 public class CameraRenderIntegration {
 
     /**

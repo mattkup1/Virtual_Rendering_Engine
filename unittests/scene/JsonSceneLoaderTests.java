@@ -1,5 +1,6 @@
 package scene;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import renderer.Camera;
@@ -20,6 +21,7 @@ import static java.awt.Color.YELLOW;
  * @author moshehanau
  */
 @SuppressWarnings("java:S109")
+@Tag("render")
 class JsonSceneLoaderTests {
     /**
      * Default constructor to satisfy Javadoc generator

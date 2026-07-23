@@ -2,6 +2,7 @@ package renderer;
 
 import geometries.api.Intersectable.Intersection;
 import geometries.impl.Plane;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Material;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 class RayTracerBaseTests {
     /**
      * Default constructor to satisfy Javadoc generator

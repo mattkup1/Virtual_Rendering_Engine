@@ -2,6 +2,7 @@ package scene;
 
 import geometries.impl.Triangle;
 import java.util.List;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Vector;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 class ObjMeshLoaderTests {
     /**
      * Default constructor to satisfy Javadoc generator

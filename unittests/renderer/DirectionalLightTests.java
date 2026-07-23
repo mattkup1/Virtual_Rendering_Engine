@@ -1,6 +1,7 @@
 package renderer;
 
 import lighting.DirectionalLight;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Point;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 public class DirectionalLightTests {
 
     /**

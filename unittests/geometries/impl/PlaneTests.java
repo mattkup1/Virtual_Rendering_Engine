@@ -1,5 +1,6 @@
 package geometries.impl;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Tests follow the methodology of
  * Equivalence Partitions (EP) and Boundary Values (BVA).
  */
+@Tag("unit")
 public class PlaneTests {
 
     /**

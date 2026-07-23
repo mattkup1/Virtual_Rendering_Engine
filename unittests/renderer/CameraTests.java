@@ -1,6 +1,7 @@
 package renderer;
 
 import java.util.MissingResourceException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * <li>{@link Camera#constructRay(int, int)}</li>
  * </ul>
  */
+@Tag("unit")
 class CameraTests {
 
     /**

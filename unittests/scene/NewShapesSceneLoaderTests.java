@@ -1,5 +1,6 @@
 package scene;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("component")
 class NewShapesSceneLoaderTests {
     /**
      * Default constructor to satisfy Javadoc generator

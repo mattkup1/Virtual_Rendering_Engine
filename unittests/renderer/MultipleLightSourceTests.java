@@ -7,6 +7,7 @@ import lighting.AmbientLight;
 import lighting.DirectionalLight;
 import lighting.PointLight;
 import lighting.SpotLight;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Double3;
@@ -26,6 +27,7 @@ import static java.awt.Color.BLUE;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("render")
 class MultipleLightSourceTests {
     /**
      * Image resolution for all tests in this class
@@ -59,20 +61,20 @@ class MultipleLightSourceTests {
     private static final Double3 KS3 = new Double3(0.2, 0.4, 0.3);
 
     /**
-     * Color of the sphere (copied from {@link LightsTests})
+     * Color of the sphere
      */
     private static final Color SPHERE_COLOR = new Color(BLUE).reduce(2);
     /**
-     * Center of the sphere (copied from {@link LightsTests})
+     * Center of the sphere
      */
     private static final Point SPHERE_CENTER = new Point(0, 0, -50);
     /**
-     * Radius of the sphere (copied from {@link LightsTests})
+     * Radius of the sphere
      */
     private static final double SPHERE_RADIUS = 50D;
 
     /**
-     * The triangles' vertices (copied from {@link LightsTests})
+     * The triangles' vertices
      */
     private static final Point[] VERTICES = {
             new Point(-110, -110, -150),

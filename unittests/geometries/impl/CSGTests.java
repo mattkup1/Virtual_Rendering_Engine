@@ -1,6 +1,7 @@
 package geometries.impl;
 
 import java.util.List;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 class CSGTests {
     /**
      * Default constructor to satisfy Javadoc generator

@@ -13,17 +13,35 @@ The project builds with Maven (`pom.xml`) as well as via the IntelliJ module
 (`ISE5786_7270_8257.iml`) — both point at the same `src/` (main) and `unittests/` (test) source
 roots, so no source directories needed to move.
 
-- `mvn test` — compile and run the full JUnit suite
+Every test class carries a JUnit 5 `@Tag`: `unit` (single-class logic), `component` (parses/
+assembles an object graph, e.g. a `SceneLoader`, without rendering), `integration` (spans
+components, asserts on behavior, no image output), or `render` (calls `Camera.renderImage()` +
+`writeToImage()` — the slow, visually-verified showcase scenes). `mvn test` excludes `render` by
+default (see the `excludedGroups` property in `pom.xml`), so day-to-day runs stay fast; opt in
+explicitly when you need to check a render:
+
+- `mvn test` — compile and run every `unit`/`component`/`integration` test (fast, seconds)
+- `mvn test -Dgroups=render -DexcludedGroups=` — run only the render/image-generation tests (slow,
+  minutes — writes to `images/`)
+- `mvn test -DexcludedGroups=` — run everything, including renders
 - `mvn -Dtest=ClassName test` — run a single test class (e.g. `-Dtest=SphereTests`)
 - `mvn -Dtest=ClassName#methodName test` — run a single test method
 - `mvn compile` — compile only
+
+`unittests-archive/` holds superseded/redundant test classes (original course-checkpoint tests
+later covered by an equivalent JSON/XML scene test, plus a couple of already-disabled exploratory
+ones) — kept for reference via git history, not part of either the Maven or IntelliJ source roots,
+so they're never compiled or run.
 
 Dependencies:
 - `org.json:json:20240303` (JSON scene parsing)
 - `org.junit.jupiter:junit-jupiter:5.10.2` (tests, via `maven-surefire-plugin`)
 
 Rendered images are written to `images/`; XML/JSON scene definitions used by tests and manual
-runs live in `sceneSourceFiles/{xml,json}/`.
+runs live in `sceneSourceFiles/{xml,json}/`, with larger external mesh packages (e.g. the Cornell
+Box) under `sceneSourceFiles/packages/`. The `gui` package (`RenderApp`/`RenderWindow`, plain
+Swing) is a desktop scene launcher/viewer front end for the same pipeline — run via
+`mvn exec:java` or `RenderApp.main` from the IDE.
 
 ## Architecture
 

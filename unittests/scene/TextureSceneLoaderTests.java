@@ -1,5 +1,6 @@
 package scene;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Point;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("component")
 class TextureSceneLoaderTests {
     /**
      * Default constructor to satisfy Javadoc generator

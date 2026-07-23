@@ -1,5 +1,6 @@
 package primitives;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -25,6 +26,7 @@ import static primitives.Util.isZero;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 class VectorTests {
     
     /**

@@ -12,6 +12,11 @@
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Default `mvn test` skips the slow image-generation tests (@Tag("render") - anything
+             that calls Camera.renderImage()/writeToImage()). Override on the command line:
+               mvn test -DexcludedGroups=                    # everything, including renders
+               mvn test -Dgroups=render -DexcludedGroups=     # only the render tests -->
+        <excludedGroups>render</excludedGroups>
     </properties>
 
     <dependencies>
@@ -36,6 +41,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <excludedGroups>${excludedGroups}</excludedGroups>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

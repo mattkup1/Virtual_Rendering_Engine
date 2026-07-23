@@ -1,5 +1,6 @@
 package primitives;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 class StripeTextureTests {
     /**
      * Default constructor to satisfy Javadoc generator

@@ -1,11 +1,13 @@
 package renderer;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 
 /**
  * Unit tests for class {@link ImageWriter}
  */
+@Tag("unit")
 public class ImageWriterTests {
 
     /**

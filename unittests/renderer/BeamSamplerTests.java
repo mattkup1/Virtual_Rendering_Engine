@@ -1,6 +1,7 @@
 package renderer;
 
 import java.util.List;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("unit")
 class BeamSamplerTests {
     /**
      * Default constructor to satisfy Javadoc generator

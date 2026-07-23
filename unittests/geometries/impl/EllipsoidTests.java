@@ -1,6 +1,7 @@
 package geometries.impl;
 
 import java.util.List;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * unit radius along Y/Z (radius 1) - a "rugby ball" lying on its side.
  * </p>
  */
+@Tag("unit")
 public class EllipsoidTests {
 
     /**

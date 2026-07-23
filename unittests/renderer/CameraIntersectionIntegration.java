@@ -4,6 +4,7 @@ import geometries.api.Intersectable;
 import geometries.impl.Plane;
 import geometries.impl.Sphere;
 import geometries.impl.Triangle;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author mattkuperwasser
  * @author moshehanau
  */
+@Tag("integration")
 public class CameraIntersectionIntegration {
 
     /**
