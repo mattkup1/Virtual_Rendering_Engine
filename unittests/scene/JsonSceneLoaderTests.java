@@ -286,4 +286,29 @@ class JsonSceneLoaderTests {
                 .renderImage()
                 .writeToImage("Garden patio showcase");
     }
+
+    /**
+     * Renders the classic Cornell Box, imported directly from the Williams College/Cornell
+     * {@code CornellBox-Original.obj} package (public domain) rather than hand-built from
+     * primitives. Exercises {@link ObjMeshLoader#loadTrianglesWithMaterials} - the {@code .obj}
+     * file's own {@code mtllib}/{@code usemtl} face groups (red/green side walls, white
+     * walls/boxes, an emissive ceiling panel) are resolved into per-triangle materials
+     * directly, via {@code "materialsFromObj": true"}, instead of one material applied to the
+     * whole mesh. Since this is a Whitted-style ray tracer with no radiosity/global
+     * illumination, the emissive ceiling panel only makes itself visibly glow - it does not
+     * actually illuminate the room - so an explicit {@code point-light} positioned at the
+     * panel (with a soft-shadow {@code radius}) provides the actual lighting.
+     */
+    @Test
+    void testCornellBox() {
+        Scene scene = new JsonSceneLoader("Cornell Box", JSON_FILE_PATH + "cornellBox.json").loadScene();
+        Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .setAntiAliasing(3)
+                .setMultithreading(-1)
+                .build()
+                .renderImage()
+                .writeToImage("Cornell Box");
+    }
 }

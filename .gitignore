@@ -27,6 +27,13 @@ images/*.png
 ### Obsidian ###
 notes
 
+### Large unused external scene packages (too big for GitHub - salle_de_bain.obj alone is
+### ~118MB, over GitHub's 100MB hard file-size limit; breakfast_room/fireplace_room are also
+### tens of MB. Not wired into any scene file - see notes/decisions.md 2026-07-23. ###
+sceneSourceFiles/packages/breakfast_room/
+sceneSourceFiles/packages/fireplace_room/
+sceneSourceFiles/packages/salle_de_bain/
+
 ### Eclipse ###
 .apt_generated
 .classpath

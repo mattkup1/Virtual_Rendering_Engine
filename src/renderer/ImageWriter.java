@@ -64,4 +64,14 @@ final class ImageWriter {
     */
    void writePixel(int xIndex, int yIndex, Color color) { _image.setRGB(xIndex, yIndex, color.getColor().getRGB()); }
 
+   /**
+    * Returns the underlying image buffer directly, without writing it to disk.
+    * <p>
+    * The returned instance is live: pixels written via {@link #writePixel} after this call
+    * are reflected in it, which callers may use to observe an in-progress render.
+    * </p>
+    * @return the image buffer
+    */
+   BufferedImage getImage() { return _image; }
+
 }

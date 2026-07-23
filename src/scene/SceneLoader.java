@@ -240,9 +240,17 @@ public abstract class SceneLoader {
      * <p>
      * Recognized keys: {@code file} (required, path to the {@code .obj} source), optional
      * {@code scale} (uniform factor, relative to the origin) and {@code translate}
-     * (applied after scaling), plus the same {@code emission}/{@code material.*} keys as
-     * other geometry types - applied uniformly to every triangle in the mesh.
+     * (applied after scaling), plus either:
      * </p>
+     * <ul>
+     *   <li>the same {@code emission}/{@code material.*} keys as other geometry types -
+     *       applied uniformly to every triangle in the mesh (the default), or</li>
+     *   <li>{@code materialsFromObj: true} - resolves the {@code .obj} file's own
+     *       {@code mtllib}/{@code usemtl} face-group materials instead (see
+     *       {@link ObjMeshLoader#loadTrianglesWithMaterials}), for multi-material mesh
+     *       packages (e.g. the Cornell Box) where {@code emission}/{@code material.*} are
+     *       not used.</li>
+     * </ul>
      *
      * @param data the mesh attribute map
      * @return a {@link Geometries} composite containing the mesh's triangles
@@ -250,22 +258,29 @@ public abstract class SceneLoader {
     private Geometries buildMesh(Map<String, String> data) {
         double scale = data.containsKey("scale") ? Double.parseDouble(data.get("scale")) : 1;
         Vector translate = data.containsKey("translate") ? parseVector(data.get("translate")) : null;
+        boolean materialsFromObj = Boolean.parseBoolean(data.get("materialsFromObj"));
 
-        List<Triangle> triangles = ObjMeshLoader.loadTriangles(data.get("file"), scale, translate);
+        List<Intersectable> meshTriangles;
+        if (materialsFromObj) {
+            meshTriangles = new ArrayList<>(
+                    ObjMeshLoader.loadTrianglesWithMaterials(data.get("file"), scale, translate));
+        } else {
+            List<Triangle> triangles = ObjMeshLoader.loadTriangles(data.get("file"), scale, translate);
+            Color emission = data.containsKey("emission") ? parseColor(data.get("emission")) : null;
+            Material material = buildMaterial(data);
 
-        Color emission = data.containsKey("emission") ? parseColor(data.get("emission")) : null;
-        Material material = buildMaterial(data);
-
-        List<Intersectable> texturedTriangles = new ArrayList<>(triangles.size());
-        for (Triangle triangle : triangles) {
-            if (emission != null) triangle.setEmission(emission);
-            if (material != null) triangle.setMaterial(material);
-            texturedTriangles.add(triangle);
+            meshTriangles = new ArrayList<>(triangles.size());
+            for (Triangle triangle : triangles) {
+                if (emission != null) triangle.setEmission(emission);
+                if (material != null) triangle.setMaterial(material);
+                meshTriangles.add(triangle);
+            }
         }
+
         // BVH-organized: meshes commonly carry hundreds of triangles, where a flat scan
         // (even with a per-triangle bounding-box check) is far more ray-intersection work
         // than a spatial tree.
-        return Geometries.buildBVH(texturedTriangles);
+        return Geometries.buildBVH(meshTriangles);
     }
 
     /**

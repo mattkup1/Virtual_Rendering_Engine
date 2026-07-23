@@ -12,8 +12,8 @@
   "environment-map": {
     "type": "image",
     "file": "sceneSourceFiles/textures/sky.png",
-    "repeatU": 1,
-    "repeatV": 1
+    "repeatU": 0.16,
+    "repeatV": 0.093
   },
   "lights": {
     "ambient-light": {

@@ -1,0 +1,32 @@
+{
+  "camera": {
+    "location": "0 100 320",
+    "direction": "0 100 -104",
+    "vpDistance": 320,
+    "vpWidth": 300,
+    "vpHeight": 300,
+    "resolutionX": 800,
+    "resolutionY": 800
+  },
+  "background-color": "0 0 0",
+  "lights": {
+    "ambient-light": {
+      "color": "16 16 18"
+    },
+    "point-light": {
+      "color": "480 460 420",
+      "position": "-0.5 190 -3",
+      "kL": 0.0006,
+      "kQ": 0.000004,
+      "radius": 22
+    }
+  },
+  "geometries": [
+    {
+      "type": "mesh",
+      "file": "sceneSourceFiles/packages/CornellBox/CornellBox-Original.obj",
+      "scale": 100,
+      "materialsFromObj": "true"
+    }
+  ]
+}

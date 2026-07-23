@@ -1,5 +1,6 @@
 package renderer;
 
+import java.awt.image.BufferedImage;
 import java.util.MissingResourceException;
 import primitives.Color;
 import primitives.Point;
@@ -308,6 +309,20 @@ public class Camera implements Cloneable {
      */
     public void writeToImage(String filename) {
         this._imageWriter.writeToImage(filename);
+    }
+
+    /**
+     * Returns the rendered image buffer directly, without writing it to disk.
+     * <p>
+     * The returned instance is live: pixels {@link #renderImage()} writes after this call
+     * are reflected in it, so it may be polled (e.g. from a GUI) to preview a render in
+     * progress rather than only inspected once complete.
+     * </p>
+     *
+     * @return the image buffer
+     */
+    public BufferedImage getImage() {
+        return _imageWriter.getImage();
     }
 
     /**
