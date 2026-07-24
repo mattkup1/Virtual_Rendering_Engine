@@ -111,6 +111,19 @@ public final class BoundingBox {
     }
 
     /**
+     * Returns the box's surface area, used as the cost proxy in the BVH's surface-area
+     * heuristic: the expected number of ray/box tests a node incurs is proportional to its
+     * surface area, so summing {@code area * itemCount} across a candidate split's two
+     * halves approximates its traversal cost.
+     *
+     * @return the surface area of the box
+     */
+    public double surfaceArea() {
+        double ex = extentX(), ey = extentY(), ez = extentZ();
+        return 2 * (ex * ey + ey * ez + ez * ex);
+    }
+
+    /**
      * Tests whether a ray intersects this bounding box within a given distance, using the
      * slab method.
      *

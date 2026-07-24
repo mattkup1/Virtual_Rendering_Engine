@@ -221,6 +221,55 @@ class CameraTests {
     }
 
     /**
+     * Test method for {@link renderer.Camera.Builder#setDepthOfField(double, double)}.
+     * <p>
+     * Verifies argument validation: a negative aperture is always rejected, a positive
+     * aperture requires a positive focal distance, and a disabled ({@code 0}) aperture
+     * accepts any focal distance since it's unused.
+     * </p>
+     */
+    @Test
+    void testSetDepthOfField() {
+        // ============ Equivalence Partitions Tests ==============
+
+        // EP01: Valid positive aperture and focal distance builds successfully
+        Builder builderEP01 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .setVpSize(8, 8)
+                .setDepthOfField(0.5, 10);
+        assertDoesNotThrow(builderEP01::build, ERROR_VALID_BUILD);
+
+        // =============== Boundary Values Tests ==================
+
+        // BV01: Zero aperture (disabled) accepts a non-positive focal distance
+        Builder builderBV01 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .setVpSize(8, 8);
+        assertDoesNotThrow(() -> builderBV01.setDepthOfField(0, 0), ERROR_VALID_BUILD);
+
+        // BV02: Negative aperture is rejected
+        Builder builderBV02 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .setVpSize(8, 8);
+        assertThrows(IllegalArgumentException.class, () -> builderBV02.setDepthOfField(-1, 10),
+                ERROR_INVALID_ARGUMENT);
+
+        // BV03: Positive aperture with zero focal distance is rejected
+        Builder builderBV03 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .setVpSize(8, 8);
+        assertThrows(IllegalArgumentException.class, () -> builderBV03.setDepthOfField(0.5, 0),
+                ERROR_INVALID_ARGUMENT);
+
+        // BV04: Positive aperture with negative focal distance is rejected
+        Builder builderBV04 = baseBuilder()
+                .setDirection(V_TO, V_UP)
+                .setVpSize(8, 8);
+        assertThrows(IllegalArgumentException.class, () -> builderBV04.setDepthOfField(0.5, -10),
+                ERROR_INVALID_ARGUMENT);
+    }
+
+    /**
      * Test method for {@link Camera#constructRay(int, int)}.
      * <p>
      * Verifies ray construction through representative pixels in 3x3 and 4x4

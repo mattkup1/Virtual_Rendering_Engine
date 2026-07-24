@@ -188,6 +188,34 @@ class JsonSceneLoaderTests {
     }
 
     /**
+     * Renders {@code glossyAndBlurryScene.json} again, this time with depth of field
+     * enabled via {@link Camera.Builder#setDepthOfField(double, double)}, focused on the
+     * bottom-row chrome spheres (centered around {@code z=-180}, ~214 units from the
+     * camera at the origin). The rainbow backdrop spheres sit much farther away
+     * ({@code z=-500}, ~539 units out), so they should render visibly blurred while the
+     * chrome spheres stay in sharp focus - demonstrating the thin-lens depth-of-field
+     * effect against a scene with a clear near/far depth split.
+     */
+    @Test
+    void testDepthOfFieldShowcase() {
+        Scene scene = new JsonSceneLoader(
+                "Depth of field showroom",
+                JSON_FILE_PATH + "glossyAndBlurryScene.json")
+                .loadScene();
+
+        Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .setResolution(400, 400)
+                .setDepthOfField(4, 214)
+                .setMultithreading(-1)
+                .setDebugPrint(1.0)
+                .build()
+                .renderImage()
+                .writeToImage("Depth of field showcase");
+    }
+
+    /**
      * Renders a showcase scene featuring the new geometries added in {@code geometries.impl}
      * - {@link geometries.impl.Box}, {@link geometries.impl.Cone}, {@link geometries.impl.Torus},
      * {@link geometries.impl.Ellipse} (as a disk), and an imported {@code .obj} triangle mesh

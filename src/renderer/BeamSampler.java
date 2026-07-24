@@ -182,7 +182,7 @@ public final class BeamSampler {
      * @param v the second uniform random value in {@code [0, 1]}
      * @return a two-element array {@code [s, t]} representing the disk-space sample
      */
-    private static double[] concentricDiskMap(double u, double v) {
+    static double[] concentricDiskMap(double u, double v) {
         // Remap [0,1]^2 to [-1,1]^2
         double a = 2 * u - 1;
         double b = 2 * v - 1;

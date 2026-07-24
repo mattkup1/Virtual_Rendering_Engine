@@ -38,7 +38,7 @@ class SimpleRayTracer extends RayTracerBase {
     private static final Double3 INITIAL_K = Double3.ONE;
 
     /** Enables adaptive sampling for glossy and blurry beams. */
-    private static final boolean adaptiveSuperSampling = false;
+    private static final boolean adaptiveSuperSampling = true;
 
     /** Number of rays sampled for a top-level glossy reflection or blurry transparency beam. */
     private static final int BLUR_SAMPLES = 65;
@@ -436,7 +436,12 @@ class SimpleRayTracer extends RayTracerBase {
                 adaptiveLevel - 1,
                 cache);
 
-        return leftColor.add(rightColor).reduce(2);
+        // Each side's color is already the average over its own sub-segment, so combining
+        // them back into the average over the full segment requires weighting by segment
+        // size (not a plain midpoint) whenever middleIndex doesn't split size evenly - e.g.
+        // BLUR_SAMPLES=65 makes every split in this recursion uneven.
+        int rightSize = size - middleIndex;
+        return leftColor.scale((double) middleIndex / size).add(rightColor.scale((double) rightSize / size));
     }
 
     /**

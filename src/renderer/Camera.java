@@ -87,6 +87,23 @@ public class Camera implements Cloneable {
      * through the pixel center, {@code n > 1} averages an {@code n x n} sub-pixel grid.
      */
     private int _antiAliasing = 1;
+    /**
+     * Thin-lens aperture radius; {@code 0} (the default) is a pinhole camera with
+     * everything in sharp focus. A positive value enables depth of field, blurring
+     * anything not at {@link #_focalDistance}.
+     */
+    private double _aperture = 0;
+    /**
+     * Distance from the camera at which the thin lens is in perfect focus; only
+     * meaningful when {@link #_aperture} is positive.
+     */
+    private double _focalDistance;
+    /**
+     * Number of lens samples averaged per pixel when {@link #_aperture} is positive.
+     * Each sample also uses an independently jittered sub-pixel offset, so this doubles
+     * as anti-aliasing in depth-of-field mode rather than combining with {@link #_antiAliasing}.
+     */
+    private static final int DOF_SAMPLES = 64;
 
     /**
      * Empty camera constructor
@@ -251,7 +268,9 @@ public class Camera implements Cloneable {
      * @param yIndex the pixel's row index
      */
     private void castRay(int xIndex, int yIndex) {
-        Color color = _antiAliasing <= 1
+        Color color = _aperture > 0
+                ? castDepthOfFieldRay(xIndex, yIndex)
+                : _antiAliasing <= 1
                 ? _rayTracerBase.traceRay(constructRay(xIndex, yIndex))
                 : castAntiAliasedRay(xIndex, yIndex);
 
@@ -280,6 +299,44 @@ public class Camera implements Cloneable {
         }
 
         return color.reduce(_antiAliasing * _antiAliasing);
+    }
+
+    /**
+     * Averages {@link #DOF_SAMPLES} thin-lens samples for a pixel to produce depth of
+     * field: each sample jitters both the sub-pixel position (giving free anti-aliasing)
+     * and the ray's origin across a disk of radius {@link #_aperture} on the lens plane,
+     * then aims the ray through the point on the sharp (pinhole) ray where it crosses the
+     * focal plane at distance {@link #_focalDistance}. Points exactly at the focal
+     * distance stay sharp regardless of the sub-pixel/lens jitter, since every sample's
+     * ray still passes through the same focal-plane point; points off the focal plane
+     * scatter across the lens radius, producing blur proportional to their distance from
+     * focus.
+     *
+     * @param xIndex the pixel's column index
+     * @param yIndex the pixel's row index
+     * @return the averaged color across the lens samples
+     */
+    private Color castDepthOfFieldRay(int xIndex, int yIndex) {
+        Color color = Color.BLACK;
+
+        for (int i = 0; i < DOF_SAMPLES; ++i) {
+            double offsetX = Math.random() - 0.5;
+            double offsetY = Math.random() - 0.5;
+            Ray sharpRay = constructRay(xIndex, yIndex, offsetX, offsetY);
+
+            Point focalPoint = sharpRay.getOrigin().add(sharpRay.getDirection()
+                    .scale(_focalDistance / sharpRay.getDirection().dotProduct(_vTo)));
+
+            double[] disk = BeamSampler.concentricDiskMap(Math.random(), Math.random());
+            Point lensPoint = _p0;
+            if (!isZero(disk[0])) lensPoint = lensPoint.add(_vRight.scale(disk[0] * _aperture));
+            if (!isZero(disk[1])) lensPoint = lensPoint.add(_vUp.scale(disk[1] * _aperture));
+
+            Ray lensRay = new Ray(lensPoint, focalPoint.subtract(lensPoint).normalize());
+            color = color.add(_rayTracerBase.traceRay(lensRay));
+        }
+
+        return color.reduce(DOF_SAMPLES);
     }
 
     /**
@@ -511,6 +568,34 @@ public class Camera implements Cloneable {
                 throw new IllegalArgumentException("Anti-aliasing samples per axis must be positive");
 
             _camera._antiAliasing = samplesPerAxis;
+            return this;
+        }
+
+        /**
+         * Enables depth of field by configuring a thin-lens aperture and focal distance.
+         * <p>
+         * Points at {@code focalDistance} from the camera render in sharp focus; points
+         * nearer or farther blur proportionally to their distance from that plane and to
+         * {@code aperture}. Leaving this unset (or passing {@code aperture == 0}) keeps
+         * the default pinhole camera, where everything is in sharp focus.
+         * </p>
+         *
+         * @param aperture      the lens radius; {@code 0} disables depth of field
+         * @param focalDistance the distance from the camera at which the lens is in
+         *                      perfect focus; only meaningful when {@code aperture > 0}
+         * @return the builder object
+         * @throws IllegalArgumentException if {@code aperture} is negative, or if
+         *                                   {@code aperture > 0} and {@code focalDistance}
+         *                                   is not positive
+         */
+        public Builder setDepthOfField(double aperture, double focalDistance) {
+            if (aperture < 0)
+                throw new IllegalArgumentException("Aperture must not be negative");
+            if (aperture > 0 && focalDistance <= 0)
+                throw new IllegalArgumentException("Focal distance must be positive when aperture is positive");
+
+            _camera._aperture = aperture;
+            _camera._focalDistance = focalDistance;
             return this;
         }
 
