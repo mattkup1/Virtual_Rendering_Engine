@@ -7,11 +7,11 @@ Authors: Matt Kuperwasser and Moshe Hanau.
 
 ## Gallery
 
-| | |
-|---|---|
-| ![Cornell Box](images/Cornell%20Box.png) | ![Soft shadow and bump showcase](images/Soft%20shadow%20and%20bump%20showcase.png) |
-| ![Texture showcase](images/Texture%20showcase.png) | ![Garden patio showcase](images/Garden%20patio%20showcase.png) |
-| ![CSG showcase](images/CSG%20showcase.png) | ![Depth of field showcase](images/Depth%20of%20field%20showcase.png) |
+|                                                       |                                                                |
+|-------------------------------------------------------|----------------------------------------------------------------|
+| ![Cornell Box](images/Cornell%20Box.png)              | ![Crystal cluster](images/Crystal%20cluster.png)               |
+| ![Texture showcase](images/Texture%20showcase.png)    | ![Garden patio showcase](images/Garden%20patio%20showcase.png) |
+| ![Landscape showcase](images/JSON%20cool%20scene.png) | ![Blur and Gloss showcase](images/11-adss.png)                 |
 
 ## Features
 
