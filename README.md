@@ -1,8 +1,17 @@
-# ISE Ray Tracer
+# Virtual Rendering Engine
 
-A Java ray tracer built for the ISE (Introduction to Software Engineering) course.
+A Java ray tracer supporting recursive Phong shading, BVH acceleration, soft shadows, depth of
+field, and glossy reflection/refraction, with scenes defined declaratively in XML or JSON.
 
-Project ID `ISE5786_7270_8257`. Authors: Matt Kuperwasser and Moshe Hanau.
+Authors: Matt Kuperwasser and Moshe Hanau.
+
+## Gallery
+
+| | |
+|---|---|
+| ![Cornell Box](images/Cornell%20Box.png) | ![Soft shadow and bump showcase](images/Soft%20shadow%20and%20bump%20showcase.png) |
+| ![Texture showcase](images/Texture%20showcase.png) | ![Garden patio showcase](images/Garden%20patio%20showcase.png) |
+| ![CSG showcase](images/CSG%20showcase.png) | ![Depth of field showcase](images/Depth%20of%20field%20showcase.png) |
 
 ## Features
 
