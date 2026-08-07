@@ -2,7 +2,7 @@
 
 A Java ray tracer built for the ISE (Introduction to Software Engineering) course.
 
-Project ID `ISE5786_7270_8257`. Authors: Matt Kuperwasser and Moshe Hanau.
+Authors: Matt Kuperwasser and Moshe Hanau.
 
 ## Features
 
