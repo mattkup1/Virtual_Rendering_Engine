@@ -148,6 +148,25 @@ class JsonSceneLoaderTests {
     }
 
     /**
+     * Renders the Courtyard Spire diorama: an original tapered, ringed tower with a
+     * base colonnade and spire, standing over a mirror-flat reflecting pool at dusk,
+     * flanked by pine trees, lantern posts, flags, and a foreground cluster of mirror
+     * spheres under a two-tone painted sky.
+     */
+    @Test
+    void testCourtyardSpireScene() {
+        Scene scene = new JsonSceneLoader("Courtyard Spire", JSON_FILE_PATH + "courtyardSpire.json").loadScene();
+        Camera.getBuilder()
+                .loadFrom(scene.cameraSettings)
+                .setRayTracer(scene, RayTracerType.SIMPLE)
+                .setMultithreading(-1)
+                .setDebugPrint(1.0)
+                .build()
+                .renderImage()
+                .writeToImage("Courtyard Spire");
+    }
+
+    /**
      * Renders the JSON "glossy &amp; blurry" showroom that exercises the new
      * {@code blurR} and {@code blurT} material properties.
      * <p>
